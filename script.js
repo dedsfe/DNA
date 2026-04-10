@@ -30,8 +30,8 @@ if (animatedWords.length) {
       const span = document.createElement("span");
 
       span.className = char === " "
-        ? "hero__nav-label-char hero__nav-label-char--space"
-        : "hero__nav-label-char";
+        ? "hero__animated-char hero__animated-char--space"
+        : "hero__animated-char";
       span.textContent = char === " " ? "\u00A0" : char;
       fragment.append(span);
     });
