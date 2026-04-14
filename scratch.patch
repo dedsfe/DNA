@@ -1,0 +1,7 @@
+--- index.html
++++ index.html
+@@ -375,3 +375,2 @@
+         <div class="t-cinema">
+-          <!-- Spotlight Cursor Element -->
+-          <div class="t-cinema__spotlight" aria-hidden="true"></div>
+ 

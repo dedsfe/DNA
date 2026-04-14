@@ -104,17 +104,20 @@ body {
   height: 42%;
   background: linear-gradient(to top, rgba(255, 255, 255, 0.14), transparent 72%);
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── HERO NAV ──────────────────────────────────── */
 
 .hero__nav {
-  position: absolute;
-  top: clamp(0.85rem, 2vw, 1.3rem);
+  position: fixed;
+  top: 0;
   left: 0;
-  z-index: 3;
+  z-index: 1000;
   width: 100%;
-  padding-inline: clamp(0.9rem, 1.8vw, 1.5rem);
+  padding: clamp(0.85rem, 2vw, 1.3rem) clamp(0.9rem, 1.8vw, 1.5rem);
+  pointer-events: none;
+  transition: padding 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__nav-shell {
@@ -139,6 +142,42 @@ body {
   backdrop-filter: blur(22px) saturate(180%);
   -webkit-backdrop-filter: blur(22px) saturate(180%);
   overflow: visible;
+  pointer-events: auto;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrolled State (Dynamic Island) */
+.hero__nav.is-scrolled {
+  padding-top: 1rem;
+}
+
+.hero__nav.is-scrolled .hero__nav-shell {
+  width: min(100%, 46rem);
+  padding: 0.35rem;
+  background:
+    linear-gradient(135deg, rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.85)),
+    var(--glass-fill);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.hero__nav.is-scrolled .hero__nav-label {
+  background: rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.hero__nav.is-scrolled .hero__nav-brand-mark {
+  width: clamp(2.5rem, 3vw, 3rem);
+  filter: brightness(0) invert(1);
+}
+
+.hero__nav.is-scrolled .hero__nav-cta {
+  min-height: 2.4rem;
+  font-size: 0.75rem;
+  padding-inline: 1.25rem;
 }
 
 .hero__nav-shell::before,
@@ -148,6 +187,7 @@ body {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__nav-shell::before {
@@ -171,6 +211,7 @@ body {
   inset: 0;
   z-index: 2;
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__nav-orbit-light {
@@ -215,6 +256,7 @@ body {
   object-fit: contain;
   object-position: center;
   transform: scale(2.25);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__nav-label {
@@ -237,6 +279,7 @@ body {
   transform: translate(-50%, -50%);
   white-space: nowrap;
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__nav-status-dot {
@@ -411,6 +454,7 @@ body {
   bottom: clamp(6rem, 12vw, 10rem);
   z-index: 5;
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hero__badge {
@@ -689,6 +733,7 @@ body {
   background: radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 60%);
   opacity: 0.6;
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .instagram-showcase__header {
@@ -864,6 +909,7 @@ body {
     linear-gradient(to top, rgba(5, 8, 16, 0.9), rgba(5, 8, 16, 0.1) 55%),
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.18), transparent 45%);
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .instagram-showcase__handle {
@@ -1646,6 +1692,7 @@ body {
     #111 100%
   );
   pointer-events: none;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* Content area */
@@ -1736,6 +1783,7 @@ body {
 /* Body lock when modal is open */
 body.modal-open {
   overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ═══════════════════════════════════════════════════
