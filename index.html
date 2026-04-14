@@ -8,10 +8,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=35" />
+    <link rel="stylesheet" href="./styles.css?v=36" />
   </head>
-  <body>
-    <main class="page">
+  <body class="is-loading">
+    
+    <!-- ══════════════════════════════════════════════
+         PRELOADER CINEMATOGRÁFICO
+         ══════════════════════════════════════════════ -->
+    <div id="preloader" class="preloader">
+      <div class="preloader__counter">
+        <span id="preloader-count">0</span><span class="preloader__percent">%</span>
+      </div>
+      <div class="preloader__logo">DNA</div>
+    </div>
+
+    <!-- Wrapping everything for Curtain Footer -->
+    <div class="site-wrapper">
+      <main class="page">
       <header class="hero" aria-label="Apresentação da empresa DNA">
         <img
           class="hero__image"
@@ -425,6 +438,36 @@
         </div>
       </section>
     </main>
+    </div> <!-- /site-wrapper -->
+
+    <!-- ══════════════════════════════════════════════
+         CURTAIN FOOTER (Gran Finale)
+         ══════════════════════════════════════════════ -->
+    <footer class="curtain-footer">
+      <div class="curtain-footer__content">
+        <p class="curtain-footer__eyebrow">Pronto para o próximo nível?</p>
+        <h2 class="curtain-footer__heading">Vamos criar<br>algo absurdo.</h2>
+        <a href="mailto:hello@dnastudio.com" class="curtain-footer__cta" data-magnetic>
+          Começar Projeto
+        </a>
+      </div>
+      
+      <div class="curtain-footer__bottom">
+        <div class="curtain-footer__local">
+          <span>SP, BR</span>
+          <span class="footer-clock-time">--:--</span>
+        </div>
+        <div class="curtain-footer__links">
+          <a href="#">Instagram</a>
+          <a href="#">Behance</a>
+          <a href="#">LinkedIn</a>
+        </div>
+        <div class="curtain-footer__copy">
+          © 2026 DNA Studio. All rights reserved.
+        </div>
+      </div>
+    </footer>
+
     <!-- Cursor Personalizado -->
     <div class="custom-cursor" aria-hidden="true">
       <svg viewBox="0 0 100 100" class="custom-cursor__text-ring">
@@ -463,6 +506,6 @@
       </div>
     </div>
 
-    <script src="./script.js?v=35"></script>
+    <script src="./script.js?v=36"></script>
   </body>
 </html>

@@ -590,3 +590,56 @@ if(heroNav) {
     });
   }
 }
+
+// ═══════════════════════════════════════════════════
+// 13. CINEMATIC PRELOADER
+// ═══════════════════════════════════════════════════
+const preloaderCount = document.getElementById('preloader-count');
+if (preloaderCount) {
+  let count = 0;
+  // A non-linear increment logic to simulate rendering
+  const interval = setInterval(() => {
+    // Add random amounts so it doesn't look like a basic timer
+    count += Math.floor(Math.random() * 8) + 1;
+    if (count >= 100) {
+      count = 100;
+      preloaderCount.textContent = count;
+      clearInterval(interval);
+      
+      // Delay before opening the curtain
+      setTimeout(() => {
+        document.body.classList.remove('is-loading');
+      }, 400); 
+    } else {
+      preloaderCount.textContent = count;
+    }
+  }, 35);
+} else {
+  // Fallback if no preloader exists
+  document.body.classList.remove('is-loading');
+}
+
+// ═══════════════════════════════════════════════════
+// 14. FOOTER CLOCK E MAGNETIC CTA
+// ═══════════════════════════════════════════════════
+const footerClock = document.querySelector('.footer-clock-time');
+if (footerClock) {
+  setInterval(() => {
+    const spTime = new Date().toLocaleTimeString('pt-BR', { timeZone: 'America/Sao_Paulo', hour12: false });
+    footerClock.textContent = spTime;
+  }, 1000);
+}
+
+const footerCta = document.querySelector('.curtain-footer__cta');
+if (footerCta && window.matchMedia("(hover: hover)").matches) {
+  footerCta.addEventListener('mousemove', (e) => {
+    const rect = footerCta.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    footerCta.style.transform = `translate(${x * 0.4}px, ${y * 0.5}px) scale(1.05)`;
+  });
+  
+  footerCta.addEventListener('mouseleave', () => {
+    footerCta.style.transform = `translate(0px, 0px) scale(1)`;
+  });
+}
