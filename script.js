@@ -539,14 +539,41 @@ const heroNav = document.querySelector('.hero__nav');
 const clockTime = document.querySelector('.nav-clock-time');
 
 if(heroNav) {
-  // A. Sticky Scrolled State for Morphing Island
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 80) {
-      heroNav.classList.add('is-scrolled');
-    } else {
-      heroNav.classList.remove('is-scrolled');
-    }
-  }, { passive: true });
+  // A. Interactive DNA Widget Morphing Logic
+  const islandConfig = {
+    island: document.querySelector('.dynamic-island'),
+    notchBtn: document.querySelector('.dynamic-island__notch'),
+  };
+
+  if (islandConfig.island && islandConfig.notchBtn) {
+    // Toggle state on click
+    islandConfig.notchBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = islandConfig.island.classList.toggle('is-open');
+      islandConfig.island.setAttribute('aria-expanded', isOpen);
+    });
+
+    // Fechar se clicar fora
+    document.addEventListener('click', (e) => {
+      if (islandConfig.island.classList.contains('is-open') && !islandConfig.island.contains(e.target)) {
+        islandConfig.island.classList.remove('is-open');
+        islandConfig.island.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    // Fechar ao rolar a página por mais de 50px de distância de segurança
+    let lastScroll = window.scrollY;
+    window.addEventListener('scroll', () => {
+      if (islandConfig.island.classList.contains('is-open')) {
+        if (Math.abs(window.scrollY - lastScroll) > 50) {
+          islandConfig.island.classList.remove('is-open');
+          islandConfig.island.setAttribute('aria-expanded', 'false');
+        }
+      } else {
+        lastScroll = window.scrollY;
+      }
+    }, { passive: true });
+  }
 
   // B. Realtime Clock Loop (Sao Paulo)
   if (clockTime) {

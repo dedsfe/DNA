@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=39" />
+    <link rel="stylesheet" href="./styles.css?v=40" />
   </head>
   <body class="is-loading">
     
@@ -40,24 +40,41 @@
         />
 
         <nav class="hero__nav" aria-label="Navegação principal">
-          <div class="dynamic-island">
-            <div class="dynamic-island__left">
-              <img class="dynamic-island__logo" src="./assets/dna-brand.png" alt="DNA" />
-            </div>
+          <!-- O novo "DNA Widget" -->
+          <div class="dynamic-island" aria-expanded="false">
             
-            <div class="dynamic-island__center">
-              <span class="dynamic-island__clock">SP, BR <span class="nav-clock-time">--:--</span></span>
+            <!-- Face Frontal (Notch) -->
+            <button class="dynamic-island__notch" aria-label="Alternar Menu">
+              <img class="dynamic-island__logo" src="./assets/dna-brand.png" alt="DNA" />
+              <div class="dynamic-island__menu-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="8" x2="20" y2="8"></line>
+                  <line x1="4" y1="16" x2="20" y2="16"></line>
+                </svg>
+              </div>
+            </button>
+            
+            <!-- Conteúdo Expandido (Widget) -->
+            <div class="dynamic-island__widget">
+              <div class="widget-header">
+                <div class="widget-status">
+                  <span class="widget-status-dot"></span>
+                  <span class="widget-status-text">Disponível para projetos</span>
+                </div>
+                <span class="widget-clock">SP, BR <span class="nav-clock-time">--:--</span></span>
+              </div>
               
-              <div class="dynamic-island__links">
-                <a href="#work">Work</a>
-                <a href="#sobre">Info</a>
-                <a href="#testemunhos">Culture</a>
+              <ul class="widget-menu">
+                <li><a href="#services">Expertise<span>Design & Estratégia</span></a></li>
+                <li><a href="#portfolio">Projetos Selèct<span>Arquitetura de Conversão</span></a></li>
+                <li><a href="#testemunhos">Visão de Clientes<span>Cinematics & Relatos</span></a></li>
+              </ul>
+              
+              <div class="widget-footer">
+                <button class="dynamic-island__cta" data-magnetic>Iniciar Projeto</button>
               </div>
             </div>
-            
-            <div class="dynamic-island__right">
-              <button class="dynamic-island__cta" data-magnetic>Vamos Conversar</button>
-            </div>
+
           </div>
         </nav>
 
@@ -503,6 +520,6 @@
       </div>
     </div>
 
-    <script src="./script.js?v=39"></script>
+    <script src="./script.js?v=40"></script>
   </body>
 </html>
