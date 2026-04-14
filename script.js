@@ -409,6 +409,125 @@ tiltCards.forEach((card) => {
 });
 
 // ═══════════════════════════════════════════════════
-// 10. TESTIMONIALS (Editorial Strip)
+// 10. TESTIMONIALS (Cinematic Scroll Experience)
 // ═══════════════════════════════════════════════════
-// Sem lógica de scroll para evitar quebras no layout.
+
+const tTrack = document.querySelector(".testimonials-track");
+const tCinema = document.querySelector(".t-cinema");
+const tScenes = document.querySelectorAll(".t-scene");
+const tProgressBar = document.querySelector(".t-cinema__progress-bar");
+
+if (tTrack && tCinema) {
+  let tTicking = false;
+
+  const updateCinema = () => {
+    const rect = tTrack.getBoundingClientRect();
+    const trackTop = rect.top;
+    const trackHeight = rect.height;
+    const windowHeight = window.innerHeight;
+
+    // Calculate progress (0 to 1) based on sticky container scrolling
+    // It starts sticky when trackTop is 0, ends when trackTop is -(trackHeight - windowHeight)
+    const scrollableDistance = trackHeight - windowHeight;
+    let progress = 0;
+
+    if (scrollableDistance > 0) {
+      progress = clamp(-trackTop / scrollableDistance, 0, 1);
+    }
+
+    // Update progress bar
+    if (tProgressBar) {
+      tProgressBar.style.width = `${progress * 100}%`;
+    }
+
+    // Determine active scene
+    let activeIndex = 0;
+    if (progress > 0.66) {
+      activeIndex = 2;
+    } else if (progress > 0.33) {
+      activeIndex = 1;
+    }
+
+    // Apply classes for scenes
+    tScenes.forEach((scene, index) => {
+      if (index === activeIndex) {
+        scene.classList.add("is-active");
+      } else {
+        scene.classList.remove("is-active");
+      }
+    });
+
+    tTicking = false;
+  };
+
+  const onCinemaScroll = () => {
+    if (!tTicking) {
+      tTicking = true;
+      requestAnimationFrame(updateCinema);
+    }
+  };
+
+  window.addEventListener("scroll", onCinemaScroll, { passive: true });
+  updateCinema(); // Init on load
+
+  // Spotlight follow cursor logic
+  let spotlightX = "50%";
+  let spotlightY = "50%";
+
+  tCinema.addEventListener("mousemove", (e) => {
+    const cinemaRect = tCinema.getBoundingClientRect();
+    const x = e.clientX - cinemaRect.left;
+    const y = e.clientY - cinemaRect.top;
+    spotlightX = `${x}px`;
+    spotlightY = `${y}px`;
+    
+    tCinema.style.setProperty("--mouse-x", spotlightX);
+    tCinema.style.setProperty("--mouse-y", spotlightY);
+  });
+
+  tCinema.addEventListener("mouseleave", () => {
+    tCinema.style.setProperty("--mouse-x", `50%`);
+    tCinema.style.setProperty("--mouse-y", `50%`);
+  });
+}
+
+
+// ═══════════════════════════════════════════════════
+// 11. SOCIAL MEDIA (Cinematic 3D Tilt)
+// ═══════════════════════════════════════════════════
+
+const igShowcase = document.querySelector(".instagram-showcase");
+const igCards = document.querySelectorAll(".instagram-showcase__card");
+
+if (igShowcase && igCards.length > 0 && window.matchMedia("(hover: hover)").matches) {
+  igShowcase.addEventListener("mousemove", (e) => {
+    const rect = igShowcase.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    
+    // Normalize coordinates from -1 to 1
+    const normalizedX = (x - centerX) / centerX;
+    const normalizedY = (y - centerY) / centerY;
+
+    igCards.forEach((card, index) => {
+      // Different multiplier based on card position (left, center, right)
+      // Left = 0, Center = 1, Right = 2  (usually center responds less to X tilt)
+      const multiplier = index === 1 ? -6 : (index === 0 ? -12 : -8);
+      
+      const tiltX = normalizedY * -10; // Tilt up/down
+      const tiltY = normalizedX * multiplier; // Pan left/right
+
+      card.style.setProperty("--tilt-x", `${tiltX}deg`);
+      card.style.setProperty("--tilt-y", `${tiltY}deg`);
+    });
+  });
+
+  igShowcase.addEventListener("mouseleave", () => {
+    igCards.forEach(card => {
+      card.style.setProperty("--tilt-x", `0deg`);
+      card.style.setProperty("--tilt-y", `0deg`);
+    });
+  });
+}

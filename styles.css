@@ -31,13 +31,13 @@
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
+  
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  overflow-x: hidden;
+  
   background: var(--page-bg);
   color: var(--ink-primary);
   font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -52,7 +52,7 @@ body {
   flex-direction: column;
   gap: var(--section-gap);
   margin: 0 auto;
-  overflow-x: clip;
+  
 }
 
 /* ─── HERO ──────────────────────────────────────── */
@@ -646,7 +646,7 @@ body {
 
 .instagram-showcase {
   position: relative;
-  margin: clamp(4rem, 8vw, 6rem) calc(50% - 50vw) 0;
+  margin: clamp(4rem, 8vw, 6rem) 0 0 0;
   padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 6rem);
   background:
     radial-gradient(circle at 10% 20%, rgba(36, 91, 161, 0.25), transparent 60%),
@@ -655,6 +655,32 @@ body {
   border-radius: clamp(1.6rem, 3vw, 2.8rem);
   overflow: hidden;
   color: #f7f7fb;
+  box-shadow: 0 24px 50px rgba(0,0,0,0.15);
+}
+
+.instagram-showcase::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.12;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  animation: film-grain 6s steps(10) infinite;
+}
+
+@keyframes film-grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(3%, 5%); }
+  90% { transform: translate(-10%, 10%); }
 }
 
 .instagram-showcase__glow {
@@ -668,7 +694,12 @@ body {
 .instagram-showcase__header {
   position: relative;
   z-index: 2;
-  max-width: 560px;
+  max-width: 680px;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .instagram-showcase__eyebrow {
@@ -689,13 +720,23 @@ body {
   line-height: 0.95;
 }
 
-.instagram-showcase__title span {
+.shimmer-text {
   font-style: italic;
-  color: rgba(255, 255, 255, 0.7);
+  display: inline-block;
+  background: linear-gradient(120deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.9) 20%, rgba(180,210,255,1) 40%, #fff 50%, rgba(180,210,255,1) 60%, rgba(255,255,255,0.9) 80%, rgba(255,255,255,0.6) 100%);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shine 5s linear infinite;
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
 }
 
 .instagram-showcase__lead {
-  margin: 1.2rem 0 0 0;
+  margin: 1.2rem auto 0;
   font-size: clamp(1rem, 1.5vw, 1.25rem);
   color: rgba(255, 255, 255, 0.68);
   max-width: 32rem;
@@ -705,29 +746,44 @@ body {
   position: relative;
   z-index: 2;
   margin-top: clamp(2.5rem, 6vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .instagram-showcase__ribbon {
   display: flex;
-  gap: 2rem;
   font-size: clamp(0.75rem, 1.2vw, 0.95rem);
   text-transform: uppercase;
   letter-spacing: 0.4em;
   color: rgba(255, 255, 255, 0.2);
   white-space: nowrap;
-  overflow: hidden;
-}
-
-.instagram-showcase__ribbon span {
+  overflow: visible;
+  width: max-content;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem 0;
   animation: ig-ribbon 18s linear infinite;
 }
 
+.instagram-showcase__ribbon span {
+  padding-right: 2rem;
+}
+
 .instagram-showcase__deck {
-  margin-top: clamp(2.5rem, 5vw, 4rem);
+  margin-top: clamp(1.5rem, 4vw, 3rem);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(1rem, 3vw, 2.5rem);
-  align-items: end;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 5vw, 3rem);
+  align-items: center;
+  width: 100%;
+}
+
+@media (min-width: 800px) {
+  .instagram-showcase__deck {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: end;
+    justify-items: center;
+  }
 }
 
 .instagram-showcase__card {
@@ -735,19 +791,69 @@ body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  height: clamp(320px, 44vw, 520px);
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  height: clamp(380px, 50vw, 520px);
   border-radius: clamp(1.6rem, 2.5vw, 2.4rem);
   background: #0a0f1f;
   background-image: var(--ig-image);
   background-size: cover;
   background-position: center top;
   box-shadow:
-    0 35px 90px rgba(3, 8, 18, 0.6),
+    0 15px 40px rgba(0, 0, 0, 0.4),
     inset 0 0 0 1px rgba(255, 255, 255, 0.08);
   text-decoration: none;
   overflow: hidden;
-  transform: translateY(0) rotate(-2deg);
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
+  --tilt-x: 0deg;
+  --tilt-y: 0deg;
+  --base-transform: translateY(0);
+  transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) var(--base-transform);
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s ease, opacity 0.6s ease, box-shadow 0.6s ease;
+}
+
+@media (min-width: 800px) {
+  .instagram-showcase__card {
+    height: clamp(320px, 44vw, 520px);
+    max-width: 280px;
+    --base-transform: translateY(0) rotate(-2deg);
+    box-shadow:
+      0 35px 90px rgba(3, 8, 18, 0.6),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+    /* Depth of field - default for side cards is slightly blurred */
+    filter: blur(4px) brightness(0.7);
+    opacity: 0.8;
+  }
+  .instagram-showcase__card--center {
+    height: clamp(360px, 48vw, 580px);
+    max-width: 320px;
+    --base-transform: translateY(-8px) rotate(1deg);
+    /* Depth of field - center card is always sharp by default */
+    filter: blur(0) brightness(1);
+    opacity: 1;
+    z-index: 2;
+  }
+  .instagram-showcase__card--right {
+    --base-transform: translateY(18px) rotate(2.5deg);
+  }
+
+  /* When hovering ANY card, the entire deck adjusts */
+  .instagram-showcase__deck:hover .instagram-showcase__card {
+    filter: blur(6px) brightness(0.6);
+    opacity: 0.6;
+    z-index: 1;
+  }
+
+  /* Specific hovered card becomes sharp */
+  .instagram-showcase__deck .instagram-showcase__card:hover {
+    --base-transform: translateY(-15px) scale(1.05); /* straightens */
+    filter: blur(0) brightness(1.1);
+    opacity: 1;
+    z-index: 10;
+    box-shadow:
+      0 45px 120px rgba(3, 8, 18, 0.75),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  }
 }
 
 .instagram-showcase__card::before {
@@ -760,42 +866,32 @@ body {
   pointer-events: none;
 }
 
-.instagram-showcase__card--center {
-  height: clamp(360px, 48vw, 580px);
-  transform: translateY(-8px) rotate(1deg);
-}
-
-.instagram-showcase__card--right {
-  transform: translateY(18px) rotate(2.5deg);
-  background-position: center 20%;
-}
-
-.instagram-showcase__card:hover {
-  transform: translateY(-14px) rotate(0deg) scale(1.02);
-  box-shadow:
-    0 45px 120px rgba(3, 8, 18, 0.75),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14);
-}
-
 .instagram-showcase__handle {
   position: relative;
   z-index: 2;
-  margin-bottom: 1.2rem;
-  padding: 0.5rem 1rem;
+  margin-bottom: 1.5rem;
+  padding: 0.6rem 1.2rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.18);
   color: #fdfdff;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.instagram-showcase__card:hover .instagram-showcase__handle {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 @keyframes ig-ribbon {
-  from { transform: translateX(0); }
-  to { transform: translateX(-100%); }
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* Image & video containers */

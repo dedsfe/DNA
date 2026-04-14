@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=30" />
+    <link rel="stylesheet" href="./styles.css?v=34" />
   </head>
   <body>
     <main class="page">
@@ -205,7 +205,7 @@
           <div class="instagram-showcase__header">
             <p class="instagram-showcase__eyebrow">Social Media</p>
             <h3 class="instagram-showcase__title">
-              Instagram que <span>parece filme</span>.
+              Instagram que <span class="shimmer-text">parece filme</span>.
             </h3>
             <p class="instagram-showcase__lead">
               Curadoria visual, ritmo de feed e direção estética como produto.
@@ -214,6 +214,10 @@
 
           <div class="instagram-showcase__stage">
             <div class="instagram-showcase__ribbon" aria-hidden="true">
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
               <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
               <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
             </div>
@@ -366,62 +370,53 @@
       </section>
 
       <!-- ══════════════════════════════════════════════
-           TESTIMONIALS (Editorial Strip)
+           TESTIMONIALS (Cinematic Scroll Experience)
            ══════════════════════════════════════════════ -->
-      <section id="testimonials" class="testimonials" aria-label="Depoimentos">
-        <div class="testimonials__header">
-          <p class="testimonials__eyebrow">Depoimentos</p>
-          <div class="testimonials__heading">
-            <h2 class="testimonials__title">O que dizem sobre a DNA</h2>
-            <p class="testimonials__lead">Três projetos, três vozes, o mesmo padrão de cuidado.</p>
+      <section id="testimonials" class="testimonials-track" aria-label="Depoimentos">
+        <div class="t-cinema">
+
+          <!-- Scene 1 -->
+          <article class="t-scene is-active" data-index="0">
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-mozzi.png');"></div>
+            <div class="t-scene__content">
+              <span class="t-scene__eyebrow">Mozzi Assessoria</span>
+              <h2 class="t-scene__quote">
+                “Conseguiram traduzir nossa essência visual para uma plataforma que <em>respira elegância.</em>”
+              </h2>
+              <p class="t-scene__role">Eventos Premium</p>
+            </div>
+          </article>
+
+          <!-- Scene 2 -->
+          <article class="t-scene" data-index="1">
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-rancho.png');"></div>
+            <div class="t-scene__content">
+              <span class="t-scene__eyebrow">Rancho da Praia</span>
+              <h2 class="t-scene__quote">
+                “O impacto foi imediato. Um design imersivo que <em>converte visitantes</em> de primeira.”
+              </h2>
+              <p class="t-scene__role">Espaço Beira-mar</p>
+            </div>
+          </article>
+
+          <!-- Scene 3 -->
+          <article class="t-scene" data-index="2">
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-jogos.png');"></div>
+            <div class="t-scene__content">
+              <span class="t-scene__eyebrow">Noite de Jogos</span>
+              <h2 class="t-scene__quote">
+                “Uma interface hipnotizante. Eles não fazem sites, <em>criam universos.</em>”
+              </h2>
+              <p class="t-scene__role">Web App Interativo</p>
+            </div>
+          </article>
+
+          <!-- Progress Indicator -->
+          <div class="t-cinema__progress">
+            <div class="t-cinema__progress-track">
+              <div class="t-cinema__progress-bar"></div>
+            </div>
           </div>
-        </div>
-
-        <div class="testimonials__grid">
-          <article class="testimonials__card">
-            <div class="testimonials__media" style="--media-image: url('./assets/project-mozzi.png');"></div>
-            <div class="testimonials__body">
-              <span class="testimonials__quote-mark">“</span>
-              <p class="testimonials__text">
-                Conseguiram traduzir nossa essência visual para uma plataforma que
-                <em>respira elegância</em>.
-              </p>
-              <div class="testimonials__author">
-                <p class="testimonials__name">Mozzi Assessoria</p>
-                <p class="testimonials__role">Eventos Premium</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="testimonials__card">
-            <div class="testimonials__media" style="--media-image: url('./assets/project-rancho.png');"></div>
-            <div class="testimonials__body">
-              <span class="testimonials__quote-mark">“</span>
-              <p class="testimonials__text">
-                O impacto na Rancho foi imediato. Um design imersivo que
-                <em>converte visitantes</em> de primeira.
-              </p>
-              <div class="testimonials__author">
-                <p class="testimonials__name">Rancho da Praia</p>
-                <p class="testimonials__role">Espaço Beira-mar</p>
-              </div>
-            </div>
-          </article>
-
-          <article class="testimonials__card">
-            <div class="testimonials__media" style="--media-image: url('./assets/project-jogos.png');"></div>
-            <div class="testimonials__body">
-              <span class="testimonials__quote-mark">“</span>
-              <p class="testimonials__text">
-                Uma interface dark mode hipnotizante. Eles não fazem sites,
-                <em>criam universos</em>.
-              </p>
-              <div class="testimonials__author">
-                <p class="testimonials__name">Noite de Jogos</p>
-                <p class="testimonials__role">Web App Interativo</p>
-              </div>
-            </div>
-          </article>
         </div>
       </section>
     </main>
@@ -463,6 +458,6 @@
       </div>
     </div>
 
-    <script src="./script.js?v=30"></script>
+    <script src="./script.js?v=34"></script>
   </body>
 </html>
