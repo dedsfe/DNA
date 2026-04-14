@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="./styles.css?v=36" />
+    <link rel="stylesheet" href="./styles.css?v=37" />
   </head>
   <body class="is-loading">
     
@@ -40,27 +40,24 @@
         />
 
         <nav class="hero__nav" aria-label="Navegação principal">
-          <div class="hero__nav-shell">
-            <span class="hero__nav-orbit" aria-hidden="true">
-              <span class="hero__nav-orbit-light"></span>
-            </span>
-            <div class="hero__nav-brand" aria-label="DNA">
-              <span class="hero__nav-brand-mark">
-                <img src="./assets/dna-brand.png" alt="" />
-              </span>
+          <div class="dynamic-island">
+            <div class="dynamic-island__left">
+              <img class="dynamic-island__logo" src="./assets/dna-brand.png" alt="DNA" />
             </div>
-            <div class="hero__nav-label">
-              <div class="hero__nav-label-content hero__nav-label-content--status">
-                <span class="hero__nav-status-dot"></span>
-                <span>Disponível para projetos</span>
-              </div>
-              <div class="hero__nav-label-content hero__nav-label-content--clock" style="display: none;">
-                SP, BR <span class="nav-clock-time">12:00:00</span>
+            
+            <div class="dynamic-island__center">
+              <span class="dynamic-island__clock">SP, BR <span class="nav-clock-time">--:--</span></span>
+              
+              <div class="dynamic-island__links">
+                <a href="#work">Work</a>
+                <a href="#sobre">Info</a>
+                <a href="#testemunhos">Culture</a>
               </div>
             </div>
-            <button class="hero__nav-cta" type="button">
-              Entrar em contato
-            </button>
+            
+            <div class="dynamic-island__right">
+              <button class="dynamic-island__cta" data-magnetic>Vamos Conversar</button>
+            </div>
           </div>
         </nav>
 
@@ -506,6 +503,6 @@
       </div>
     </div>
 
-    <script src="./script.js?v=36"></script>
+    <script src="./script.js?v=37"></script>
   </body>
 </html>

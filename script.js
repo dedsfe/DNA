@@ -533,26 +533,18 @@ if (igShowcase && igCards.length > 0 && window.matchMedia("(hover: hover)").matc
 }
 
 // ═══════════════════════════════════════════════════
-// 12. NAVBAR DYNAMIC ISLAND & CLOCK & MAGNETIC CTA
+// 12. NAVBAR DYNAMIC ISLAND & CLOCK & MAGNETIC CTAs
 // ═══════════════════════════════════════════════════
 const heroNav = document.querySelector('.hero__nav');
 const clockTime = document.querySelector('.nav-clock-time');
-const navCta = document.querySelector('.hero__nav-cta');
-const orbitLight = document.querySelector('.hero__nav-orbit-light');
 
 if(heroNav) {
-  // A. Sticky Scrolled State
+  // A. Sticky Scrolled State for Morphing Island
   window.addEventListener('scroll', () => {
-    const statusLabel = document.querySelector('.hero__nav-label-content--status');
-    const clockLabel = document.querySelector('.hero__nav-label-content--clock');
     if (window.scrollY > 80) {
       heroNav.classList.add('is-scrolled');
-      if (statusLabel) statusLabel.style.display = 'none';
-      if (clockLabel) clockLabel.style.display = 'block';
     } else {
       heroNav.classList.remove('is-scrolled');
-      if (statusLabel) statusLabel.style.display = 'flex';
-      if (clockLabel) clockLabel.style.display = 'none';
     }
   }, { passive: true });
 
@@ -563,9 +555,12 @@ if(heroNav) {
       clockTime.textContent = spTime;
     }, 1000);
   }
+}
 
-  // C. Magnetic Force on CTA
-  if (navCta && window.matchMedia("(hover: hover)").matches) {
+// C. Generic Magnetic Force on any element with data-magnetic
+const magneticFields = document.querySelectorAll('[data-magnetic]');
+if (window.matchMedia("(hover: hover)").matches) {
+  magneticFields.forEach(navCta => {
     navCta.addEventListener('mousemove', (e) => {
       const rect = navCta.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
@@ -576,19 +571,7 @@ if(heroNav) {
     navCta.addEventListener('mouseleave', () => {
       navCta.style.transform = `translate(0px, 0px) scale(1)`;
     });
-  }
-
-  // D. Orbit Light Speed on Scroll
-  if (orbitLight) {
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-      orbitLight.style.animationDuration = '2s';
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        orbitLight.style.animationDuration = '8.5s';
-      }, 150);
-    });
-  }
+  });
 }
 
 // ═══════════════════════════════════════════════════
