@@ -2311,6 +2311,90 @@ body.modal-open {
 }
 
 /* ═══════════════════════════════════════════════════
+   MOBILE REFINEMENTS (DNA STUDIO)
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* 1. Portfolio Grid to Single Column */
+  .portfolio__grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    padding-inline: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .portfolio__overlay {
+    padding: 1.5rem;
+  }
+  
+  .portfolio__title {
+    font-size: 1.8rem;
+  }
+
+  /* 2. Services Adjustments */
+  .services {
+    padding: clamp(4rem, 8vw, 6rem) clamp(1rem, 4vw, 1.5rem);
+  }
+  
+  .services__item {
+    padding: 1.5rem 0;
+    gap: 1rem;
+  }
+  
+  .services__item-index {
+    font-size: 0.7rem;
+  }
+
+  .services__item-title {
+    font-size: clamp(1.4rem, 6vw, 2rem);
+  }
+
+  /* 3. Hero Badge Sizing */
+  .hero__badge-container {
+    right: 1.5rem;
+    bottom: 5rem;
+  }
+
+  .hero__badge {
+    width: clamp(5rem, 15vw, 6rem);
+  }
+
+  /* 4. The DNA Widget constraints */
+  .dynamic-island.is-open {
+    height: 360px;
+    border-radius: 28px;
+  }
+  .dynamic-island__widget {
+    padding: 1.25rem;
+  }
+  .widget-header {
+    margin-bottom: 1.2rem;
+  }
+  .widget-menu {
+    gap: 1rem;
+  }
+  .widget-menu a {
+    font-size: 1.15rem;
+  }
+
+  /* 5. Curtain Footer Wrap */
+  .curtain-footer {
+    padding: clamp(3rem, 6vw, 4rem) 1.5rem 2rem;
+  }
+  
+  .curtain-footer__bottom {
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .curtain-footer__links {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+}
+
+/* ═══════════════════════════════════════════════════
    REDUCED MOTION
    ═══════════════════════════════════════════════════ */
 
