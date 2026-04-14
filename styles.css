@@ -192,12 +192,15 @@ body.is-loading {
   outline: none;
 }
 
-.dynamic-island__logo {
-  height: 1.2rem;
-  width: auto;
-  object-fit: contain;
-  filter: brightness(0) invert(1); /* Sempre branca no fundo preto */
+.dynamic-island__logo-text {
+  font-family: inherit;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.04em;
+  transform-origin: left center;
   transition: opacity 0.3s ease;
+  line-height: 1;
 }
 
 .dynamic-island__menu-icon {
@@ -209,7 +212,7 @@ body.is-loading {
 }
 
 /* Quando expandido, some a logo e o icone suavemente para dar espaço ao Header interno */
-.dynamic-island.is-open .dynamic-island__logo,
+.dynamic-island.is-open .dynamic-island__logo-text,
 .dynamic-island.is-open .dynamic-island__menu-icon {
   opacity: 0;
   pointer-events: none;
