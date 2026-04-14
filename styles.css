@@ -342,6 +342,10 @@ body.is-loading {
 }
 
 .dynamic-island__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
   width: 100%;
   background: #fff;
   color: var(--ink-primary);

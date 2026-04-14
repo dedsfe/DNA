@@ -589,6 +589,7 @@ const magneticFields = document.querySelectorAll('[data-magnetic]');
 if (window.matchMedia("(hover: hover)").matches) {
   magneticFields.forEach(navCta => {
     navCta.addEventListener('mousemove', (e) => {
+      navCta.style.transition = 'none'; // remove CSS jitter constraint
       const rect = navCta.getBoundingClientRect();
       const x = e.clientX - rect.left - rect.width / 2;
       const y = e.clientY - rect.top - rect.height / 2;
@@ -596,6 +597,12 @@ if (window.matchMedia("(hover: hover)").matches) {
     });
     
     navCta.addEventListener('mouseleave', () => {
+      navCta.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      navCta.style.transform = `translate(0px, 0px) scale(1)`;
+    });
+
+    navCta.addEventListener('click', () => {
+      navCta.style.transition = 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
       navCta.style.transform = `translate(0px, 0px) scale(1)`;
     });
   });
