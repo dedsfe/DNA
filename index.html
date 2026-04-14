@@ -3,8 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>DNA</title>
-    <link rel="stylesheet" href="./styles.css?v=17" />
+    <title>DNA — Estúdio de Design & Estratégia</title>
+    <meta name="description" content="Sites, branding e direção visual bem resolvidos. Clareza e presença para sua marca parecer profissional." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css?v=30" />
   </head>
   <body>
     <main class="page">
@@ -32,9 +36,10 @@
                 <img src="./assets/dna-brand.png" alt="" />
               </span>
             </div>
-            <p class="hero__nav-label" aria-hidden="true">
-              Clareza, presença e consistência
-            </p>
+            <div class="hero__nav-label">
+              <span class="hero__nav-status-dot"></span>
+              Disponível para projetos
+            </div>
             <button class="hero__nav-cta" type="button">
               Entrar em contato
             </button>
@@ -45,12 +50,29 @@
           <p class="hero__watermark" aria-hidden="true">DNA</p>
 
           <div class="hero__stage">
+            <p class="hero__eyebrow">Estúdio de Design & Estratégia</p>
             <h1 class="hero__headline">
-              Sites, branding e direção visual bem resolvidos.
+              <span class="hero__headline-row">Sites, branding</span>
+              <span class="hero__headline-row hero__headline-row--alt">e direção visual</span>
+              <span class="hero__headline-row">bem resolvidos.</span>
             </h1>
             <p class="hero__subhead">
               Clareza e presença para sua marca parecer profissional.
             </p>
+          </div>
+
+          <div class="hero__badge-container">
+            <div class="hero__badge">
+              <svg viewBox="0 0 100 100" class="hero__badge-svg">
+                <path id="circlePath" d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0" fill="none" />
+                <text class="hero__badge-text">
+                  <textPath href="#circlePath">ESTÚDIO DNA • PREMIUM DESIGN •</textPath>
+                </text>
+              </svg>
+              <div class="hero__badge-icon">
+                <img src="./assets/dna-brand.png" alt="" />
+              </div>
+            </div>
           </div>
 
           <p
@@ -69,11 +91,378 @@
         </div>
       </header>
 
-      <section
-        class="support-panel"
-        aria-label="Base da próxima seção"
-      ></section>
+      <section class="services" aria-label="Nossos Serviços">
+        <div class="services__container">
+          <p class="services__eyebrow">O que fazemos</p>
+          <div class="services__list">
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">01</span>
+              <h2 class="services__item-title">Estratégia de <em>Social Media</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">02</span>
+              <h2 class="services__item-title">Stories & <em>Wedding Content</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">03</span>
+              <h2 class="services__item-title">Websites de <em>Alto Impacto</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">04</span>
+              <h2 class="services__item-title">Apps & <em>Web Experiences</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">05</span>
+              <h2 class="services__item-title">Branding & <em>Identidade Visual</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+            <a href="#portfolio" class="services__item">
+              <span class="services__item-index">06</span>
+              <h2 class="services__item-title">Marketing de <em>Performance</em></h2>
+              <span class="services__item-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section id="portfolio" class="portfolio" aria-label="Nosso Portfólio">
+        <div class="portfolio__header">
+          <p class="portfolio__eyebrow">Trabalhos Selecionados</p>
+          <h2 class="portfolio__heading">Portfólio</h2>
+        </div>
+
+        <!-- Websites Grid 2×2 -->
+        <div class="portfolio__grid">
+          <div class="portfolio__item"
+            data-modal-tag="Web Design & Eventos"
+            data-modal-title="Mozzi Assessoria"
+            data-modal-desc="Landing page completa para assessoria de eventos premium. Design sofisticado com glassmorphism, seção de pacotes com cards animados, galeria do Instagram integrada, sistema de agendamento com calendário funcional e formulário de contato — tudo pensado para transmitir elegância e confiança."
+            data-modal-image="./assets/project-mozzi.png"
+            data-modal-link="https://dedsfe.github.io/MozziAssessoria/">
+            <div class="portfolio__media-container">
+              <img class="portfolio__image" src="./assets/project-mozzi.png" alt="Mozzi Assessoria" loading="lazy" />
+              <div class="portfolio__overlay">
+                <span class="portfolio__tag">Web Design</span>
+                <h3 class="portfolio__title">Mozzi Assessoria</h3>
+                <p class="portfolio__desc">Assessoria premium em eventos</p>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio__item"
+            data-modal-tag="Web Design & Casamentos"
+            data-modal-title="Rancho da Praia"
+            data-modal-desc="Site imersivo para espaço de eventos em Praia Grande. Design editorial com sistema de disponibilidade de datas, curadoria visual integrada ao Pinterest, mapa interativo e contador de urgência — criando uma experiência que converte visitantes em clientes."
+            data-modal-image="./assets/project-rancho.png"
+            data-modal-link="https://dedsfe.github.io/RanchodaPraia/">
+            <div class="portfolio__media-container">
+              <img class="portfolio__image" src="./assets/project-rancho.png" alt="Rancho da Praia" loading="lazy" />
+              <div class="portfolio__overlay">
+                <span class="portfolio__tag">Casamentos</span>
+                <h3 class="portfolio__title">Rancho da Praia</h3>
+                <p class="portfolio__desc">Espaço de eventos à beira-mar</p>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio__item"
+            data-modal-tag="Web App"
+            data-modal-title="Noite de Jogos"
+            data-modal-desc="Aplicativo web para noites de jogos em grupo — reúne Impostor, Polícia e Ladrão, Cidade Dorme, Quem Sou Eu e Mímica Rápida em uma interface única. Sistema de distribuição de papéis por passagem de celular, configuração de rodadas e UI intuitiva em dark mode."
+            data-modal-image="./assets/project-jogos.png"
+            data-modal-link="https://dedsfe.github.io/ImpostorGame/">
+            <div class="portfolio__media-container">
+              <img class="portfolio__image" src="./assets/project-jogos.png" alt="Noite de Jogos" loading="lazy" />
+              <div class="portfolio__overlay">
+                <span class="portfolio__tag">Web App</span>
+                <h3 class="portfolio__title">Noite de Jogos</h3>
+                <p class="portfolio__desc">5 jogos de festa em um app</p>
+              </div>
+            </div>
+          </div>
+          <div class="portfolio__item"
+            data-modal-tag="Portfólio Pessoal"
+            data-modal-title="Portfólio André"
+            data-modal-desc="Portfólio pessoal de desenvolvedor iOS com design minimalista e moderno. Apresentação clean dos projetos com cards interativos, links diretos para GitHub e LinkedIn, e destaque para o app PerfectEar — um treinador auditivo para músicos em desenvolvimento."
+            data-modal-image="./assets/project-portfolio.png"
+            data-modal-link="https://dedsfe.github.io/Portfolio---Andre-Souza/">
+            <div class="portfolio__media-container">
+              <img class="portfolio__image" src="./assets/project-portfolio.png" alt="Portfólio André" loading="lazy" />
+              <div class="portfolio__overlay">
+                <span class="portfolio__tag">Portfólio</span>
+                <h3 class="portfolio__title">Portfólio André</h3>
+                <p class="portfolio__desc">Dev iOS & Python</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram — Awwwards Moment -->
+        <section class="instagram-showcase" aria-label="Gestão de Instagram">
+          <div class="instagram-showcase__glow" aria-hidden="true"></div>
+          <div class="instagram-showcase__header">
+            <p class="instagram-showcase__eyebrow">Social Media</p>
+            <h3 class="instagram-showcase__title">
+              Instagram que <span>parece filme</span>.
+            </h3>
+            <p class="instagram-showcase__lead">
+              Curadoria visual, ritmo de feed e direção estética como produto.
+            </p>
+          </div>
+
+          <div class="instagram-showcase__stage">
+            <div class="instagram-showcase__ribbon" aria-hidden="true">
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
+              <span>ESTÉTICA • DIREÇÃO • ENGAGEMENT •</span>
+            </div>
+
+            <div class="instagram-showcase__deck">
+              <a
+                href="https://www.instagram.com/marbr.com.br/"
+                target="_blank"
+                rel="noopener"
+                class="instagram-showcase__card instagram-showcase__card--left"
+                style="--ig-image: url('./assets/instagram-marbr.png');"
+              >
+                <span class="instagram-showcase__handle">@marbr.com.br</span>
+              </a>
+
+              <a
+                href="https://www.instagram.com/rancho.da.praia/"
+                target="_blank"
+                rel="noopener"
+                class="instagram-showcase__card instagram-showcase__card--center"
+                style="--ig-image: url('./assets/instagram-rancho.png');"
+              >
+                <span class="instagram-showcase__handle">@rancho.da.praia</span>
+              </a>
+
+              <a
+                href="https://www.instagram.com/marbr.com.br/"
+                target="_blank"
+                rel="noopener"
+                class="instagram-showcase__card instagram-showcase__card--right"
+                style="--ig-image: url('./assets/instagram-marbr.png');"
+              >
+                <span class="instagram-showcase__handle">@marbr.com.br</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <!-- ══════════════════════════════════════════════
+           SOBRE NÓS
+           ══════════════════════════════════════════════ -->
+      <section id="about" class="about" aria-label="Sobre Nós">
+
+        <!-- Manifesto — word-by-word reveal -->
+        <div class="about__manifesto">
+          <p class="about__eyebrow">Quem somos</p>
+          <h2 class="about__statement">
+            <span class="about__word">Não</span>
+            <span class="about__word">somos</span>
+            <span class="about__word">uma</span>
+            <span class="about__word">agência.</span>
+            <span class="about__word">Somos</span>
+            <span class="about__word">dois</span>
+            <span class="about__word"><em>criativos</em></span>
+            <span class="about__word">que</span>
+            <span class="about__word">transformam</span>
+            <span class="about__word"><em>ideias</em></span>
+            <span class="about__word">em</span>
+            <span class="about__word">experiências</span>
+            <span class="about__word">que</span>
+            <span class="about__word">as</span>
+            <span class="about__word">pessoas</span>
+            <span class="about__word"><em>sentem.</em></span>
+          </h2>
+        </div>
+
+        <!-- Marquee de skills -->
+        <div class="about__marquee" aria-hidden="true">
+          <div class="about__marquee-track">
+            <span>Web Design</span><span>·</span>
+            <span>Social Media</span><span>·</span>
+            <span>Branding</span><span>·</span>
+            <span>Aplicativos</span><span>·</span>
+            <span>Estratégia Digital</span><span>·</span>
+            <span>Conteúdo</span><span>·</span>
+            <span>UI/UX</span><span>·</span>
+            <span>Casamentos</span><span>·</span>
+            <span>Web Design</span><span>·</span>
+            <span>Social Media</span><span>·</span>
+            <span>Branding</span><span>·</span>
+            <span>Aplicativos</span><span>·</span>
+            <span>Estratégia Digital</span><span>·</span>
+            <span>Conteúdo</span><span>·</span>
+            <span>UI/UX</span><span>·</span>
+            <span>Casamentos</span><span>·</span>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="about__stats">
+          <div class="about__stat">
+            <span class="about__stat-number" data-count="15">0</span>
+            <span class="about__stat-label">Projetos Entregues</span>
+          </div>
+          <div class="about__stat">
+            <span class="about__stat-number" data-count="10">0</span>
+            <span class="about__stat-label">Clientes Satisfeitos</span>
+          </div>
+          <div class="about__stat">
+            <span class="about__stat-number" data-count="3">0</span>
+            <span class="about__stat-label">Anos de Experiência</span>
+          </div>
+          <div class="about__stat">
+            <span class="about__stat-number" data-count="100" data-suffix="%">0</span>
+            <span class="about__stat-label">Dedicação</span>
+          </div>
+        </div>
+
+        <!-- Team -->
+        <div class="about__team">
+          <div class="about__team-intro">
+            <p class="about__eyebrow">As pessoas por trás</p>
+          </div>
+
+          <div class="about__team-grid">
+            <div class="about__member" data-tilt>
+              <div class="about__member-visual">
+                <div class="about__member-gradient about__member-gradient--andre"></div>
+                <span class="about__member-initial">A</span>
+              </div>
+              <div class="about__member-info">
+                <h3 class="about__member-name">André Felipe</h3>
+                <p class="about__member-role">Desenvolvedor & Designer</p>
+                <p class="about__member-bio">iOS developer por formação, designer por obsessão. Transforma interfaces em experiências que as pessoas querem usar — e voltar.</p>
+                <div class="about__member-skills">
+                  <span>Swift</span><span>React</span><span>UI/UX</span><span>Web Design</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="about__ampersand" aria-hidden="true">&</div>
+
+            <div class="about__member" data-tilt>
+              <div class="about__member-visual">
+                <div class="about__member-gradient about__member-gradient--dany"></div>
+                <span class="about__member-initial">D</span>
+              </div>
+              <div class="about__member-info">
+                <h3 class="about__member-name">Danyelle</h3>
+                <p class="about__member-role">Estrategista & Criadora de Conteúdo</p>
+                <p class="about__member-bio">Especialista em transformar marcas invisíveis em presenças magnéticas. Do feed ao reels, cada peça é pensada pra gerar conexão e resultado.</p>
+                <div class="about__member-skills">
+                  <span>Social Media</span><span>Branding</span><span>Storytelling</span><span>Gestão</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════
+           TESTIMONIALS (Editorial Strip)
+           ══════════════════════════════════════════════ -->
+      <section id="testimonials" class="testimonials" aria-label="Depoimentos">
+        <div class="testimonials__header">
+          <p class="testimonials__eyebrow">Depoimentos</p>
+          <div class="testimonials__heading">
+            <h2 class="testimonials__title">O que dizem sobre a DNA</h2>
+            <p class="testimonials__lead">Três projetos, três vozes, o mesmo padrão de cuidado.</p>
+          </div>
+        </div>
+
+        <div class="testimonials__grid">
+          <article class="testimonials__card">
+            <div class="testimonials__media" style="--media-image: url('./assets/project-mozzi.png');"></div>
+            <div class="testimonials__body">
+              <span class="testimonials__quote-mark">“</span>
+              <p class="testimonials__text">
+                Conseguiram traduzir nossa essência visual para uma plataforma que
+                <em>respira elegância</em>.
+              </p>
+              <div class="testimonials__author">
+                <p class="testimonials__name">Mozzi Assessoria</p>
+                <p class="testimonials__role">Eventos Premium</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="testimonials__card">
+            <div class="testimonials__media" style="--media-image: url('./assets/project-rancho.png');"></div>
+            <div class="testimonials__body">
+              <span class="testimonials__quote-mark">“</span>
+              <p class="testimonials__text">
+                O impacto na Rancho foi imediato. Um design imersivo que
+                <em>converte visitantes</em> de primeira.
+              </p>
+              <div class="testimonials__author">
+                <p class="testimonials__name">Rancho da Praia</p>
+                <p class="testimonials__role">Espaço Beira-mar</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="testimonials__card">
+            <div class="testimonials__media" style="--media-image: url('./assets/project-jogos.png');"></div>
+            <div class="testimonials__body">
+              <span class="testimonials__quote-mark">“</span>
+              <p class="testimonials__text">
+                Uma interface dark mode hipnotizante. Eles não fazem sites,
+                <em>criam universos</em>.
+              </p>
+              <div class="testimonials__author">
+                <p class="testimonials__name">Noite de Jogos</p>
+                <p class="testimonials__role">Web App Interativo</p>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
     </main>
-    <script src="./script.js?v=14"></script>
+    <!-- Cursor Personalizado -->
+    <div class="custom-cursor" aria-hidden="true">
+      <svg viewBox="0 0 100 100" class="custom-cursor__text-ring">
+        <path id="cursorCircle" d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" fill="none" />
+        <text class="custom-cursor__text">
+          <textPath href="#cursorCircle">VER PROJETO • VER PROJETO • </textPath>
+        </text>
+      </svg>
+      <span class="custom-cursor__dot"></span>
+    </div>
+
+    <!-- Modal Netflix-style -->
+    <div class="project-modal" aria-hidden="true">
+      <div class="project-modal__backdrop"></div>
+      <div class="project-modal__container">
+        <button class="project-modal__close" type="button" aria-label="Fechar">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+        <div class="project-modal__hero">
+          <img class="project-modal__hero-image" src="" alt="" />
+          <video class="project-modal__video" loop muted playsinline></video>
+          <div class="project-modal__hero-gradient"></div>
+        </div>
+        <div class="project-modal__content">
+          <span class="project-modal__tag"></span>
+          <h2 class="project-modal__title"></h2>
+          <p class="project-modal__desc"></p>
+          <div class="project-modal__actions">
+            <a href="#" target="_blank" rel="noopener" class="project-modal__btn project-modal__btn--primary">Ver Projeto</a>
+            <button type="button" class="project-modal__btn project-modal__btn--secondary">Entrar em Contato</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./script.js?v=30"></script>
   </body>
 </html>
