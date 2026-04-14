@@ -352,6 +352,45 @@ body.is-loading {
   color: #0b1220;
 }
 
+.hero__animated-char {
+  display: inline-block;
+}
+
+.hero__animated-char--space {
+  width: 0.36em;
+}
+
+.hero__bottom-note {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(1.2rem, 2.4vw, 1.8rem);
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.18rem;
+  margin: 0;
+  padding-inline: 0.75rem;
+  max-width: calc(100% - 1.5rem);
+  color: rgba(16, 57, 109, 0.9);
+  font-size: clamp(0.92rem, 1.08vw, 1.04rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-align: center;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.hero__bottom-note-prefix {
+  opacity: 0.72;
+}
+
+.hero__bottom-note-word {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 9ch;
+}
+
 /* ─── HERO CONTENT ──────────────────────────────── */
 
 .hero__content {
