@@ -2392,6 +2392,26 @@ body.modal-open {
     justify-content: center;
     gap: 1.5rem;
   }
+
+  /* 6. Ultra-Small Screen Typography Rescues (320-375px bounds) */
+  .hero__bottom-note {
+    font-size: clamp(0.65rem, 3.5vw, 0.85rem);
+    white-space: normal;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+  }
+  .hero__bottom-note-prefix {
+    white-space: nowrap; /* Previne a quebra doentia no meio da frase */
+  }
+  .hero__headline-row--alt {
+    padding-left: 1rem;
+    font-size: 1.05em;
+  }
+  .hero__subhead {
+    font-size: 0.85rem;
+    padding: 0 1rem;
+  }
 }
 
 /* ═══════════════════════════════════════════════════
