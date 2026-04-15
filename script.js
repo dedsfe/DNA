@@ -744,59 +744,111 @@ if (videoReelTrackWrap && videoReelItems.length > 0) {
     videoReelTrackWrap.scrollLeft = scrollLeft - walk;
   });
 
-  // Lights Out Cinema Effect
+  // Expandable Video Modal Logic
+  let activeModal = null;
+  let modalOverlay = document.createElement('div');
+  modalOverlay.className = 'video-modal-overlay';
+  document.body.appendChild(modalOverlay);
+
+  const closeVideoModal = () => {
+    if (!activeModal) return;
+    const { clone, originalItem, originalRect, videoElement } = activeModal;
+    
+    // Animate clone back to original position
+    clone.classList.remove('is-expanded');
+    clone.style.top = `${originalRect.top}px`;
+    clone.style.left = `${originalRect.left}px`;
+    clone.style.width = `${originalRect.width}px`;
+    clone.style.height = `${originalRect.height}px`;
+    clone.style.transform = `none`;
+    
+    modalOverlay.classList.remove('is-active');
+
+    // Wait for transition to finish then cleanup
+    setTimeout(() => {
+      if (document.body.contains(clone)) clone.remove();
+      originalItem.style.opacity = '1'; // Restore original
+      originalItem.style.pointerEvents = 'auto';
+    }, 600); // matches CSS transition time
+
+    activeModal = null;
+  };
+
+  modalOverlay.addEventListener('click', closeVideoModal);
+
   videoReelItems.forEach(item => {
-    const video = item.querySelector('video');
+    const originalVideo = item.querySelector('video');
 
-    const activateCinema = () => {
-      document.body.classList.add('is-cinema-mode');
-      item.classList.add('is-focused');
-      if (video) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
-      }
-    };
-
-    const deactivateCinema = () => {
-      document.body.classList.remove('is-cinema-mode');
-      item.classList.remove('is-focused');
-      if (video) {
-        video.pause();
-      }
-    };
-
-    // Desktop hover
-    item.addEventListener('mouseenter', activateCinema);
-    item.addEventListener('mouseleave', deactivateCinema);
-
-    // Mobile click logic
     item.addEventListener('click', (e) => {
       // Allow link clicking if we eventually add anchors inside
       if (e.target.tagName.toLowerCase() === 'a') return;
+      if (activeModal) return; // Prevent double clicks
 
-      if (item.classList.contains('is-focused')) {
-        deactivateCinema();
-      } else {
-        // Deactivate any other focused item first
-        videoReelItems.forEach(i => {
-          i.classList.remove('is-focused');
-          const v = i.querySelector('video');
-          if (v) v.pause();
-        });
-        activateCinema();
-      }
-    });
-  });
+      const rect = item.getBoundingClientRect();
+      item.style.opacity = '0'; // Hide original
+      item.style.pointerEvents = 'none';
 
-  // Global dismiss if clicked outside a video item while in cinema mode
-  document.addEventListener('click', (e) => {
-    if (document.body.classList.contains('is-cinema-mode') && !e.target.closest('.video-reel__item')) {
-      document.body.classList.remove('is-cinema-mode');
-      videoReelItems.forEach(i => {
-        i.classList.remove('is-focused');
-        const v = i.querySelector('video');
-        if (v) v.pause();
+      // Create Clone
+      const clone = document.createElement('div');
+      clone.className = 'video-modal-clone';
+      clone.style.top = `${rect.top}px`;
+      clone.style.left = `${rect.left}px`;
+      clone.style.width = `${rect.width}px`;
+      clone.style.height = `${rect.height}px`;
+
+      // Copy video
+      const cloneVideo = document.createElement('video');
+      cloneVideo.src = originalVideo.src;
+      cloneVideo.loop = false; // We want it to end to auto-close
+      cloneVideo.muted = false; // Start unmuted
+      cloneVideo.playsInline = true;
+      cloneVideo.setAttribute('crossorigin', 'anonymous');
+
+      // Mute Toggle Button
+      const muteBtn = document.createElement('div');
+      muteBtn.className = 'video-modal-mute';
+      // Icon: Speaker High
+      muteBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+      
+      muteBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        cloneVideo.muted = !cloneVideo.muted;
+        if (cloneVideo.muted) {
+           muteBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+        } else {
+           muteBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+        }
       });
-    }
+
+      // Auto close on finish
+      cloneVideo.addEventListener('ended', () => {
+        closeVideoModal();
+      });
+
+      clone.appendChild(cloneVideo);
+      clone.appendChild(muteBtn);
+      document.body.appendChild(clone);
+
+      activeModal = {
+        clone,
+        originalItem: item,
+        originalRect: rect,
+        videoElement: cloneVideo
+      };
+
+      // Trigger animation
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          modalOverlay.classList.add('is-active');
+          clone.classList.add('is-expanded');
+          cloneVideo.play().catch(() => {
+            // Browsers might block unmuted autoplay, so fallback to muted if error
+            cloneVideo.muted = true;
+            muteBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
+            cloneVideo.play();
+          });
+        });
+      });
+    });
   });
 }

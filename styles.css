@@ -1711,48 +1711,80 @@ body.is-loading {
   pointer-events: none;
 }
 
-/* LIGHTS OUT EFFECT (Focus state) */
-
-/* Global Body Dark Overlay (inject via JS) */
-body::after {
+/* Expandable Clone Effect Structure */
+.video-modal-overlay {
   content: "";
   position: fixed;
   inset: 0;
-  background: rgba(4, 7, 13, 0.94);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  z-index: 4;
+  background: rgba(4, 7, 13, 0.7); /* Blackout background */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 9998;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-body.is-cinema-mode::after {
+.video-modal-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.video-modal-clone {
+  position: fixed;
+  z-index: 9999;
+  border-radius: clamp(1.2rem, 2vw, 1.5rem);
+  background: #000;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.video-modal-clone.is-expanded {
+  top: 50% !important;
+  left: 50% !important;
+  width: clamp(280px, 80vh * 0.5625, 420px) !important; /* Keep 9:16 aspect ratio bounds relative to 80vh height */
+  height: 80vh !important;
+  transform: translate(-50%, -50%) !important;
+  border-radius: clamp(0.5rem, 1vw, 1rem); /* Sharpens in center */
+  box-shadow: 0 45px 100px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.video-modal-clone video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.video-modal-mute {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s ease 0.3s, background 0.3s ease;
+}
+
+.video-modal-clone.is-expanded .video-modal-mute {
   opacity: 1;
 }
 
-body.is-cinema-mode .video-reel__header {
-  opacity: 0;
-}
-
-/* Focused Item */
-.video-reel__item.is-focused {
-  transform: scale(1.08); /* cinematically grows */
-  border-radius: clamp(0.5rem, 1vw, 1rem); /* sharpens slightly */
-  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1);
-  z-index: 10;
-}
-
-.video-reel__item.is-focused .video-reel__play-btn {
-  opacity: 0;
-  transform: translate(-50%, -50%) scale(1.2);
-}
-
-/* Other items when one is focused */
-body.is-cinema-mode .video-reel__item:not(.is-focused) {
-  opacity: 0.3;
-  transform: scale(0.95);
-  filter: blur(8px);
+.video-modal-mute:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
 
 /* ═══════════════════════════════════════════════════
