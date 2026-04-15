@@ -1594,6 +1594,160 @@ body.is-loading {
 }
 
 /* ═══════════════════════════════════════════════════
+   CINEMATIC VIDEO REEL (Lights Out Effect)
+   ═══════════════════════════════════════════════════ */
+
+.video-reel {
+  position: relative;
+  margin: clamp(4rem, 8vw, 6rem) 0 0 0;
+  padding: clamp(3rem, 6vw, 5rem) 0;
+}
+
+.video-reel__header {
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+  text-align: center;
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  position: relative;
+  z-index: 2;
+  transition: opacity 0.5s ease;
+}
+
+.video-reel__eyebrow {
+  margin: 0 0 0.5rem 0;
+  color: var(--ink-muted);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+}
+
+.video-reel__title {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  color: var(--ink-primary);
+}
+
+/* Horizontal Track */
+.video-reel__track-wrap {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+  cursor: grab;
+}
+
+.video-reel__track-wrap:active {
+  cursor: grabbing;
+}
+
+.video-reel__track {
+  display: flex;
+  gap: clamp(1rem, 2vw, 2rem);
+  padding: 0 clamp(1.5rem, 5vw, 6rem);
+  width: max-content;
+  will-change: transform;
+}
+
+/* Video Items */
+.video-reel__item {
+  position: relative;
+  width: clamp(260px, 30vw, 360px);
+  /* vertical ratio 9:16 ~ 1.77 */
+  aspect-ratio: 9 / 16;
+  border-radius: clamp(1.2rem, 2vw, 1.5rem);
+  background: var(--surface-primary);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: center;
+}
+
+.video-reel__media {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.video-reel__media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.video-reel__play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.8);
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 1;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+/* LIGHTS OUT EFFECT (Focus state) */
+
+/* Global Body Dark Overlay (inject via JS) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 7, 13, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body.is-cinema-mode::after {
+  opacity: 1;
+}
+
+body.is-cinema-mode .video-reel__header {
+  opacity: 0;
+}
+
+/* Focused Item */
+.video-reel__item.is-focused {
+  transform: scale(1.08); /* cinematically grows */
+  border-radius: clamp(0.5rem, 1vw, 1rem); /* sharpens slightly */
+  box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.1);
+  z-index: 10;
+}
+
+.video-reel__item.is-focused .video-reel__play-btn {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Other items when one is focused */
+body.is-cinema-mode .video-reel__item:not(.is-focused) {
+  opacity: 0.3;
+  transform: scale(0.95);
+  filter: blur(8px);
+}
+
+/* ═══════════════════════════════════════════════════
    TESTIMONIALS (Cinematic Scroll Experience)
    ═══════════════════════════════════════════════════ */
 

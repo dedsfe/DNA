@@ -705,3 +705,83 @@ if (footerCta && window.matchMedia("(hover: hover)").matches) {
     footerCta.style.transform = `translate(0px, 0px) scale(1)`;
   });
 }
+
+// ═══════════════════════════════════════════════════
+// 15. CINEMATIC VIDEO REEL (Drag to Scroll + Lights Out)
+// ═══════════════════════════════════════════════════
+
+const videoReelTrackWrap = document.querySelector('.video-reel__track-wrap');
+const videoReelItems = document.querySelectorAll('.video-reel__item');
+
+if (videoReelTrackWrap && videoReelItems.length > 0) {
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+
+  // Draggable slider logic
+  videoReelTrackWrap.addEventListener('mousedown', (e) => {
+    isDown = true;
+    videoReelTrackWrap.style.cursor = 'grabbing';
+    startX = e.pageX - videoReelTrackWrap.offsetLeft;
+    scrollLeft = videoReelTrackWrap.scrollLeft;
+  });
+
+  videoReelTrackWrap.addEventListener('mouseleave', () => {
+    isDown = false;
+    videoReelTrackWrap.style.cursor = 'grab';
+  });
+
+  videoReelTrackWrap.addEventListener('mouseup', () => {
+    isDown = false;
+    videoReelTrackWrap.style.cursor = 'grab';
+  });
+
+  videoReelTrackWrap.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - videoReelTrackWrap.offsetLeft;
+    const walk = (x - startX) * 2; // Scroll speed multiplier
+    videoReelTrackWrap.scrollLeft = scrollLeft - walk;
+  });
+
+  // Lights Out Cinema Effect (Hover & Touch)
+  videoReelItems.forEach(item => {
+    const video = item.querySelector('video');
+
+    const activateCinema = () => {
+      document.body.classList.add('is-cinema-mode');
+      item.classList.add('is-focused');
+      if (video) {
+        video.currentTime = 0;
+        video.play().catch(() => {});
+      }
+    };
+
+    const deactivateCinema = () => {
+      document.body.classList.remove('is-cinema-mode');
+      item.classList.remove('is-focused');
+      if (video) {
+        video.pause();
+      }
+    };
+
+    // Desktop hover
+    item.addEventListener('mouseenter', activateCinema);
+    item.addEventListener('mouseleave', deactivateCinema);
+
+    // Mobile specific: If touched/clicked it toggles
+    item.addEventListener('touchstart', (e) => {
+      if (item.classList.contains('is-focused')) {
+        deactivateCinema();
+      } else {
+        // Deactivate any other focused item first
+        videoReelItems.forEach(i => {
+          i.classList.remove('is-focused');
+          const v = i.querySelector('video');
+          if (v) v.pause();
+        });
+        activateCinema();
+      }
+    }, {passive: true});
+  });
+}
