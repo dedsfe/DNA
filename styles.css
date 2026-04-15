@@ -468,7 +468,7 @@ body.is-loading {
 .hero__eyebrow {
   margin: 0 0 0.5rem 0;
   color: rgba(16, 57, 109, 0.55);
-  font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -574,7 +574,7 @@ body.is-loading {
 .services__eyebrow {
   margin: 0 0 clamp(2rem, 4vw, 3.5rem) 0;
   color: var(--ink-muted);
-  font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -618,7 +618,7 @@ body.is-loading {
 
 .services__item-index {
   flex-shrink: 0;
-  font-size: clamp(0.72rem, 0.85vw, 0.85rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 500;
   color: var(--ink-muted);
   letter-spacing: 0.08em;
@@ -703,7 +703,7 @@ body.is-loading {
 
 .pipeline__eyebrow {
   margin: 0 0 1rem 0;
-  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.3em;
@@ -818,7 +818,7 @@ body.is-loading {
 .pipeline__step-title {
   margin: 0 0 0.5rem 0;
   font-family: "Inter", sans-serif;
-  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: #fff;
@@ -826,7 +826,7 @@ body.is-loading {
 
 .pipeline__step-desc {
   margin: 0;
-  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  font-size: clamp(0.85rem, 1vw, 1rem);
   line-height: 1.55;
   color: rgba(255, 255, 255, 0.55);
   max-width: 38ch;
@@ -893,7 +893,7 @@ body.is-loading {
 .portfolio__eyebrow {
   margin: 0 0 0.75rem 0;
   color: var(--ink-muted);
-  font-size: clamp(0.72rem, 0.82vw, 0.82rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -902,7 +902,7 @@ body.is-loading {
 .portfolio__heading {
   margin: 0;
   font-family: "Instrument Serif", Georgia, serif;
-  font-size: clamp(3rem, 8vw, 6.5rem);
+  font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 400;
   font-style: italic;
   letter-spacing: -0.04em;
@@ -1002,7 +1002,7 @@ body.is-loading {
 
 .instagram-showcase__eyebrow {
   margin: 0 0 0.8rem 0;
-  font-size: clamp(0.7rem, 0.9vw, 0.82rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -1012,7 +1012,7 @@ body.is-loading {
 .instagram-showcase__title {
   margin: 0;
   font-family: "Instrument Serif", Georgia, serif;
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 400;
   letter-spacing: -0.04em;
   line-height: 0.95;
@@ -1035,7 +1035,7 @@ body.is-loading {
 
 .instagram-showcase__lead {
   margin: 1.2rem auto 0;
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-size: clamp(0.88rem, 1.1vw, 1.05rem);
   color: rgba(255, 255, 255, 0.68);
   max-width: 32rem;
 }
@@ -1051,7 +1051,7 @@ body.is-loading {
 
 .instagram-showcase__ribbon {
   display: flex;
-  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  font-size: clamp(0.82rem, 1vw, 0.95rem);
   text-transform: uppercase;
   letter-spacing: 0.4em;
   color: rgba(255, 255, 255, 0.2);
@@ -1317,7 +1317,7 @@ body.is-loading {
 }
 
 .about__eyebrow {
-  font-size: clamp(0.65rem, 0.75vw, 0.78rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -1808,7 +1808,7 @@ body:not(.is-loading) .preloader {
 
 .faq__eyebrow {
   margin: 0 0 1rem 0;
-  font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+  font-size: clamp(0.7rem, 0.82vw, 0.82rem);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.28em;
@@ -1855,7 +1855,7 @@ body:not(.is-loading) .preloader {
   cursor: pointer;
   list-style: none;
   font-family: "Inter", sans-serif;
-  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--ink-primary);
@@ -1903,7 +1903,7 @@ body:not(.is-loading) .preloader {
 
 .faq__answer p {
   margin: 0;
-  font-size: clamp(0.88rem, 1.05vw, 1rem);
+  font-size: clamp(0.88rem, 1vw, 1rem);
   line-height: 1.65;
   color: var(--ink-muted);
   max-width: 55ch;
