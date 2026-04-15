@@ -1634,10 +1634,17 @@ body.is-loading {
 /* Horizontal Track */
 .video-reel__track-wrap {
   width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Hide scrollbar Firefox */
   position: relative;
   z-index: 5;
   cursor: grab;
+  scroll-snap-type: x mandatory;
+}
+
+.video-reel__track-wrap::-webkit-scrollbar {
+  display: none; /* Hide scrollbar Chrome/Safari */
 }
 
 .video-reel__track-wrap:active {
@@ -1664,6 +1671,7 @@ body.is-loading {
   overflow: hidden;
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-radius 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   transform-origin: center;
+  scroll-snap-align: center;
 }
 
 .video-reel__media {

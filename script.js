@@ -744,7 +744,7 @@ if (videoReelTrackWrap && videoReelItems.length > 0) {
     videoReelTrackWrap.scrollLeft = scrollLeft - walk;
   });
 
-  // Lights Out Cinema Effect (Hover & Touch)
+  // Lights Out Cinema Effect
   videoReelItems.forEach(item => {
     const video = item.querySelector('video');
 
@@ -769,8 +769,11 @@ if (videoReelTrackWrap && videoReelItems.length > 0) {
     item.addEventListener('mouseenter', activateCinema);
     item.addEventListener('mouseleave', deactivateCinema);
 
-    // Mobile specific: If touched/clicked it toggles
-    item.addEventListener('touchstart', (e) => {
+    // Mobile click logic
+    item.addEventListener('click', (e) => {
+      // Allow link clicking if we eventually add anchors inside
+      if (e.target.tagName.toLowerCase() === 'a') return;
+
       if (item.classList.contains('is-focused')) {
         deactivateCinema();
       } else {
@@ -782,6 +785,18 @@ if (videoReelTrackWrap && videoReelItems.length > 0) {
         });
         activateCinema();
       }
-    }, {passive: true});
+    });
+  });
+
+  // Global dismiss if clicked outside a video item while in cinema mode
+  document.addEventListener('click', (e) => {
+    if (document.body.classList.contains('is-cinema-mode') && !e.target.closest('.video-reel__item')) {
+      document.body.classList.remove('is-cinema-mode');
+      videoReelItems.forEach(i => {
+        i.classList.remove('is-focused');
+        const v = i.querySelector('video');
+        if (v) v.pause();
+      });
+    }
   });
 }
