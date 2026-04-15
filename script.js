@@ -533,7 +533,42 @@ if (igShowcase && igCards.length > 0 && window.matchMedia("(hover: hover)").matc
 }
 
 // ═══════════════════════════════════════════════════
-// 12. NAVBAR DYNAMIC ISLAND & CLOCK & MAGNETIC CTAs
+// 12. THE PIPELINE — Scroll Reveal & Progress Line
+// ═══════════════════════════════════════════════════
+const pipelineSteps = document.querySelectorAll('.pipeline__step');
+const pipelineLineFill = document.querySelector('.pipeline__line-fill');
+
+if (pipelineSteps.length) {
+  const pipelineObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+      }
+    });
+  }, { threshold: 0.3 });
+
+  pipelineSteps.forEach(step => pipelineObserver.observe(step));
+
+  // Progress line fill based on scroll position
+  if (pipelineLineFill) {
+    const track = document.querySelector('.pipeline__track');
+    window.addEventListener('scroll', () => {
+      if (!track) return;
+      const rect = track.getBoundingClientRect();
+      const trackTop = rect.top;
+      const trackHeight = rect.height;
+      const viewH = window.innerHeight;
+      
+      // Calculate progress: 0% when track enters viewport, 100% when bottom reaches middle
+      let progress = (viewH - trackTop) / (trackHeight + viewH * 0.5);
+      progress = Math.max(0, Math.min(1, progress));
+      pipelineLineFill.style.height = `${progress * 100}%`;
+    }, { passive: true });
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 13. NAVBAR DYNAMIC ISLAND & CLOCK & MAGNETIC CTAs
 // ═══════════════════════════════════════════════════
 const heroNav = document.querySelector('.hero__nav');
 const clockTime = document.querySelector('.nav-clock-time');

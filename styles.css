@@ -663,6 +663,219 @@ body.is-loading {
 }
 
 /* ═══════════════════════════════════════════════════
+   THE PIPELINE (Como Funciona)
+   ═══════════════════════════════════════════════════ */
+
+.pipeline {
+  position: relative;
+  padding: clamp(6rem, 12vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+  background:
+    radial-gradient(circle at 30% 50%, rgba(36, 91, 161, 0.12), transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.08), transparent 55%),
+    #0b1220;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* Noise overlay matching Instagram showcase */
+.pipeline::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.pipeline > * {
+  position: relative;
+  z-index: 2;
+}
+
+.pipeline__header {
+  text-align: center;
+  margin-bottom: clamp(4rem, 8vw, 6rem);
+}
+
+.pipeline__eyebrow {
+  margin: 0 0 1rem 0;
+  font-size: clamp(0.7rem, 0.9vw, 0.85rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.pipeline__heading {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 400;
+  font-style: italic;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  color: #fff;
+}
+
+/* Track Container */
+.pipeline__track {
+  position: relative;
+  max-width: 64rem;
+  margin: 0 auto;
+  display: grid;
+  gap: 0;
+}
+
+/* Glowing Vertical Line */
+.pipeline__line {
+  position: absolute;
+  left: 2rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+}
+
+.pipeline__line-fill {
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(180deg, #2ab25e, rgba(42, 178, 94, 0.2));
+  border-radius: 2px;
+  box-shadow: 0 0 16px rgba(42, 178, 94, 0.4);
+  transition: height 0.1s linear;
+}
+
+/* Individual Step */
+.pipeline__step {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(2rem, 4vw, 3.5rem);
+  padding: clamp(2.5rem, 5vw, 3.5rem) 0;
+  padding-left: 5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  
+  /* Scroll reveal */
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pipeline__step:last-child {
+  border-bottom: none;
+}
+
+.pipeline__step.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Watermark Number */
+.pipeline__number {
+  position: absolute;
+  left: -1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: clamp(5rem, 12vw, 9rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Step dot on the line */
+.pipeline__step::before {
+  content: "";
+  position: absolute;
+  left: calc(2rem - 5px);
+  top: clamp(3rem, 5.5vw, 4rem);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #0b1220;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  z-index: 3;
+  transition: border-color 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
+}
+
+.pipeline__step.is-revealed::before {
+  border-color: #2ab25e;
+  background: #2ab25e;
+  box-shadow: 0 0 12px rgba(42, 178, 94, 0.5);
+}
+
+/* Content */
+.pipeline__step-title {
+  margin: 0 0 0.5rem 0;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #fff;
+}
+
+.pipeline__step-desc {
+  margin: 0;
+  font-size: clamp(0.85rem, 1.1vw, 1rem);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 38ch;
+}
+
+/* CTA */
+.pipeline__cta-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(3rem, 6vw, 5rem);
+}
+
+.pipeline__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #0b1220;
+  font-family: "Inter", sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 1.25rem 3.5rem;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+
+.pipeline__cta:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15);
+}
+
+/* ─── MOBILE: Pipeline ─── */
+@media (max-width: 768px) {
+  .pipeline__line {
+    left: 1rem;
+  }
+  .pipeline__step {
+    padding-left: 3.5rem;
+  }
+  .pipeline__step::before {
+    left: calc(1rem - 5px);
+  }
+  .pipeline__number {
+    left: -0.5rem;
+    font-size: clamp(4rem, 18vw, 6rem);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
    PORTFÓLIO BENTO GRID
    ═══════════════════════════════════════════════════ */
 
