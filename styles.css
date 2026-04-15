@@ -246,6 +246,30 @@ body.is-loading {
   transition-delay: 0.2s; /* Espera abrir um pouco a mola pra dar fade in */
 }
 
+/* Close Button */
+.widget-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 10;
+  padding: 0;
+}
+
+.widget-close:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
 /* WIDGET HEADER */
 .widget-header {
   display: flex;

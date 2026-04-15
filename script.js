@@ -581,12 +581,22 @@ if(heroNav) {
   };
 
   if (islandConfig.island && islandConfig.notchBtn) {
-    // Toggle state on click
+    // Toggle state on click notch
     islandConfig.notchBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const isOpen = islandConfig.island.classList.toggle('is-open');
       islandConfig.island.setAttribute('aria-expanded', isOpen);
     });
+
+    // Close button logic
+    const closeBtn = document.querySelector('.widget-close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        islandConfig.island.classList.remove('is-open');
+        islandConfig.island.setAttribute('aria-expanded', 'false');
+      });
+    }
 
     // Fechar se clicar fora
     document.addEventListener('click', (e) => {
