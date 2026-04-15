@@ -563,7 +563,7 @@ body.is-loading {
 
 .services {
   background: transparent;
-  padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 5rem);
 }
 
 .services__container {
@@ -572,7 +572,7 @@ body.is-loading {
 }
 
 .services__eyebrow {
-  margin: 0 0 clamp(3rem, 6vw, 5rem) 0;
+  margin: 0 0 clamp(2rem, 4vw, 3.5rem) 0;
   color: var(--ink-muted);
   font-size: clamp(0.72rem, 0.82vw, 0.82rem);
   font-weight: 600;
@@ -668,7 +668,7 @@ body.is-loading {
 
 .pipeline {
   position: relative;
-  padding: clamp(6rem, 12vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+  padding: clamp(5rem, 10vw, 8rem) clamp(1.5rem, 5vw, 5rem);
   margin-inline: clamp(0.5rem, 2vw, 1.5rem);
   border-radius: clamp(1.6rem, 3vw, 2.8rem);
   background:
@@ -887,7 +887,7 @@ body.is-loading {
 
 .portfolio__header {
   text-align: center;
-  padding: clamp(4rem, 8vw, 7rem) 0 clamp(2rem, 4vw, 3.5rem) 0;
+  padding: clamp(3rem, 6vw, 5rem) 0 clamp(2rem, 4vw, 3.5rem) 0;
 }
 
 .portfolio__eyebrow {
@@ -1305,7 +1305,7 @@ body.is-loading {
    ═══════════════════════════════════════════════════ */
 
 .about {
-  padding: clamp(6rem, 12vw, 10rem) 0 clamp(4rem, 8vw, 6rem);
+  padding: clamp(5rem, 10vw, 8rem) 0 clamp(3rem, 6vw, 5rem);
 }
 
 /* ─── Manifesto ─────────────────────────────────── */
@@ -1358,7 +1358,7 @@ body.is-loading {
 /* ─── Marquee ───────────────────────────────────── */
 
 .about__marquee {
-  margin: clamp(3rem, 6vw, 5rem) 0;
+  margin: clamp(2.5rem, 5vw, 4rem) 0;
   overflow: hidden;
   border-top: 1px solid rgba(0, 0, 0, 0.06);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
@@ -1786,6 +1786,127 @@ body:not(.is-loading) .preloader {
   letter-spacing: 0.25em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════
+   FAQ — OBJECTION KILLER
+   ═══════════════════════════════════════════════════ */
+
+.faq {
+  padding: clamp(5rem, 10vw, 8rem) clamp(1.5rem, 5vw, 5rem);
+  background: var(--surface-primary);
+}
+
+.faq__container {
+  max-width: 52rem;
+  margin: 0 auto;
+}
+
+.faq__header {
+  margin-bottom: clamp(3rem, 6vw, 4.5rem);
+}
+
+.faq__eyebrow {
+  margin: 0 0 1rem 0;
+  font-size: clamp(0.68rem, 0.78vw, 0.78rem);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--ink-tertiary);
+}
+
+.faq__heading {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  color: var(--ink-primary);
+}
+
+.faq__heading em {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Accordion List */
+.faq__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq__item {
+  border-top: 1px solid rgba(10, 22, 40, 0.08);
+}
+
+.faq__item:last-child {
+  border-bottom: 1px solid rgba(10, 22, 40, 0.08);
+}
+
+/* Question (Summary) */
+.faq__question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: clamp(1.4rem, 2.5vw, 2rem) 0;
+  cursor: pointer;
+  list-style: none;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink-primary);
+  transition: color 0.3s ease;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.faq__question::-webkit-details-marker {
+  display: none;
+}
+
+.faq__question:hover {
+  color: var(--ink-secondary);
+}
+
+/* Plus icon */
+.faq__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid rgba(10, 22, 40, 0.12);
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: var(--ink-muted);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, border-color 0.3s ease;
+}
+
+.faq__item[open] .faq__icon {
+  transform: rotate(45deg);
+  background: var(--ink-primary);
+  color: #fff;
+  border-color: var(--ink-primary);
+}
+
+/* Answer */
+.faq__answer {
+  overflow: hidden;
+  padding: 0 0 clamp(1.4rem, 2.5vw, 2rem) 0;
+}
+
+.faq__answer p {
+  margin: 0;
+  font-size: clamp(0.88rem, 1.05vw, 1rem);
+  line-height: 1.65;
+  color: var(--ink-muted);
+  max-width: 55ch;
 }
 
 /* ═══════════════════════════════════════════════════
