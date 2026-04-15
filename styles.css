@@ -669,6 +669,8 @@ body.is-loading {
 .pipeline {
   position: relative;
   padding: clamp(6rem, 12vw, 10rem) clamp(1.5rem, 5vw, 5rem);
+  margin-inline: clamp(0.5rem, 2vw, 1.5rem);
+  border-radius: clamp(1.6rem, 3vw, 2.8rem);
   background:
     radial-gradient(circle at 30% 50%, rgba(36, 91, 161, 0.12), transparent 60%),
     radial-gradient(circle at 80% 20%, rgba(124, 58, 237, 0.08), transparent 55%),
