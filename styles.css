@@ -1102,7 +1102,7 @@ body.is-loading {
 
 @media (min-width: 800px) {
   .instagram-showcase__deck {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: end;
     justify-items: center;
   }
@@ -1146,17 +1146,17 @@ body.is-loading {
     filter: blur(4px) brightness(0.7);
     opacity: 0.8;
   }
-  .instagram-showcase__card--center {
-    height: clamp(360px, 48vw, 580px);
-    max-width: 320px;
-    --base-transform: translateY(-8px) rotate(1deg);
-    /* Depth of field - center card is always sharp by default */
-    filter: blur(0) brightness(1);
-    opacity: 1;
+  .instagram-showcase__card--left {
+    --base-transform: translateY(0) rotate(-2deg);
+    filter: blur(0px) brightness(0.9);
+    opacity: 0.95;
     z-index: 2;
   }
   .instagram-showcase__card--right {
     --base-transform: translateY(18px) rotate(2.5deg);
+    filter: blur(0px) brightness(0.9);
+    opacity: 0.95;
+    z-index: 2;
   }
 
   /* When hovering ANY card, the entire deck adjusts */
