@@ -489,7 +489,6 @@ body.is-loading {
   font-family: "Instrument Serif", Georgia, serif;
   font-weight: 400;
   font-style: italic;
-  padding-left: clamp(1rem, 4vw, 3rem);
   letter-spacing: -0.03em;
   font-size: 1.08em;
 }
@@ -2627,7 +2626,7 @@ body.modal-open {
   }
 
   .hero__headline-row--alt {
-    padding-left: 1.5rem;
+    /* Padding removed for centered headline */
   }
 
   .hero__eyebrow {
@@ -2964,7 +2963,6 @@ body.modal-open {
     white-space: nowrap; /* Previne a quebra doentia no meio da frase */
   }
   .hero__headline-row--alt {
-    padding-left: 1rem;
     font-size: 1.05em;
   }
   .hero__subhead {
