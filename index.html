@@ -32,18 +32,14 @@
     <div class="site-wrapper">
       <main class="page">
       <header class="hero" aria-label="Apresentação da empresa DNA">
-        <img
-          class="hero__image"
-          src="./assets/hero-clouds.png"
-          alt=""
-          aria-hidden="true"
-        />
-        <img
-          class="hero__image hero__image--bottom"
-          src="./assets/hero-clouds-bottom.png"
-          alt=""
-          aria-hidden="true"
-        />
+        <picture>
+          <source media="(max-width: 768px)" srcset="./assets/hero-clouds-mobile.jpg">
+          <img class="hero__image" src="./assets/hero-clouds.jpg" alt="" aria-hidden="true" />
+        </picture>
+        <picture>
+          <source media="(max-width: 768px)" srcset="./assets/hero-clouds-bottom-mobile.jpg">
+          <img class="hero__image hero__image--bottom" src="./assets/hero-clouds-bottom.jpg" alt="" aria-hidden="true" />
+        </picture>
 
         <nav class="hero__nav" aria-label="Navegação principal">
           <!-- O novo "DNA Widget" -->
@@ -234,10 +230,13 @@
             data-modal-tag="Web Design & Eventos"
             data-modal-title="Mozzi Assessoria"
             data-modal-desc="Landing page completa para assessoria de eventos premium. Design sofisticado com glassmorphism, seção de pacotes com cards animados, galeria do Instagram integrada, sistema de agendamento com calendário funcional e formulário de contato — tudo pensado para transmitir elegância e confiança."
-            data-modal-image="./assets/project-mozzi.png"
+            data-modal-image="./assets/project-mozzi.jpg"
             data-modal-link="https://dedsfe.github.io/MozziAssessoria/">
             <div class="portfolio__media-container">
-              <img class="portfolio__image" src="./assets/project-mozzi.png" alt="Mozzi Assessoria" loading="lazy" />
+              <picture>
+                <source media="(max-width: 768px)" srcset="./assets/project-mozzi-mobile.jpg">
+                <img class="portfolio__image" src="./assets/project-mozzi.jpg" alt="Mozzi Assessoria" loading="lazy" />
+              </picture>
               <div class="portfolio__overlay">
                 <span class="portfolio__tag">Web Design</span>
                 <h3 class="portfolio__title">Mozzi Assessoria</h3>
@@ -249,10 +248,13 @@
             data-modal-tag="Web Design & Eventos"
             data-modal-title="Rancho da Praia"
             data-modal-desc="Site imersivo para espaço de eventos em Praia Grande. Design editorial com sistema de disponibilidade de datas, curadoria visual integrada ao Pinterest, mapa interativo e contador de urgência — criando uma experiência que converte visitantes em clientes."
-            data-modal-image="./assets/project-rancho.png"
+            data-modal-image="./assets/project-rancho.jpg"
             data-modal-link="https://dedsfe.github.io/RanchodaPraia/">
             <div class="portfolio__media-container">
-              <img class="portfolio__image" src="./assets/project-rancho.png" alt="Rancho da Praia" loading="lazy" />
+              <picture>
+                <source media="(max-width: 768px)" srcset="./assets/project-rancho-mobile.jpg">
+                <img class="portfolio__image" src="./assets/project-rancho.jpg" alt="Rancho da Praia" loading="lazy" />
+              </picture>
               <div class="portfolio__overlay">
                 <span class="portfolio__tag">Eventos</span>
                 <h3 class="portfolio__title">Rancho da Praia</h3>
@@ -264,10 +266,13 @@
             data-modal-tag="Web App"
             data-modal-title="Noite de Jogos"
             data-modal-desc="Aplicativo web para noites de jogos em grupo — reúne Impostor, Polícia e Ladrão, Cidade Dorme, Quem Sou Eu e Mímica Rápida em uma interface única. Sistema de distribuição de papéis por passagem de celular, configuração de rodadas e UI intuitiva em dark mode."
-            data-modal-image="./assets/project-jogos.png"
+            data-modal-image="./assets/project-jogos.jpg"
             data-modal-link="https://dedsfe.github.io/ImpostorGame/">
             <div class="portfolio__media-container">
-              <img class="portfolio__image" src="./assets/project-jogos.png" alt="Noite de Jogos" loading="lazy" />
+              <picture>
+                <source media="(max-width: 768px)" srcset="./assets/project-jogos-mobile.jpg">
+                <img class="portfolio__image" src="./assets/project-jogos.jpg" alt="Noite de Jogos" loading="lazy" />
+              </picture>
               <div class="portfolio__overlay">
                 <span class="portfolio__tag">Web App</span>
                 <h3 class="portfolio__title">Noite de Jogos</h3>
@@ -279,10 +284,13 @@
             data-modal-tag="Portfólio Pessoal"
             data-modal-title="Portfólio André"
             data-modal-desc="Portfólio pessoal de desenvolvedor iOS com design minimalista e moderno. Apresentação clean dos projetos com cards interativos, links diretos para GitHub e LinkedIn, e destaque para o app PerfectEar — um treinador auditivo para músicos em desenvolvimento."
-            data-modal-image="./assets/project-portfolio.png"
+            data-modal-image="./assets/project-portfolio.jpg"
             data-modal-link="https://dedsfe.github.io/Portfolio---Andre-Souza/">
             <div class="portfolio__media-container">
-              <img class="portfolio__image" src="./assets/project-portfolio.png" alt="Portfólio André" loading="lazy" />
+              <picture>
+                <source media="(max-width: 768px)" srcset="./assets/project-portfolio-mobile.jpg">
+                <img class="portfolio__image" src="./assets/project-portfolio.jpg" alt="Portfólio André" loading="lazy" />
+              </picture>
               <div class="portfolio__overlay">
                 <span class="portfolio__tag">Portfólio</span>
                 <h3 class="portfolio__title">Portfólio André</h3>
@@ -358,7 +366,7 @@
                 target="_blank"
                 rel="noopener"
                 class="instagram-showcase__card instagram-showcase__card--left"
-                style="--ig-image: url('./assets/instagram-rancho.png');"
+                style="--ig-image: url('./assets/instagram-rancho.jpg');"
               >
                 <span class="instagram-showcase__handle">@rancho.da.praia</span>
               </a>
@@ -368,7 +376,7 @@
                 target="_blank"
                 rel="noopener"
                 class="instagram-showcase__card instagram-showcase__card--right"
-                style="--ig-image: url('./assets/instagram-perfectear.png');"
+                style="--ig-image: url('./assets/instagram-perfectear.jpg');"
               >
                 <span class="instagram-showcase__handle">@perfectear.m</span>
               </a>
@@ -501,7 +509,7 @@
 
           <!-- Scene 1 -->
           <article class="t-scene is-active" data-index="0">
-            <div class="t-scene__bg" style="--bg-image: url('./assets/project-mozzi.png');"></div>
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-mozzi.jpg');"></div>
             <div class="t-scene__content">
               <span class="t-scene__eyebrow">Mozzi Assessoria</span>
               <h2 class="t-scene__quote">
@@ -513,7 +521,7 @@
 
           <!-- Scene 2 -->
           <article class="t-scene" data-index="1">
-            <div class="t-scene__bg" style="--bg-image: url('./assets/project-rancho.png');"></div>
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-rancho.jpg');"></div>
             <div class="t-scene__content">
               <span class="t-scene__eyebrow">Rancho da Praia</span>
               <h2 class="t-scene__quote">
@@ -525,7 +533,7 @@
 
           <!-- Scene 3 -->
           <article class="t-scene" data-index="2">
-            <div class="t-scene__bg" style="--bg-image: url('./assets/project-jogos.png');"></div>
+            <div class="t-scene__bg" style="--bg-image: url('./assets/project-jogos.jpg');"></div>
             <div class="t-scene__content">
               <span class="t-scene__eyebrow">Noite de Jogos</span>
               <h2 class="t-scene__quote">

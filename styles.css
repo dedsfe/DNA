@@ -3034,3 +3034,14 @@ body.modal-open {
     animation: none;
   }
 }
+
+/* 16. Lógica de Rede 3G/2G (Performance) */
+html.is-slow-connection .video-reel {
+  /* Apaga inteiramente a seção de vídeos para não pesar scroll nem dados do usuário */
+  display: none !important;
+}
+
+html.is-slow-connection .pipeline::after {
+  /* Remove noise filter que gera um PNG pesadinho no 3G em algumas resoluções */
+  display: none !important;
+}

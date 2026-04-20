@@ -836,7 +836,13 @@ if (videoReelTrackWrap && videoReelItems.length > 0) {
         videoElement: cloneVideo
       };
 
-      // Trigger animation
+      // Trigger animation (skip heavy play if slow connection but still show modal maybe? No wait, if slow connection, the src is removed. Let's just alert.)
+      if (document.documentElement.classList.contains('is-slow-connection')) {
+         alert("Seu vídeo não foi carregado para economizar seus dados na conexão 3G.");
+         closeVideoModal();
+         return;
+      }
+      
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           modalOverlay.classList.add('is-active');
