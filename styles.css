@@ -1106,9 +1106,10 @@ body.is-loading {
 
 @media (min-width: 800px) {
   .instagram-showcase__deck {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: end;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    align-items: center;
     justify-items: center;
+    gap: clamp(1rem, 2vw, 2rem);
   }
 }
 
@@ -1140,45 +1141,49 @@ body.is-loading {
 
 @media (min-width: 800px) {
   .instagram-showcase__card {
-    height: clamp(320px, 44vw, 520px);
+    height: clamp(320px, 44vw, 480px);
     max-width: 280px;
-    --base-transform: translateY(0) rotate(-2deg);
+    --base-transform: translateY(0);
     box-shadow:
       0 35px 90px rgba(3, 8, 18, 0.6),
       inset 0 0 0 1px rgba(255, 255, 255, 0.08);
     /* Depth of field - default for side cards is slightly blurred */
-    filter: blur(4px) brightness(0.7);
-    opacity: 0.8;
+    filter: blur(2px) brightness(0.85);
+    opacity: 0.85;
   }
-  .instagram-showcase__card--left {
-    --base-transform: translateY(0) rotate(-2deg);
-    filter: blur(0px) brightness(0.9);
-    opacity: 0.95;
+  .instagram-showcase__card--1 {
+    --base-transform: translateY(20px) rotate(-4deg);
+    z-index: 1;
+  }
+  .instagram-showcase__card--2 {
+    --base-transform: translateY(-10px) rotate(-1deg);
     z-index: 2;
   }
-  .instagram-showcase__card--right {
-    --base-transform: translateY(18px) rotate(2.5deg);
-    filter: blur(0px) brightness(0.9);
-    opacity: 0.95;
-    z-index: 2;
+  .instagram-showcase__card--3 {
+    --base-transform: translateY(15px) rotate(2deg);
+    z-index: 3;
+  }
+  .instagram-showcase__card--4 {
+    --base-transform: translateY(-5px) rotate(5deg);
+    z-index: 4;
   }
 
   /* When hovering ANY card, the entire deck adjusts */
   .instagram-showcase__deck:hover .instagram-showcase__card {
-    filter: blur(6px) brightness(0.6);
+    filter: blur(6px) brightness(0.5);
     opacity: 0.6;
     z-index: 1;
   }
 
   /* Specific hovered card becomes sharp */
   .instagram-showcase__deck .instagram-showcase__card:hover {
-    --base-transform: translateY(-15px) scale(1.05); /* straightens */
+    --base-transform: translateY(-20px) scale(1.08); /* straightens */
     filter: blur(0) brightness(1.1);
     opacity: 1;
     z-index: 10;
     box-shadow:
-      0 45px 120px rgba(3, 8, 18, 0.75),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+      0 45px 120px rgba(3, 8, 18, 0.8),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
   }
 }
 
@@ -2759,8 +2764,10 @@ body.modal-open {
     transform: none;
   }
 
-  .instagram-showcase__card--center,
-  .instagram-showcase__card--right {
+  .instagram-showcase__card--1,
+  .instagram-showcase__card--2,
+  .instagram-showcase__card--3,
+  .instagram-showcase__card--4 {
     transform: none;
   }
 
