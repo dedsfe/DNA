@@ -7,6 +7,9 @@
     <meta name="description" content="Audiovisual que prende. Feed vertical de vídeos do estúdio DNA." />
     <meta name="theme-color" content="#000000" />
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬛</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -322,6 +325,105 @@
         font-weight: 600;
         cursor: pointer;
       }
+
+      /* Card de CTA — mesmo frame do vídeo, sem vídeo */
+      .cta-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 44px 30px;
+        background: radial-gradient(ellipse 80% 60% at 50% 28%, #14305a 0%, #0a0d14 62%);
+        overflow: hidden;
+      }
+      .cta-card__glow {
+        position: absolute;
+        width: 140%;
+        aspect-ratio: 1;
+        top: -28%;
+        left: -20%;
+        background: radial-gradient(circle, rgba(36, 91, 161, 0.6) 0%, transparent 62%);
+        filter: blur(14px);
+        pointer-events: none;
+        animation: cta-float 9s ease-in-out infinite;
+      }
+      @keyframes cta-float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(9%, 7%) scale(1.14); }
+      }
+      .cta-card__inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 420px;
+      }
+      .cta-card__logo {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.34em;
+        padding-left: 0.34em;
+        color: #fff;
+        margin-bottom: 28px;
+      }
+      .cta-card__eyebrow {
+        color: #6f9fd6;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        margin-bottom: 16px;
+      }
+      .cta-card__title {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: clamp(2.3rem, 8.5vw, 3.1rem);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        color: #fff;
+        margin-bottom: 18px;
+      }
+      .cta-card__title span { color: #9cc1ec; }
+      .cta-card__text {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.96rem;
+        line-height: 1.5;
+        margin-bottom: 30px;
+      }
+      .cta-card__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 16px 32px;
+        border-radius: 999px;
+        background: #fff;
+        color: #0a0d14;
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 12px 44px rgba(255, 255, 255, 0.16);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .cta-card__btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 16px 54px rgba(255, 255, 255, 0.3);
+      }
+      .cta-card__btn svg { width: 19px; height: 19px; }
+      .cta-card__link {
+        margin-top: 20px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .cta-card__link:hover { color: #fff; }
     </style>
   </head>
   <body>
@@ -376,6 +478,11 @@
         const HANDLE = "@dnadigital_s";
         const INSTAGRAM_URL = "https://www.instagram.com/dnadigital_s/";
         const SITE_URL = new URL("./index.html", location.href).href;
+        const WHATSAPP_URL =
+          "https://wa.me/5513991863669?text=" +
+          encodeURIComponent(
+            "Oi! Vim pelo modo Reels do site da DNA — quero falar com o time."
+          );
 
         const VIDEOS = [
           { src: "./assets/portfolio-dany-video.mp4", caption: "Audiovisual que vira cinema. Cada frame, intencional." },
@@ -609,15 +716,42 @@
           return slide;
         }
 
-        // Adiciona um lote de slides
-        function appendBatch(count) {
-          for (let i = 0; i < count; i++) {
+        // Card de CTA — entra no feed com o mesmo frame dos vídeos
+        function createCTASlide() {
+          const slide = document.createElement("div");
+          slide.className = "slide";
+          const player = document.createElement("div");
+          player.className = "slide__player";
+          player.innerHTML =
+            '<div class="cta-card">' +
+            '<div class="cta-card__glow"></div>' +
+            '<div class="cta-card__inner">' +
+            '<div class="cta-card__logo">DNA</div>' +
+            '<p class="cta-card__eyebrow">Pergunta honesta</p>' +
+            '<h2 class="cta-card__title">Curtiu?<br /><span>Isso não foi por acaso.</span></h2>' +
+            '<p class="cta-card__text">Cada corte, cada frame, cada legenda foi pensado pra prender você até aqui. É exatamente isso que a gente faz pela sua marca: transforma rolagem em atenção, e atenção em cliente.</p>' +
+            '<a class="cta-card__btn" href="' + WHATSAPP_URL + '" target="_blank" rel="noopener">' +
+            '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.16c-.24.68-1.42 1.3-1.95 1.34-.5.05-1.13.27-3.8-.79-3.2-1.26-5.25-4.5-5.41-4.71-.16-.21-1.3-1.73-1.3-3.3 0-1.57.82-2.34 1.11-2.66.29-.32.64-.4.85-.4.21 0 .43 0 .61.01.2.01.46-.07.72.55.27.64.92 2.21 1 2.37.08.16.13.35.03.56-.1.21-.16.34-.31.53-.16.19-.33.42-.47.56-.16.16-.32.33-.14.65.18.32.8 1.32 1.72 2.14 1.18 1.05 2.18 1.38 2.49 1.54.31.16.49.13.67-.08.18-.21.77-.9.98-1.21.21-.32.42-.26.71-.16.29.11 1.83.86 2.14 1.02.31.16.52.24.6.37.08.13.08.76-.16 1.44z"/></svg>' +
+            'Quero falar com o time DNA</a>' +
+            '<a class="cta-card__link" href="./index.html">ou conhecer o estúdio inteiro</a>' +
+            '</div>' +
+            '</div>';
+          slide.appendChild(player);
+          return slide;
+        }
+
+        // Adiciona um ciclo: todos os vídeos + 1 card de CTA no fim
+        function appendCycle() {
+          for (let i = 0; i < VIDEOS.length; i++) {
             feed.appendChild(createSlide(slideCount));
             slideCount++;
           }
+          feed.appendChild(createCTASlide());
         }
 
-        appendBatch(VIDEOS.length * 3);
+        appendCycle();
+        appendCycle();
+        appendCycle();
 
         // Toca apenas o vídeo visível
         const playObserver = new IntersectionObserver(
@@ -643,7 +777,7 @@
             entries.forEach(function (entry) {
               if (entry.isIntersecting) {
                 infiniteObserver.unobserve(entry.target);
-                appendBatch(VIDEOS.length);
+                appendCycle();
                 observeAll();
               }
             });
