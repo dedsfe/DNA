@@ -1640,6 +1640,27 @@ body.is-loading {
   color: var(--ink-primary);
 }
 
+.video-reel__feed-link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1.25rem;
+  padding: 0.6rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(10, 22, 40, 0.18);
+  font-size: clamp(0.78rem, 0.9vw, 0.9rem);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--ink-primary);
+  text-decoration: none;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+}
+
+.video-reel__feed-link:hover {
+  background: var(--ink-primary);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
 /* Horizontal Track */
 .video-reel__track-wrap {
   width: 100%;

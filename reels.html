@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>DNA — Reels</title>
+    <meta name="description" content="Audiovisual que prende. Feed vertical de vídeos do estúdio DNA." />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬛</text></svg>">
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        height: 100%;
+        background: #0b0b0d;
+        overflow: hidden;
+        font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Feed: cada slide ocupa a tela toda e gruda no scroll (sticky/snap) */
+      .feed {
+        height: 100svh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .feed::-webkit-scrollbar { display: none; }
+
+      .slide {
+        position: relative;
+        height: 100svh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      /* O "player" — full-screen no mobile, frame com max-width no desktop */
+      .slide__player {
+        position: relative;
+        height: 100svh;
+        aspect-ratio: 9 / 16;
+        max-width: 100vw;
+        background: #000;
+        overflow: hidden;
+      }
+
+      @media (min-width: 700px) {
+        .slide__player {
+          height: min(94svh, 900px);
+          border-radius: 20px;
+          box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65);
+        }
+      }
+
+      .slide__video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #000;
+        display: block;
+      }
+
+      /* Scrim para legibilidade do texto */
+      .slide__scrim {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 42%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* Barra de progresso no rodapé ("bottle") do vídeo — arrastável */
+      .slide__progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 22px;
+        display: flex;
+        align-items: flex-end;
+        z-index: 5;
+        cursor: pointer;
+        touch-action: none;
+      }
+      .slide__progress-track {
+        position: relative;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: height 0.15s ease;
+      }
+      .slide__progress.is-scrubbing .slide__progress-track { height: 6px; }
+      .slide__progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #fff;
+        transition: width 0.1s linear;
+      }
+      .slide__progress.is-scrubbing .slide__progress-fill { transition: none; }
+      .slide__progress-knob {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.15s ease;
+        pointer-events: none;
+      }
+      .slide__progress.is-scrubbing .slide__progress-knob {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      /* Texto no rodapé estilo TikTok */
+      .slide__info {
+        position: absolute;
+        left: 0;
+        right: 78px;
+        bottom: 0;
+        padding: 0 16px 24px;
+        z-index: 3;
+      }
+      .slide__handle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.96rem;
+        text-decoration: none;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+      .slide__handle svg { width: 14px; height: 14px; opacity: 0.85; }
+      .slide__caption {
+        margin-top: 7px;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 0.9rem;
+        line-height: 1.4;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Indicador de pausa */
+      .slide__pause {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 76px;
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        z-index: 4;
+      }
+      .slide.is-paused .slide__pause { opacity: 0.92; }
+      .slide__pause svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5)); }
+
+      /* Rail de ações (coração + compartilhar) */
+      .slide__actions {
+        position: absolute;
+        right: 10px;
+        bottom: 96px;
+        z-index: 6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        color: #fff;
+        padding: 0;
+      }
+      .action-btn svg {
+        width: 36px;
+        height: 36px;
+        filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 0.55));
+        transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .action-btn:active svg { transform: scale(0.82); }
+      .action-btn__label {
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+      }
+      .action-btn.is-liked .heart-shape { fill: #ff2d55; stroke: #ff2d55; }
+      .action-btn.is-liked svg { animation: heart-pop 0.4s ease; }
+
+      @keyframes heart-pop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.35); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); }
+      }
+
+      /* Explosão de emojis */
+      .emoji-burst {
+        position: absolute;
+        z-index: 9;
+        font-size: 26px;
+        pointer-events: none;
+        will-change: transform, opacity;
+        animation: emoji-fly 1.05s ease-out forwards;
+      }
+      @keyframes emoji-fly {
+        0%   { transform: translate(-50%, -50%) translateY(0) scale(0.4) rotate(0deg); opacity: 0; }
+        18%  { opacity: 1; }
+        100% { transform: translate(-50%, -50%) translateY(-230px) translateX(var(--dx)) scale(1.1) rotate(var(--rot)); opacity: 0; }
+      }
+
+      /* Coração grande do double-tap */
+      .big-heart {
+        position: absolute;
+        z-index: 8;
+        font-size: 96px;
+        pointer-events: none;
+        animation: big-heart 0.9s ease-out forwards;
+      }
+      @keyframes big-heart {
+        0%   { transform: translate(-50%, -50%) scale(0) rotate(-18deg); opacity: 0; }
+        22%  { transform: translate(-50%, -50%) scale(1.15) rotate(-8deg); opacity: 1; }
+        70%  { transform: translate(-50%, -50%) scale(1) rotate(-8deg); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(1.35) rotate(-8deg); opacity: 0; }
+      }
+
+      /* Botões fixos: voltar e som */
+      .fab {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top));
+        z-index: 20;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #fff;
+        cursor: pointer;
+      }
+      .fab svg { width: 20px; height: 20px; }
+      .back { left: 16px; }
+      .mute { right: 16px; }
+      .mute .icon-on { display: none; }
+      .mute.is-on .icon-on { display: block; }
+      .mute.is-on .icon-off { display: none; }
+
+      /* Popover de compartilhamento (fallback desktop) */
+      .share-pop {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+      .share-pop.is-open { display: flex; }
+      .share-pop__card {
+        background: #1a1a1d;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 22px;
+        width: min(320px, 86vw);
+        text-align: center;
+      }
+      .share-pop__title {
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .share-pop__action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 13px 16px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff;
+        font-size: 0.92rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.18s ease;
+      }
+      .share-pop__action:hover { background: rgba(255, 255, 255, 0.14); }
+      .share-pop__action svg { width: 19px; height: 19px; flex-shrink: 0; }
+      .share-pop__close {
+        margin-top: 6px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <button class="fab back" aria-label="Voltar" onclick="history.length > 1 ? history.back() : (location.href = './index.html')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+
+    <button class="fab mute" id="muteBtn" aria-label="Ativar ou desativar som">
+      <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+      <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      </svg>
+    </button>
+
+    <div class="feed" id="feed"></div>
+
+    <!-- Popover de compartilhamento (fallback para navegadores sem menu nativo) -->
+    <div class="share-pop" id="sharePop">
+      <div class="share-pop__card">
+        <div class="share-pop__title">Compartilhar</div>
+        <button class="share-pop__action" id="copyLinkBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span id="copyLinkLabel">Copiar link do site</span>
+        </button>
+        <a class="share-pop__action" id="downloadBtn" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Baixar vídeo</span>
+        </a>
+        <button class="share-pop__close" id="shareCloseBtn">Fechar</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // Cada vídeo com sua legenda. handle leva ao Instagram da DNA.
+        const HANDLE = "@dnadigital_s";
+        const INSTAGRAM_URL = "https://www.instagram.com/dnadigital_s/";
+        const SITE_URL = new URL("./index.html", location.href).href;
+
+        const VIDEOS = [
+          { src: "./assets/portfolio-dany-video.mp4", caption: "Audiovisual que vira cinema. Cada frame, intencional." },
+          { src: "./assets/portfolio-dany-video-2.mp4", caption: "Movimento que prende o olhar e para o feed." },
+          { src: "./assets/portfolio-dany-video-3.mp4", caption: "É assim que sua marca merece ser vista." },
+        ];
+
+        const feed = document.getElementById("feed");
+        const muteBtn = document.getElementById("muteBtn");
+        const sharePop = document.getElementById("sharePop");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const copyLinkLabel = document.getElementById("copyLinkLabel");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const shareCloseBtn = document.getElementById("shareCloseBtn");
+
+        let muted = true;
+        let slideCount = 0;
+
+        const HEART_EMOJIS = ["❤️", "💖", "💘", "💕", "😍", "🔥"];
+
+        // Explosão de emojis a partir de um ponto do player
+        function burstEmojis(player, x, y) {
+          for (let i = 0; i < 14; i++) {
+            const span = document.createElement("span");
+            span.className = "emoji-burst";
+            span.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+            span.style.left = x + "px";
+            span.style.top = y + "px";
+            span.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+            span.style.setProperty("--rot", (Math.random() * 90 - 45) + "deg");
+            span.style.animationDelay = (Math.random() * 0.12) + "s";
+            player.appendChild(span);
+            setTimeout(function () { span.remove(); }, 1300);
+          }
+        }
+
+        // Coração grande no double-tap
+        function bigHeart(player, x, y) {
+          const heart = document.createElement("span");
+          heart.className = "big-heart";
+          heart.textContent = "❤️";
+          heart.style.left = x + "px";
+          heart.style.top = y + "px";
+          player.appendChild(heart);
+          setTimeout(function () { heart.remove(); }, 950);
+        }
+
+        // Cria um slide completo
+        function createSlide(index) {
+          const data = VIDEOS[index % VIDEOS.length];
+
+          const slide = document.createElement("div");
+          slide.className = "slide";
+
+          const player = document.createElement("div");
+          player.className = "slide__player";
+
+          const video = document.createElement("video");
+          video.className = "slide__video";
+          // #t=0.001 força o navegador a pintar o primeiro frame como poster
+          video.src = data.src + "#t=0.001";
+          video.loop = true;
+          video.muted = muted;
+          video.playsInline = true;
+          video.setAttribute("playsinline", "");
+          video.setAttribute("webkit-playsinline", "");
+          video.preload = "metadata";
+
+          const scrim = document.createElement("div");
+          scrim.className = "slide__scrim";
+
+          const progress = document.createElement("div");
+          progress.className = "slide__progress";
+          const track = document.createElement("div");
+          track.className = "slide__progress-track";
+          const fill = document.createElement("div");
+          fill.className = "slide__progress-fill";
+          const knob = document.createElement("div");
+          knob.className = "slide__progress-knob";
+          track.appendChild(fill);
+          track.appendChild(knob);
+          progress.appendChild(track);
+
+          const pause = document.createElement("div");
+          pause.className = "slide__pause";
+          pause.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>';
+
+          // Texto no rodapé
+          const info = document.createElement("div");
+          info.className = "slide__info";
+          const handle = document.createElement("a");
+          handle.className = "slide__handle";
+          handle.href = INSTAGRAM_URL;
+          handle.target = "_blank";
+          handle.rel = "noopener";
+          handle.innerHTML =
+            HANDLE +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
+          const caption = document.createElement("p");
+          caption.className = "slide__caption";
+          caption.textContent = data.caption;
+          info.appendChild(handle);
+          info.appendChild(caption);
+
+          // Rail de ações
+          const actions = document.createElement("div");
+          actions.className = "slide__actions";
+
+          const likeBtn = document.createElement("button");
+          likeBtn.className = "action-btn like-btn";
+          likeBtn.setAttribute("aria-label", "Curtir");
+          likeBtn.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path class="heart-shape" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+            '<span class="action-btn__label">Curtir</span>';
+
+          const shareBtn = document.createElement("button");
+          shareBtn.className = "action-btn share-btn";
+          shareBtn.setAttribute("aria-label", "Compartilhar");
+          shareBtn.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+            '<span class="action-btn__label">Enviar</span>';
+
+          actions.appendChild(likeBtn);
+          actions.appendChild(shareBtn);
+
+          // Estado de like
+          let liked = false;
+          function setLiked(value) {
+            liked = value;
+            likeBtn.classList.toggle("is-liked", liked);
+          }
+
+          // Curtir + explosão de emojis
+          function doLike() {
+            setLiked(true);
+            const rect = likeBtn.getBoundingClientRect();
+            const pRect = player.getBoundingClientRect();
+            burstEmojis(player, rect.left - pRect.left + rect.width / 2, rect.top - pRect.top + rect.height / 2);
+          }
+
+          likeBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (liked) {
+              setLiked(false);
+            } else {
+              doLike();
+            }
+          });
+
+          shareBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            openShare(data.src);
+          });
+
+          // Atualiza a barra de progresso
+          let scrubbing = false;
+          video.addEventListener("timeupdate", function () {
+            if (video.duration && !scrubbing) {
+              const pct = (video.currentTime / video.duration) * 100;
+              fill.style.width = pct + "%";
+              knob.style.left = pct + "%";
+            }
+          });
+
+          // Arrastar a barra para frente / para trás
+          function seekFromEvent(e) {
+            const rect = track.getBoundingClientRect();
+            const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+            const pct = ratio * 100;
+            fill.style.width = pct + "%";
+            knob.style.left = pct + "%";
+            if (video.duration) video.currentTime = ratio * video.duration;
+          }
+          progress.addEventListener("pointerdown", function (e) {
+            e.stopPropagation();
+            scrubbing = true;
+            progress.classList.add("is-scrubbing");
+            try { progress.setPointerCapture(e.pointerId); } catch (err) {}
+            seekFromEvent(e);
+          });
+          progress.addEventListener("pointermove", function (e) {
+            if (scrubbing) seekFromEvent(e);
+          });
+          function endScrub(e) {
+            if (!scrubbing) return;
+            scrubbing = false;
+            progress.classList.remove("is-scrubbing");
+          }
+          progress.addEventListener("pointerup", endScrub);
+          progress.addEventListener("pointercancel", endScrub);
+          progress.addEventListener("click", function (e) {
+            e.stopPropagation();
+          });
+
+          // Tap = pausa/retoma | Double-tap = curtir
+          let lastTap = 0;
+          let tapTimer = null;
+          player.addEventListener("click", function (e) {
+            if (e.target.closest(".slide__actions") || e.target.closest(".slide__handle")) return;
+            const now = Date.now();
+            if (now - lastTap < 300) {
+              clearTimeout(tapTimer);
+              lastTap = 0;
+              const pRect = player.getBoundingClientRect();
+              const x = e.clientX - pRect.left;
+              const y = e.clientY - pRect.top;
+              bigHeart(player, x, y);
+              if (!liked) doLike();
+            } else {
+              lastTap = now;
+              tapTimer = setTimeout(function () {
+                if (video.paused) {
+                  video.play();
+                  slide.classList.remove("is-paused");
+                } else {
+                  video.pause();
+                  slide.classList.add("is-paused");
+                }
+              }, 300);
+            }
+          });
+
+          player.appendChild(video);
+          player.appendChild(scrim);
+          player.appendChild(progress);
+          player.appendChild(pause);
+          player.appendChild(info);
+          player.appendChild(actions);
+          slide.appendChild(player);
+          return slide;
+        }
+
+        // Adiciona um lote de slides
+        function appendBatch(count) {
+          for (let i = 0; i < count; i++) {
+            feed.appendChild(createSlide(slideCount));
+            slideCount++;
+          }
+        }
+
+        appendBatch(VIDEOS.length * 3);
+
+        // Toca apenas o vídeo visível
+        const playObserver = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              const video = entry.target.querySelector("video");
+              if (!video) return;
+              if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                video.muted = muted;
+                video.play().catch(function () {});
+              } else {
+                video.pause();
+                entry.target.classList.remove("is-paused");
+              }
+            });
+          },
+          { threshold: [0, 0.6, 1] }
+        );
+
+        // Scroll infinito
+        const infiniteObserver = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                infiniteObserver.unobserve(entry.target);
+                appendBatch(VIDEOS.length);
+                observeAll();
+              }
+            });
+          },
+          { rootMargin: "200% 0px" }
+        );
+
+        function observeAll() {
+          const slides = feed.querySelectorAll(".slide");
+          slides.forEach(function (slide) {
+            if (!slide.dataset.observed) {
+              slide.dataset.observed = "1";
+              playObserver.observe(slide);
+            }
+          });
+          if (slides.length >= 3) {
+            const trigger = slides[slides.length - 3];
+            if (!trigger.dataset.trigger) {
+              trigger.dataset.trigger = "1";
+              infiniteObserver.observe(trigger);
+            }
+          }
+        }
+
+        observeAll();
+
+        // Toggle de som
+        muteBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          muted = !muted;
+          muteBtn.classList.toggle("is-on", !muted);
+          feed.querySelectorAll("video").forEach(function (v) {
+            v.muted = muted;
+          });
+        });
+
+        // ===== Compartilhar =====
+        function openShare(videoSrc) {
+          const videoUrl = new URL(videoSrc, location.href).href;
+          // Menu nativo do sistema (celular / navegadores compatíveis)
+          if (navigator.share) {
+            navigator
+              .share({
+                title: "DNA — Estúdio de Design & Estratégia",
+                text: "Olha esse audiovisual da DNA 🔥",
+                url: SITE_URL,
+              })
+              .catch(function () {});
+            return;
+          }
+          // Fallback (desktop): popover com copiar link + baixar vídeo
+          downloadBtn.href = videoUrl;
+          copyLinkLabel.textContent = "Copiar link do site";
+          sharePop.classList.add("is-open");
+        }
+
+        copyLinkBtn.addEventListener("click", function () {
+          navigator.clipboard
+            .writeText(SITE_URL)
+            .then(function () {
+              copyLinkLabel.textContent = "Link copiado!";
+              setTimeout(function () {
+                copyLinkLabel.textContent = "Copiar link do site";
+              }, 1800);
+            })
+            .catch(function () {});
+        });
+
+        function closeShare() {
+          sharePop.classList.remove("is-open");
+        }
+        shareCloseBtn.addEventListener("click", closeShare);
+        sharePop.addEventListener("click", function (e) {
+          if (e.target === sharePop) closeShare();
+        });
+
+        // Inicia o primeiro vídeo
+        const first = feed.querySelector("video");
+        if (first) first.play().catch(function () {});
+      })();
+    </script>
+  </body>
+</html>
