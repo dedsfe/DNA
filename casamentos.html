@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Danyelle — Portfólio</title>
+    <meta name="description" content="Portfólio de direção, captura e edição de conteúdo por Danyelle Vieira." />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>▶</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+      html, body {
+        height: 100%;
+        background: #0b0b0d;
+        overflow: hidden;
+        font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .feed {
+        height: 100svh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .feed::-webkit-scrollbar { display: none; }
+
+      .slide {
+        position: relative;
+        height: 100svh;
+        scroll-snap-align: start;
+        scroll-snap-stop: always;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .slide__player {
+        position: relative;
+        height: 100svh;
+        aspect-ratio: 9 / 16;
+        max-width: 100vw;
+        background: #000;
+        overflow: hidden;
+      }
+
+      @media (min-width: 700px) {
+        .slide__player {
+          height: min(94svh, 900px);
+          border-radius: 20px;
+          box-shadow: 0 30px 90px rgba(0, 0, 0, 0.65);
+        }
+      }
+
+      .slide__video,
+      .slide__image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: #000;
+        display: block;
+      }
+
+      .slide__scrim {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 42%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.72), transparent);
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      /* Barra de progresso (só vídeo) */
+      .slide__progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 22px;
+        display: flex;
+        align-items: flex-end;
+        z-index: 5;
+        cursor: pointer;
+        touch-action: none;
+      }
+      .slide__progress-track {
+        position: relative;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        transition: height 0.15s ease;
+      }
+      .slide__progress.is-scrubbing .slide__progress-track { height: 6px; }
+      .slide__progress-fill {
+        height: 100%;
+        width: 0%;
+        background: #fff;
+        transition: width 0.1s linear;
+      }
+      .slide__progress.is-scrubbing .slide__progress-fill { transition: none; }
+      .slide__progress-knob {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+        transform: translate(-50%, -50%) scale(0);
+        transition: transform 0.15s ease;
+        pointer-events: none;
+      }
+      .slide__progress.is-scrubbing .slide__progress-knob {
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      .slide__info {
+        position: absolute;
+        left: 0;
+        right: 78px;
+        bottom: 0;
+        padding: 0 16px 24px;
+        z-index: 3;
+      }
+      .slide__handle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: #fff;
+        font-weight: 700;
+        font-size: 0.96rem;
+        text-decoration: none;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+      .slide__handle svg { width: 14px; height: 14px; opacity: 0.85; }
+      .slide__caption {
+        margin-top: 7px;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: 0.9rem;
+        line-height: 1.4;
+        text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6);
+      }
+
+      .slide__pause {
+        position: absolute;
+        inset: 0;
+        margin: auto;
+        width: 76px;
+        height: 76px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+        z-index: 4;
+      }
+      .slide.is-paused .slide__pause { opacity: 0.92; }
+      .slide__pause svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5)); }
+
+      .slide__actions {
+        position: absolute;
+        right: 10px;
+        bottom: 96px;
+        z-index: 6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
+      .action-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        color: #fff;
+        padding: 0;
+      }
+      .action-btn svg {
+        width: 36px;
+        height: 36px;
+        filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 0.55));
+        transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .action-btn:active svg { transform: scale(0.82); }
+      .action-btn__label {
+        font-size: 0.74rem;
+        font-weight: 600;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.6);
+      }
+      .action-btn.is-liked .heart-shape { fill: #ff2d55; stroke: #ff2d55; }
+      .action-btn.is-liked svg { animation: heart-pop 0.4s ease; }
+
+      @keyframes heart-pop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.35); }
+        70% { transform: scale(0.9); }
+        100% { transform: scale(1); }
+      }
+
+      .emoji-burst {
+        position: absolute;
+        z-index: 9;
+        font-size: 26px;
+        pointer-events: none;
+        will-change: transform, opacity;
+        animation: emoji-fly 1.05s ease-out forwards;
+      }
+      @keyframes emoji-fly {
+        0%   { transform: translate(-50%, -50%) translateY(0) scale(0.4) rotate(0deg); opacity: 0; }
+        18%  { opacity: 1; }
+        100% { transform: translate(-50%, -50%) translateY(-230px) translateX(var(--dx)) scale(1.1) rotate(var(--rot)); opacity: 0; }
+      }
+
+      .big-heart {
+        position: absolute;
+        z-index: 8;
+        font-size: 96px;
+        pointer-events: none;
+        animation: big-heart 0.9s ease-out forwards;
+      }
+      @keyframes big-heart {
+        0%   { transform: translate(-50%, -50%) scale(0) rotate(-18deg); opacity: 0; }
+        22%  { transform: translate(-50%, -50%) scale(1.15) rotate(-8deg); opacity: 1; }
+        70%  { transform: translate(-50%, -50%) scale(1) rotate(-8deg); opacity: 1; }
+        100% { transform: translate(-50%, -50%) scale(1.35) rotate(-8deg); opacity: 0; }
+      }
+
+      .fab {
+        position: fixed;
+        top: max(16px, env(safe-area-inset-top));
+        z-index: 20;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        color: #fff;
+        cursor: pointer;
+      }
+      .fab svg { width: 20px; height: 20px; }
+      .back { left: 16px; }
+      .mute { right: 16px; }
+      .mute .icon-on { display: none; }
+      .mute.is-on .icon-on { display: block; }
+      .mute.is-on .icon-off { display: none; }
+
+      .share-pop {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+      }
+      .share-pop.is-open { display: flex; }
+      .share-pop__card {
+        background: #1a1a1d;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 22px;
+        width: min(320px, 86vw);
+        text-align: center;
+      }
+      .share-pop__title {
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+      .share-pop__action {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+        padding: 13px 16px;
+        margin-bottom: 10px;
+        border: none;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.07);
+        color: #fff;
+        font-size: 0.92rem;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.18s ease;
+      }
+      .share-pop__action:hover { background: rgba(255, 255, 255, 0.14); }
+      .share-pop__action svg { width: 19px; height: 19px; flex-shrink: 0; }
+      .share-pop__close {
+        margin-top: 6px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* ─── HEADER card — minimalista com vídeo borrado ─── */
+      .header-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        text-align: center;
+        padding: 0 28px 72px;
+        overflow: hidden;
+        background: #000;
+      }
+      .header-card__bg-video {
+        position: absolute;
+        inset: -60px;
+        width: calc(100% + 120px);
+        height: calc(100% + 120px);
+        object-fit: cover;
+        filter: blur(40px) brightness(0.4) saturate(1.3);
+        transform: scale(1.25);
+        z-index: 0;
+        pointer-events: none;
+      }
+      .header-card__overlay {
+        position: absolute;
+        inset: 0;
+        background:
+          radial-gradient(ellipse 80% 50% at 50% 60%, transparent 0%, rgba(0,0,0,0.6) 100%),
+          linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.7) 100%);
+        z-index: 1;
+      }
+      .header-card__inner {
+        position: relative;
+        z-index: 2;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+      }
+      .header-card__eyebrow {
+        font-size: 0.62rem;
+        font-weight: 600;
+        letter-spacing: 0.5em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.45);
+        margin-bottom: 18px;
+      }
+      .header-card__title {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: clamp(2.6rem, 10vw, 3.8rem);
+        line-height: 0.96;
+        letter-spacing: -0.03em;
+        color: #fff;
+        margin-bottom: 0;
+        text-wrap: balance;
+      }
+      .header-card__title em {
+        color: #d4a87a;
+        font-style: italic;
+      }
+      .header-card__line {
+        width: 32px;
+        height: 1px;
+        background: rgba(212, 168, 122, 0.5);
+        margin: 24px 0;
+        border: none;
+      }
+      .header-card__handle {
+        font-size: 0.78rem;
+        font-weight: 500;
+        color: rgba(255,255,255,0.5);
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        transition: color 0.3s ease;
+      }
+      .header-card__handle:hover { color: #d4a87a; }
+      .header-card__hint {
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        color: rgba(255,255,255,0.35);
+        font-size: 0.6rem;
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        animation: header-nudge 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      }
+      @keyframes header-nudge {
+        0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.3; }
+        50%      { transform: translateX(-50%) translateY(6px); opacity: 0.7; }
+      }
+
+      /* CTA card — paleta romântica (gold + black) ao invés do azul do DNA */
+      .cta-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 44px 30px;
+        background: radial-gradient(ellipse 80% 60% at 50% 28%, #3b2614 0%, #0a0807 62%);
+        overflow: hidden;
+      }
+      .cta-card__glow {
+        position: absolute;
+        width: 140%;
+        aspect-ratio: 1;
+        top: -28%;
+        left: -20%;
+        background: radial-gradient(circle, rgba(184, 148, 106, 0.45) 0%, transparent 62%);
+        filter: blur(14px);
+        pointer-events: none;
+        animation: cta-float 9s ease-in-out infinite;
+      }
+      @keyframes cta-float {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        50% { transform: translate(9%, 7%) scale(1.14); }
+      }
+      .cta-card__inner {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 420px;
+      }
+      .cta-card__portrait {
+        width: 116px;
+        height: 116px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-bottom: 22px;
+        box-shadow: 0 12px 36px rgba(0,0,0,0.5);
+        border: 2px solid rgba(255,255,255,0.18);
+        background: #1a1410;
+      }
+      .cta-card__portrait img,
+      .cta-card__portrait video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .cta-card__logo {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-size: 1.8rem;
+        font-weight: 400;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .cta-card__eyebrow {
+        color: #d4a87a;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.26em;
+        margin-bottom: 16px;
+      }
+      .cta-card__title {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: clamp(2.3rem, 8.5vw, 3.1rem);
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        color: #fff;
+        margin-bottom: 18px;
+      }
+      .cta-card__title span { color: #d4a87a; }
+      .cta-card__text {
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.96rem;
+        line-height: 1.5;
+        margin-bottom: 30px;
+      }
+      .cta-card__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 16px 32px;
+        border-radius: 999px;
+        background: #fff;
+        color: #0a0807;
+        font-size: 1rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 12px 44px rgba(255, 255, 255, 0.16);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      .cta-card__btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 16px 54px rgba(255, 255, 255, 0.3);
+      }
+      .cta-card__btn svg { width: 19px; height: 19px; }
+      .cta-card__link {
+        margin-top: 20px;
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .cta-card__link:hover { color: #fff; }
+    </style>
+  </head>
+  <body>
+    <button class="fab back" aria-label="Voltar" onclick="history.length > 1 ? history.back() : (location.href = './index.html')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+
+    <button class="fab mute" id="muteBtn" aria-label="Ativar ou desativar som">
+      <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+      <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+      </svg>
+    </button>
+
+    <div class="feed" id="feed"></div>
+
+    <div class="share-pop" id="sharePop">
+      <div class="share-pop__card">
+        <div class="share-pop__title">Compartilhar</div>
+        <button class="share-pop__action" id="copyLinkBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+          </svg>
+          <span id="copyLinkLabel">Copiar link</span>
+        </button>
+        <a class="share-pop__action" id="downloadBtn" download>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>Baixar</span>
+        </a>
+        <button class="share-pop__close" id="shareCloseBtn">Fechar</button>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        // ─── Identidade da Danyelle (troque os placeholders) ───
+        const HANDLE = "@danyellevieiracc";
+        const INSTAGRAM_URL = "https://www.instagram.com/danyellevieiracc/";
+        const WHATSAPP_URL =
+          "https://wa.me/5513991863669?text=" +
+          encodeURIComponent(
+            "Oi Dany! Vi seu portfólio e quero conversar."
+          );
+        const SITE_URL = location.href;
+
+        // Fundo blurado do header (poster extraído do primeiro vídeo)
+        const HEADER_BG = "./assets/wedding-header-bg.jpg";
+
+        // ─── Mídias do portfólio (vídeos de social media — variados) ───
+        // Para cada item, defina: type ("image" ou "video"), src, caption
+        const MEDIA = [
+          { type: "video", src: "./assets/portfolio-dany-video.mp4",   caption: "Cada frame, uma decisão. Nenhuma por acaso." },
+          { type: "video", src: "./assets/wedding-01.mp4", caption: "Detalhe é o que separa anúncio de história." },
+          { type: "video", src: "./assets/wedding-02.mp4", caption: "Quando o produto precisa parecer maior do que é." },
+          { type: "video", src: "./assets/wedding-03.mp4", caption: "Direção pensa primeiro. Câmera só executa." },
+          { type: "video", src: "./assets/wedding-04.mp4", caption: "Luz fácil. Decisão difícil." },
+          { type: "video", src: "./assets/wedding-05.mp4", caption: "Movimento que prende antes da legenda carregar." },
+          { type: "video", src: "./assets/portfolio-dany-video-3.mp4", caption: "Primeiros 2 segundos: ou prende, ou perdeu." },
+          { type: "video", src: "./assets/wedding-06.mp4", caption: "Edição é narrativa. Quem não conta, só corta." },
+          { type: "video", src: "./assets/wedding-07.mp4", caption: "Câmera não é o talento. A escolha, sim." },
+          { type: "video", src: "./assets/wedding-08.mp4", caption: "Experiência se entrega no detalhe que ninguém pediu." },
+        ];
+
+        const feed = document.getElementById("feed");
+        const muteBtn = document.getElementById("muteBtn");
+        const sharePop = document.getElementById("sharePop");
+        const copyLinkBtn = document.getElementById("copyLinkBtn");
+        const copyLinkLabel = document.getElementById("copyLinkLabel");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const shareCloseBtn = document.getElementById("shareCloseBtn");
+
+        let muted = true;
+        let slideCount = 0;
+
+        const HEART_EMOJIS = ["🔥", "💖", "✨", "💕", "⚡", "🤍"];
+
+        function burstEmojis(player, x, y) {
+          for (let i = 0; i < 14; i++) {
+            const span = document.createElement("span");
+            span.className = "emoji-burst";
+            span.textContent = HEART_EMOJIS[Math.floor(Math.random() * HEART_EMOJIS.length)];
+            span.style.left = x + "px";
+            span.style.top = y + "px";
+            span.style.setProperty("--dx", (Math.random() * 160 - 80) + "px");
+            span.style.setProperty("--rot", (Math.random() * 90 - 45) + "deg");
+            span.style.animationDelay = (Math.random() * 0.12) + "s";
+            player.appendChild(span);
+            setTimeout(function () { span.remove(); }, 1300);
+          }
+        }
+
+        function bigHeart(player, x, y) {
+          const heart = document.createElement("span");
+          heart.className = "big-heart";
+          heart.textContent = "❤️";
+          heart.style.left = x + "px";
+          heart.style.top = y + "px";
+          player.appendChild(heart);
+          setTimeout(function () { heart.remove(); }, 950);
+        }
+
+        function createSlide(index) {
+          const data = MEDIA[index % MEDIA.length];
+          const isVideo = data.type === "video";
+
+          const slide = document.createElement("div");
+          slide.className = "slide";
+
+          const player = document.createElement("div");
+          player.className = "slide__player";
+
+          // Mídia (vídeo OU imagem)
+          let mediaEl;
+          if (isVideo) {
+            mediaEl = document.createElement("video");
+            mediaEl.className = "slide__video";
+            mediaEl.src = data.src + "#t=0.001";
+            mediaEl.loop = true;
+            mediaEl.muted = muted;
+            mediaEl.playsInline = true;
+            mediaEl.setAttribute("playsinline", "");
+            mediaEl.setAttribute("webkit-playsinline", "");
+            mediaEl.preload = "metadata";
+          } else {
+            mediaEl = document.createElement("img");
+            mediaEl.className = "slide__image";
+            mediaEl.src = data.src;
+            mediaEl.alt = data.caption || "";
+            mediaEl.loading = "lazy";
+          }
+
+          const scrim = document.createElement("div");
+          scrim.className = "slide__scrim";
+
+          // Pause indicator (só vídeo)
+          const pause = document.createElement("div");
+          pause.className = "slide__pause";
+          pause.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>';
+
+          // Info
+          const info = document.createElement("div");
+          info.className = "slide__info";
+          const handle = document.createElement("a");
+          handle.className = "slide__handle";
+          handle.href = INSTAGRAM_URL;
+          handle.target = "_blank";
+          handle.rel = "noopener";
+          handle.innerHTML =
+            HANDLE +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>';
+          const caption = document.createElement("p");
+          caption.className = "slide__caption";
+          caption.textContent = data.caption;
+          info.appendChild(handle);
+          info.appendChild(caption);
+
+          // Actions
+          const actions = document.createElement("div");
+          actions.className = "slide__actions";
+
+          const likeBtn = document.createElement("button");
+          likeBtn.className = "action-btn like-btn";
+          likeBtn.setAttribute("aria-label", "Curtir");
+          likeBtn.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path class="heart-shape" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+            '<span class="action-btn__label">Curtir</span>';
+
+          const shareBtn = document.createElement("button");
+          shareBtn.className = "action-btn share-btn";
+          shareBtn.setAttribute("aria-label", "Compartilhar");
+          shareBtn.innerHTML =
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+            '<span class="action-btn__label">Enviar</span>';
+
+          actions.appendChild(likeBtn);
+          actions.appendChild(shareBtn);
+
+          let liked = false;
+          function setLiked(value) {
+            liked = value;
+            likeBtn.classList.toggle("is-liked", liked);
+          }
+          function doLike() {
+            setLiked(true);
+            const rect = likeBtn.getBoundingClientRect();
+            const pRect = player.getBoundingClientRect();
+            burstEmojis(player, rect.left - pRect.left + rect.width / 2, rect.top - pRect.top + rect.height / 2);
+          }
+
+          likeBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (liked) setLiked(false);
+            else doLike();
+          });
+
+          shareBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            openShare(data.src, isVideo);
+          });
+
+          // Tap handlers
+          let lastTap = 0;
+          let tapTimer = null;
+          player.addEventListener("click", function (e) {
+            if (e.target.closest(".slide__actions") || e.target.closest(".slide__handle")) return;
+            const now = Date.now();
+            if (now - lastTap < 300) {
+              // Double tap: like
+              clearTimeout(tapTimer);
+              lastTap = 0;
+              const pRect = player.getBoundingClientRect();
+              const x = e.clientX - pRect.left;
+              const y = e.clientY - pRect.top;
+              bigHeart(player, x, y);
+              if (!liked) doLike();
+            } else {
+              // Single tap: pausa só faz sentido em vídeo
+              lastTap = now;
+              tapTimer = setTimeout(function () {
+                if (!isVideo) return;
+                if (mediaEl.paused) {
+                  mediaEl.play();
+                  slide.classList.remove("is-paused");
+                } else {
+                  mediaEl.pause();
+                  slide.classList.add("is-paused");
+                }
+              }, 300);
+            }
+          });
+
+          player.appendChild(mediaEl);
+          player.appendChild(scrim);
+
+          // Progress bar só pra vídeo
+          if (isVideo) {
+            const progress = document.createElement("div");
+            progress.className = "slide__progress";
+            const track = document.createElement("div");
+            track.className = "slide__progress-track";
+            const fill = document.createElement("div");
+            fill.className = "slide__progress-fill";
+            const knob = document.createElement("div");
+            knob.className = "slide__progress-knob";
+            track.appendChild(fill);
+            track.appendChild(knob);
+            progress.appendChild(track);
+
+            let scrubbing = false;
+            mediaEl.addEventListener("timeupdate", function () {
+              if (mediaEl.duration && !scrubbing) {
+                const pct = (mediaEl.currentTime / mediaEl.duration) * 100;
+                fill.style.width = pct + "%";
+                knob.style.left = pct + "%";
+              }
+            });
+
+            function seekFromEvent(e) {
+              const rect = track.getBoundingClientRect();
+              const ratio = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+              const pct = ratio * 100;
+              fill.style.width = pct + "%";
+              knob.style.left = pct + "%";
+              if (mediaEl.duration) mediaEl.currentTime = ratio * mediaEl.duration;
+            }
+            progress.addEventListener("pointerdown", function (e) {
+              e.stopPropagation();
+              scrubbing = true;
+              progress.classList.add("is-scrubbing");
+              try { progress.setPointerCapture(e.pointerId); } catch (err) {}
+              seekFromEvent(e);
+            });
+            progress.addEventListener("pointermove", function (e) {
+              if (scrubbing) seekFromEvent(e);
+            });
+            function endScrub() {
+              if (!scrubbing) return;
+              scrubbing = false;
+              progress.classList.remove("is-scrubbing");
+            }
+            progress.addEventListener("pointerup", endScrub);
+            progress.addEventListener("pointercancel", endScrub);
+            progress.addEventListener("click", function (e) { e.stopPropagation(); });
+
+            player.appendChild(progress);
+            player.appendChild(pause);
+          }
+
+          player.appendChild(info);
+          player.appendChild(actions);
+          slide.appendChild(player);
+          return slide;
+        }
+
+        function createHeaderSlide() {
+          const slide = document.createElement("div");
+          slide.className = "slide";
+          const player = document.createElement("div");
+          player.className = "slide__player";
+
+          // Vídeo de fundo borrado — usa o primeiro vídeo do array
+          const bgVideoSrc = MEDIA[0].src;
+
+          player.innerHTML =
+            '<div class="header-card">' +
+            '<video class="header-card__bg-video" src="' + bgVideoSrc + '" autoplay muted loop playsinline webkit-playsinline></video>' +
+            '<div class="header-card__overlay"></div>' +
+            '<div class="header-card__inner">' +
+            '<p class="header-card__eyebrow">Portfólio</p>' +
+            '<h1 class="header-card__title">Cada frame,<br><em>uma decisão.</em></h1>' +
+            '<hr class="header-card__line">' +
+            '<a class="header-card__handle" href="' + INSTAGRAM_URL + '" target="_blank" rel="noopener">' + HANDLE + '</a>' +
+            '</div>' +
+            '<span class="header-card__hint">↓ deslize</span>' +
+            '</div>';
+          slide.appendChild(player);
+          return slide;
+        }
+
+        // ─── Variações de CTA (cicla a cada aparição) ───
+        const CTA_VARIANTS = [
+          {
+            eyebrow: "Sem rodeio",
+            title: 'Gostou? <span>Imagina isso pra sua marca.</span>',
+            text: "Cada vídeo que você viu foi pensado pra prender em 2 segundos e fazer voltar pra ver de novo. Direção, captura e edição — tudo num lugar só.",
+            btn: "Falar com a Dany"
+          },
+          {
+            eyebrow: "Próximo passo",
+            title: 'Parou de scrollar, <span>né?</span>',
+            text: "Isso é o que acontece quando o conteúdo é feito com intenção. Seu público vai reagir igual. Bora conversar?",
+            btn: "Chamar no WhatsApp"
+          },
+          {
+            eyebrow: "Direto ao ponto",
+            title: 'Conteúdo bonito <span>qualquer um faz.</span>',
+            text: "Conteúdo que faz alguém parar, sentir e agir — isso é outro nível. É isso que eu entrego.",
+            btn: "Quero pra minha marca"
+          },
+          {
+            eyebrow: "Última chance",
+            title: 'Vai só assistir <span>ou vai agir?</span>',
+            text: "Enquanto você tá aqui scrollando, seu concorrente já tá gravando. Não espera o timing perfeito — ele não existe.",
+            btn: "Garantir minha vaga"
+          },
+          {
+            eyebrow: "O convite",
+            title: 'Sua marca merece <span>ser sentida.</span>',
+            text: "Não é sobre ter mais posts. É sobre ter os posts certos, com a direção certa, pro público certo.",
+            btn: "Bora conversar"
+          }
+        ];
+        let ctaIndex = 0;
+
+        function createCTASlide() {
+          const v = CTA_VARIANTS[ctaIndex % CTA_VARIANTS.length];
+          ctaIndex++;
+
+          const slide = document.createElement("div");
+          slide.className = "slide";
+          const player = document.createElement("div");
+          player.className = "slide__player";
+          const portraitHTML =
+            '<div class="cta-card__portrait">' +
+            '<img src="./assets/danyelle-img.png" alt="Danyelle" />' +
+            '</div>';
+          player.innerHTML =
+            '<div class="cta-card">' +
+            '<div class="cta-card__glow"></div>' +
+            '<div class="cta-card__inner">' +
+            portraitHTML +
+            '<div class="cta-card__logo">Danyelle</div>' +
+            '<p class="cta-card__eyebrow">' + v.eyebrow + '</p>' +
+            '<h2 class="cta-card__title">' + v.title + '</h2>' +
+            '<p class="cta-card__text">' + v.text + '</p>' +
+            '<a class="cta-card__btn" href="' + WHATSAPP_URL + '" target="_blank" rel="noopener">' +
+            '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm5.8 14.16c-.24.68-1.42 1.3-1.95 1.34-.5.05-1.13.27-3.8-.79-3.2-1.26-5.25-4.5-5.41-4.71-.16-.21-1.3-1.73-1.3-3.3 0-1.57.82-2.34 1.11-2.66.29-.32.64-.4.85-.4.21 0 .43 0 .61.01.2.01.46-.07.72.55.27.64.92 2.21 1 2.37.08.16.13.35.03.56-.1.21-.16.34-.31.53-.16.19-.33.42-.47.56-.16.16-.32.33-.14.65.18.32.8 1.32 1.72 2.14 1.18 1.05 2.18 1.38 2.49 1.54.31.16.49.13.67-.08.18-.21.77-.9.98-1.21.21-.32.42-.26.71-.16.29.11 1.83.86 2.14 1.02.31.16.52.24.6.37.08.13.08.76-.16 1.44z"/></svg>' +
+            v.btn + '</a>' +
+            '<a class="cta-card__link" href="' + INSTAGRAM_URL + '" target="_blank" rel="noopener">ou ver mais no Instagram</a>' +
+            '</div>' +
+            '</div>';
+          slide.appendChild(player);
+          return slide;
+        }
+
+        // Padrão: HEADER (uma vez) → ciclo infinito de (3 vídeos + CTA)
+        const VIDEOS_PER_CYCLE = 3;
+
+        function appendCycle() {
+          for (let i = 0; i < VIDEOS_PER_CYCLE; i++) {
+            feed.appendChild(createSlide(slideCount));
+            slideCount++;
+          }
+          feed.appendChild(createCTASlide());
+        }
+
+        feed.appendChild(createHeaderSlide());
+        appendCycle();
+        appendCycle();
+
+        // Toca apenas o vídeo visível (no-op pra slides sem vídeo)
+        const playObserver = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              const video = entry.target.querySelector("video");
+              if (!video) return;
+              if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+                video.muted = muted;
+                const p = video.play();
+                if (p && typeof p.catch === "function") {
+                  p.catch(function () {
+                    // Política de autoplay: garante mute e tenta de novo
+                    video.muted = true;
+                    video.play().catch(function () {});
+                  });
+                }
+                entry.target.classList.remove("is-paused");
+              } else if (!video.paused) {
+                video.pause();
+                entry.target.classList.remove("is-paused");
+              }
+            });
+          },
+          { threshold: [0, 0.6, 1] }
+        );
+
+        // Scroll infinito: quando faltar 3 slides pro fim, anexa novo ciclo
+        const infiniteObserver = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                infiniteObserver.unobserve(entry.target);
+                appendCycle();
+                observeAll();
+              }
+            });
+          },
+          { rootMargin: "200% 0px" }
+        );
+
+        function observeAll() {
+          const slides = feed.querySelectorAll(".slide");
+          slides.forEach(function (slide) {
+            if (!slide.dataset.observed) {
+              slide.dataset.observed = "1";
+              playObserver.observe(slide);
+            }
+          });
+          if (slides.length >= 3) {
+            const trigger = slides[slides.length - 3];
+            if (!trigger.dataset.trigger) {
+              trigger.dataset.trigger = "1";
+              infiniteObserver.observe(trigger);
+            }
+          }
+        }
+
+        observeAll();
+
+        muteBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          muted = !muted;
+          muteBtn.classList.toggle("is-on", !muted);
+          feed.querySelectorAll("video").forEach(function (v) {
+            v.muted = muted;
+          });
+        });
+
+        function openShare(mediaSrc, isVideo) {
+          const mediaUrl = new URL(mediaSrc, location.href).href;
+          if (navigator.share) {
+            navigator
+              .share({
+                title: "Danyelle — Portfólio",
+                text: "Olha esse trabalho ✨",
+                url: SITE_URL,
+              })
+              .catch(function () {});
+            return;
+          }
+          downloadBtn.href = mediaUrl;
+          downloadBtn.querySelector("span").textContent = isVideo ? "Baixar vídeo" : "Baixar imagem";
+          copyLinkLabel.textContent = "Copiar link";
+          sharePop.classList.add("is-open");
+        }
+
+        copyLinkBtn.addEventListener("click", function () {
+          navigator.clipboard
+            .writeText(SITE_URL)
+            .then(function () {
+              copyLinkLabel.textContent = "Link copiado!";
+              setTimeout(function () {
+                copyLinkLabel.textContent = "Copiar link";
+              }, 1800);
+            })
+            .catch(function () {});
+        });
+
+        function closeShare() { sharePop.classList.remove("is-open"); }
+        shareCloseBtn.addEventListener("click", closeShare);
+        sharePop.addEventListener("click", function (e) {
+          if (e.target === sharePop) closeShare();
+        });
+
+        // Header é o 1º slide — não pré-toca vídeo offscreen, deixa o
+        // IntersectionObserver disparar quando o usuário deslizar pra ele.
+      })();
+    </script>
+  </body>
+</html>
