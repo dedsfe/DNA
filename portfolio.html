@@ -155,18 +155,31 @@
         position: absolute;
         inset: 0;
         margin: auto;
-        width: 76px;
-        height: 76px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         display: flex;
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: opacity 0.2s ease;
+        transform: scale(0.85);
+        transition: opacity 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
         pointer-events: none;
         z-index: 4;
       }
-      .slide.is-paused .slide__pause { opacity: 0.92; }
-      .slide__pause svg { width: 100%; height: 100%; filter: drop-shadow(0 2px 12px rgba(0,0,0,0.5)); }
+      .slide.is-paused .slide__pause {
+        opacity: 1;
+        transform: scale(1);
+      }
+      .slide__pause svg {
+        width: 24px;
+        height: 24px;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
+      }
 
       .slide__actions {
         position: absolute;
@@ -190,12 +203,12 @@
         padding: 0;
       }
       .action-btn svg {
-        width: 36px;
-        height: 36px;
-        filter: drop-shadow(0 2px 7px rgba(0, 0, 0, 0.55));
+        width: 26px;
+        height: 26px;
+        filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5));
         transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
       }
-      .action-btn:active svg { transform: scale(0.82); }
+      .action-btn:active svg { transform: scale(0.85); }
       .action-btn__label {
         font-size: 0.74rem;
         font-weight: 600;
@@ -706,7 +719,7 @@
           const pause = document.createElement("div");
           pause.className = "slide__pause";
           pause.innerHTML =
-            '<svg viewBox="0 0 24 24" fill="#fff"><path d="M8 5h3v14H8zM13 5h3v14h-3z"/></svg>';
+            '<svg viewBox="0 0 24 24" fill="#fff" style="margin-left: 2px;"><path d="M8 5v14l11-7z"/></svg>';
 
           // Info
           const info = document.createElement("div");
@@ -733,14 +746,14 @@
           likeBtn.className = "action-btn like-btn";
           likeBtn.setAttribute("aria-label", "Curtir");
           likeBtn.innerHTML =
-            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path class="heart-shape" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.35"><path class="heart-shape" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>' +
             '<span class="action-btn__label">Curtir</span>';
 
           const shareBtn = document.createElement("button");
           shareBtn.className = "action-btn share-btn";
           shareBtn.setAttribute("aria-label", "Compartilhar");
           shareBtn.innerHTML =
-            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>' +
             '<span class="action-btn__label">Enviar</span>';
 
           actions.appendChild(likeBtn);
