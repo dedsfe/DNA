@@ -595,6 +595,8 @@
 
         // ─── Mídias do portfólio (vídeos de social media — variados) ───
         const MEDIA = [
+          { type: "video", src: "./assets/portfolio-dany-video-10.mp4", caption: "Persamento cinematográfico em formato widescreen." },
+          { type: "video", src: "./assets/portfolio-dany-video-11.mp4", caption: "Direção de cena que dita o tom e prende a atenção." },
           { type: "video", src: "./assets/portfolio-dany-video-4.mp4", caption: "Ritmo, cortes e intenção. Nada é por acaso." },
           { type: "video", src: "./assets/portfolio-dany-video-5.mp4", caption: "Vídeos que vendem sem parecer que estão vendendo." },
           { type: "video", src: "./assets/portfolio-dany-video-6.mp4", caption: "Estética alinhada à estratégia de posicionamento." },
@@ -674,12 +676,26 @@
             mediaEl.setAttribute("playsinline", "");
             mediaEl.setAttribute("webkit-playsinline", "");
             mediaEl.preload = "metadata";
+
+            // Detect landscape video to contain with black bars (like Instagram reels)
+            mediaEl.addEventListener("loadedmetadata", function () {
+              if (mediaEl.videoWidth > mediaEl.videoHeight) {
+                mediaEl.style.objectFit = "contain";
+              }
+            });
           } else {
             mediaEl = document.createElement("img");
             mediaEl.className = "slide__image";
             mediaEl.src = data.src;
             mediaEl.alt = data.caption || "";
             mediaEl.loading = "lazy";
+
+            // Detect landscape image
+            mediaEl.addEventListener("load", function () {
+              if (mediaEl.naturalWidth > mediaEl.naturalHeight) {
+                mediaEl.style.objectFit = "contain";
+              }
+            });
           }
 
           const scrim = document.createElement("div");
