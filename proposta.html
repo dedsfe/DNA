@@ -351,6 +351,81 @@
       border-color: rgba(var(--accent-gold-rgb), 0.2);
     }
 
+    .scope-card.is-deselected {
+      opacity: 0.35;
+      filter: grayscale(80%);
+      border-color: rgba(255, 255, 255, 0.03);
+      transform: scale(0.99);
+      box-shadow: none;
+    }
+
+    /* PREMIUM CHECKBOX STYLING */
+    .scope-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .premium-checkbox-container {
+      display: block;
+      position: relative;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .premium-checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .premium-checkbox-checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 24px;
+      width: 24px;
+      background-color: transparent;
+      border: 2px solid rgba(var(--accent-gold-rgb), 0.3);
+      border-radius: 6px;
+      transition: var(--transition);
+    }
+
+    .premium-checkbox-container:hover input ~ .premium-checkbox-checkmark {
+      border-color: var(--accent-gold);
+      background-color: rgba(var(--accent-gold-rgb), 0.05);
+    }
+
+    .premium-checkbox-container input:checked ~ .premium-checkbox-checkmark {
+      background-color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 10px rgba(var(--accent-gold-rgb), 0.3);
+    }
+
+    .premium-checkbox-checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .premium-checkbox-container input:checked ~ .premium-checkbox-checkmark:after {
+      display: block;
+    }
+
+    .premium-checkbox-container .premium-checkbox-checkmark:after {
+      left: 8px;
+      top: 4px;
+      width: 5px;
+      height: 10px;
+      border: solid var(--bg-dark);
+      border-width: 0 2.5px 2.5px 0;
+      transform: rotate(45deg);
+    }
+
     .scope-header {
       display: flex;
       justify-content: space-between;
@@ -641,8 +716,13 @@
       .print-trigger-btn, 
       .accept-btn,
       .scope-price-badge:empty,
-      #errorScreen {
-        display: none !important; /* Esconde botões, luzes e telas auxiliares */
+      #errorScreen,
+      .premium-checkbox-container {
+        display: none !important; /* Esconde botões, luzes, caixas de seleção e telas auxiliares */
+      }
+
+      .scope-select-wrap {
+        gap: 0 !important;
       }
 
       .container {
@@ -1231,13 +1311,9 @@
       document.getElementById('sigClientCompany').textContent = data.company || 'Empresa Cliente';
 
       // Popular Cards Métricas
-      document.getElementById('metricTotal').textContent = data.total || 'Sob Consulta';
       document.getElementById('metricDeadline').textContent = data.deadline || 'A definir';
       document.getElementById('metricValidity').textContent = data.validity || 'A definir';
 
-      // Popular Sessão Financeira
-      document.getElementById('financialTotal').innerHTML = `${data.total || 'Sob Consulta'} <span>*</span>`;
-      
       // Popular Apresentação (Apenas se preenchido)
       const introSection = document.getElementById('introSection');
       if (data.intro && data.intro.trim() !== '') {
@@ -1324,11 +1400,17 @@
           }
           
           const itemHtml = `
-            <div class="scope-card">
+            <div class="scope-card" id="scopeCard_${index}">
               <div class="scope-header">
-                <div class="scope-number-title">
-                  <span class="scope-num">SERVIÇO // ${itemNum}</span>
-                  <h3 class="scope-title">${item.title}</h3>
+                <div class="scope-select-wrap">
+                  <label class="premium-checkbox-container">
+                    <input type="checkbox" checked onchange="toggleScopeItem(${index})" data-price="${item.price}" class="scope-checkbox">
+                    <span class="premium-checkbox-checkmark"></span>
+                  </label>
+                  <div class="scope-number-title">
+                    <span class="scope-num">SERVIÇO // ${itemNum}</span>
+                    <h3 class="scope-title">${item.title}</h3>
+                  </div>
                 </div>
                 ${priceBadge}
               </div>
@@ -1341,17 +1423,179 @@
         });
       }
 
-      // Configurar CTA de Aceite WhatsApp
-      const whatsappNumber = data.whatsapp || '5513991863669';
-      const companyNameEncoded = encodeURIComponent(data.company || '');
-      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyNameEncoded} e gostaria de dar o aceite oficial para darmos início!`;
-      const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-      
-      const acceptBtn = document.getElementById('acceptBtn');
-      acceptBtn.href = waLink;
+      // Realizar o primeiro cálculo de investimento com base nas seleções iniciais
+      calculateScopeTotals();
 
       // Exibir página da Proposta
       document.getElementById('proposalView').style.display = 'block';
+    }
+
+    // --- FUNÇÕES DE CÁLCULO E INTERATIVIDADE (ITERAÇÃO 3) ---
+
+    function toggleScopeItem(index) {
+      const card = document.getElementById(`scopeCard_${index}`);
+      if (!card) return;
+      
+      const cb = card.querySelector('.scope-checkbox');
+      if (cb) {
+        if (cb.checked) {
+          card.classList.remove('is-deselected');
+        } else {
+          card.classList.add('is-deselected');
+        }
+      }
+      
+      calculateScopeTotals();
+    }
+
+    function parsePriceString(priceStr) {
+      if (!priceStr) return 0;
+      let cleaned = priceStr.toLowerCase().replace(/\s/g, '');
+      if (!/\d/.test(cleaned)) {
+        return 0;
+      }
+      cleaned = cleaned.replace(/r\$/g, '');
+      
+      const matches = cleaned.match(/[0-9.,]+/);
+      if (!matches) return 0;
+      
+      let numStr = matches[0];
+      const hasComma = numStr.includes(',');
+      const hasDot = numStr.includes('.');
+      
+      if (hasComma && hasDot) {
+        numStr = numStr.replace(/\./g, '').replace(/,/g, '.');
+      } else if (hasComma) {
+        numStr = numStr.replace(/,/g, '.');
+      } else if (hasDot) {
+        const parts = numStr.split('.');
+        const lastPart = parts[parts.length - 1];
+        if (lastPart.length === 3 && parts.length === 2) {
+          numStr = numStr.replace(/\./g, '');
+        }
+      }
+      
+      const parsed = parseFloat(numStr);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    function isMonthlyPrice(priceStr) {
+      if (!priceStr) return false;
+      const lower = priceStr.toLowerCase();
+      return lower.includes('mês') || lower.includes('mensal') || lower.includes('/m') || lower.includes('recorrente');
+    }
+
+    function calculateScopeTotals() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      let oneOffTotal = 0;
+      let monthlyTotal = 0;
+      
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const priceStr = cb.getAttribute('data-price');
+          const value = parsePriceString(priceStr);
+          if (isMonthlyPrice(priceStr)) {
+            monthlyTotal += value;
+          } else {
+            oneOffTotal += value;
+          }
+        }
+      });
+      
+      const formatCurrency = (val) => {
+        return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+      };
+      
+      const totalBlock = document.getElementById('financialTotal');
+      const headerTotalBlock = document.getElementById('metricTotal');
+      
+      let totalHtml = '';
+      let simpleText = '';
+      
+      if (oneOffTotal === 0 && monthlyTotal === 0) {
+        const rawTotal = data.total || 'Sob consulta';
+        totalHtml = `${rawTotal} <span>*</span>`;
+        simpleText = rawTotal;
+        updateWhatsAppCTAWithFallback(rawTotal);
+      } else {
+        if (oneOffTotal > 0 && monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span> + ${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)} + ${formatCurrency(monthlyTotal)}/mês`;
+        } else if (oneOffTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)}`;
+        } else if (monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(monthlyTotal)}/mês`;
+        }
+        
+        updateWhatsAppCTADynamic(oneOffTotal, monthlyTotal);
+      }
+      
+      if (totalBlock) totalBlock.innerHTML = totalHtml;
+      if (headerTotalBlock) headerTotalBlock.textContent = simpleText;
+    }
+
+    function updateWhatsAppCTAWithFallback(rawTotal) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyName} e gostaria de dar o aceite oficial para darmos início!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        acceptBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
+    }
+
+    function updateWhatsAppCTADynamic(oneOff, monthly) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      
+      const checkedCards = [];
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const card = cb.closest('.scope-card');
+          const title = card.querySelector('.scope-title').textContent;
+          checkedCards.push(title);
+        }
+      });
+      
+      const servicesList = checkedCards.map(s => `• ${s}`).join('\n');
+      
+      let priceText = '';
+      if (oneOff > 0 && monthly > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único) + R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      } else if (oneOff > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único)`;
+      } else if (monthly > 0) {
+        priceText = `R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      }
+      
+      const message = `Olá! Acabei de aprovar a proposta da DNA Studio para o projeto da ${companyName}!\n\n*Escopo Selecionado:*\n${servicesList}\n\n*Investimento:* ${priceText}\n\nGostaria de dar o aceite oficial e prosseguir!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        acceptBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
     }
   </script>
 </body>

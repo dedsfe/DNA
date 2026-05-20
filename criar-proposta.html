@@ -612,6 +612,17 @@ Aumentar conversão e oportunidades de venda</textarea>
               <input type="text" id="whatsappContact" value="5513991863669" placeholder="Apenas números com DDD (Ex: 5513991863669)" required>
             </div>
             <div class="form-group full-width">
+              <label for="paymentPreset">Carregar Condições de Pagamento (Template)</label>
+              <select id="paymentPreset" onchange="applyPaymentPreset(this.value)">
+                <option value="">-- Personalizado (Em Branco) --</option>
+                <option value="site_recorrente">Site (Único) + Marketing Recorrente Mensal</option>
+                <option value="site_parcelado">Site: 50% de entrada + 50% na entrega</option>
+                <option value="marketing_mensal">Marketing Digital: Mensal Recorrente</option>
+                <option value="marketing_anual">Marketing Digital: Contrato Anual (Cobrança Mensal)</option>
+                <option value="unico_desconto">Pagamento Único Integral (com 10% de desconto à vista)</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
               <label for="paymentConditions">Condições de Pagamento Detalhadas (PDF &amp; Web) — Um por linha</label>
               <textarea id="paymentConditions" style="min-height: 100px;" placeholder="Ex: Valor do site: 1x de R$ 1.000&#10;Marketing cobrado mensalmente&#10;Data de pagamento definida entre as partes" required></textarea>
             </div>
@@ -645,6 +656,47 @@ Aumentar conversão e oportunidades de venda</textarea>
     const SECRET_KEY = "dna2026";
     const STORAGE_KEY = "dna_proposal_dashboard_auth";
 
+    const SERVICE_PRESETS = {
+      site: {
+        title: "Sites que convertem (Site Profissional)",
+        price: "R$ 1.500 (único)",
+        desc: "Landing page completa de alto padrão\nDesign responsivo e otimizado para celulares\nSeções de apresentação, serviços e FAQ\nFormulário de contato inteligente\nIntegração com WhatsApp e redes sociais\nCopywriting focado em alta conversão\nSEO básico e velocidade de carregamento"
+      },
+      redes: {
+        title: "Redes Sociais que vendem (Gestão de Redes)",
+        price: "R$ 1.200/mês",
+        desc: "Criação de cronograma e linha editorial mensal\nProdução e edição de posts para Feed (Imagens/Carrosséis)\nDirecionamento de gravação e roteirização de Reels/TikToks\nEdição profissional de vídeos curtos\nPlanejamento de Stories de engajamento diário\nOrganização visual e estética do perfil\nAcompanhamento semanal de métricas"
+      },
+      branding: {
+        title: "Branding & identidade (Branding Completo)",
+        price: "R$ 2.000 (único)",
+        desc: "Estudo de posicionamento estratégico de marca\nLogotipo principal, secundário e variações\nDefinição de paleta de cores e tipografia de luxo\nManual de identidade visual completo\nTemplates editáveis para redes sociais\nDesign de cartões de visitas ou materiais físicos básicos\nDirecionamento estético e guia de tom de voz"
+      },
+      estrategia: {
+        title: "Estratégia digital (Tráfego & Consultoria)",
+        price: "R$ 900/mês",
+        desc: "Planejamento de funil de vendas digital\nConfiguração de contas de anúncios (Meta & Google Ads)\nCriação e otimização de campanhas de tráfego pago\nTestes de público, criativos e segmentação\nRelatório mensal detalhado de custos e retorno (ROI)\nReunião mensal de consultoria e alinhamento tático"
+      },
+      apps: {
+        title: "Apps & experiências web (Sistemas sob Medida)",
+        price: "Sob consulta",
+        desc: "Desenvolvimento de sistema web exclusivo\nArquitetura de banco de dados robusta e segura\nPainel administrativo completo\nIntegrações com APIs externas e gateways de pagamento\nFluxo de trabalho personalizado sob medida\nHospedagem escalável e manutenção inclusa"
+      },
+      eventos: {
+        title: "Conteúdo para eventos (Cobertura Digital)",
+        price: "Sob consulta",
+        desc: "Planejamento de cobertura e cronograma do evento\nCaptação de imagens e vídeos no local (Mobile/Câmera)\nCriação e postagem de Stories em tempo real\nEdição e publicação de Reels resumo durante o evento\nDirecionamento estético das publicações no dia\nEntrega de acervo bruto pós-evento"
+      }
+    };
+
+    const PAYMENT_PRESETS = {
+      site_recorrente: "Valor do site profissional: 1x único de R$ 1.500\nGestão de Redes Sociais cobrada mensalmente (R$ 1.200/mês)\nData de pagamento mensal definida entre as partes\nVencimento no dia 10 de cada mês",
+      site_parcelado: "50% de entrada no aceite da proposta (R$ 750)\n50% restante na entrega do projeto aprovado (R$ 750)\nPagamento via Pix ou boleto bancário",
+      marketing_mensal: "Mensalidade de Marketing: R$ 1.200/mês cobrado mensalmente\nFaturamento recorrente todo dia 05\nSem fidelidade contratual, cancelamento com 30 dias de aviso prévio",
+      marketing_anual: "Fidelidade contratual de 12 meses (Anual)\nValor recorrente de R$ 900/mês cobrado mensalmente\nFaturamento todo dia 05 via boleto ou cartão\nMulta de rescisão antecipada de 20% do valor restante",
+      unico_desconto: "Pagamento único integral no ato do aceite\nDesconto de 10% aplicado para pagamento à vista\nValor total final líquido com desconto: R$ X.XXX\nPagamento via transferência Pix ou boleto"
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
       const isAuth = sessionStorage.getItem(STORAGE_KEY) === "true" || localStorage.getItem(STORAGE_KEY) === "true";
       if (isAuth) {
@@ -652,10 +704,11 @@ Aumentar conversão e oportunidades de venda</textarea>
       }
 
       // Pre-fill standard payment conditions based on common PDF patterns
-      document.getElementById('paymentConditions').value = "Valor do site: 1x de R$ 1.000\nMarketing cobrado mensalmente\nData de pagamento definida entre as partes";
+      document.getElementById('paymentConditions').value = PAYMENT_PRESETS.site_recorrente;
 
       // Adiciona o primeiro item de escopo por padrão com preenchimento sugestivo
-      addScopeItem("Site Profissional", "Página profissional completa e responsiva\nSistema de agendamento\nÁrea de serviços e pacotes\nSessão 'Sobre você'\nDepoimentos\nFAQ\nIntegração com Instagram\nBotão para WhatsApp\nÁrea interativa", "R$ 1.000 (único)");
+      const sitePreset = SERVICE_PRESETS.site;
+      addScopeItem(sitePreset.title, sitePreset.desc, sitePreset.price);
     });
 
     function handleLogin(event) {
@@ -700,6 +753,18 @@ Aumentar conversão e oportunidades de venda</textarea>
             ${scopeItemCounter > 1 ? `<button type="button" class="remove-item-btn" onclick="removeScopeItem(${scopeItemCounter})">Remover</button>` : ''}
           </div>
           <div class="form-grid">
+            <div class="form-group full-width">
+              <label>Carregar de um Template (Opcional — Preenchimento Rápido)</label>
+              <select class="scope-preset" onchange="loadPresetToItem(${scopeItemCounter}, this.value)">
+                <option value="">-- Personalizado (Em Branco) --</option>
+                <option value="site">Sites que convertem (Site Profissional) — R$ 1.500 (único)</option>
+                <option value="redes">Redes Sociais que vendem (Gestão de Redes) — R$ 1.200/mês</option>
+                <option value="branding">Branding &amp; identidade (Branding Completo) — R$ 2.000 (único)</option>
+                <option value="estrategia">Estratégia digital (Tráfego &amp; Consultoria) — R$ 900/mês</option>
+                <option value="apps">Apps &amp; experiências web (Sistemas sob Medida) — Sob consulta</option>
+                <option value="eventos">Conteúdo para eventos (Cobertura Digital) — Sob consulta</option>
+              </select>
+            </div>
             <div class="form-group">
               <label>Nome do Serviço (Ex: GESTÃO DE MARKETING)</label>
               <input type="text" class="scope-title" placeholder="Ex: Gestão de Marketing" value="${title}" required>
@@ -722,6 +787,33 @@ Aumentar conversão e oportunidades de venda</textarea>
       const item = document.getElementById(`scopeItem_${id}`);
       if (item) {
         item.remove();
+      }
+    }
+
+    function loadPresetToItem(id, presetKey) {
+      const item = document.getElementById(`scopeItem_${id}`);
+      if (!item) return;
+      
+      const titleInput = item.querySelector('.scope-title');
+      const priceInput = item.querySelector('.scope-price');
+      const descInput = item.querySelector('.scope-desc');
+      
+      if (!presetKey) {
+        return;
+      }
+      
+      const preset = SERVICE_PRESETS[presetKey];
+      if (preset) {
+        titleInput.value = preset.title;
+        priceInput.value = preset.price;
+        descInput.value = preset.desc;
+      }
+    }
+
+    function applyPaymentPreset(key) {
+      const textarea = document.getElementById('paymentConditions');
+      if (key && PAYMENT_PRESETS[key]) {
+        textarea.value = PAYMENT_PRESETS[key];
       }
     }
 
