@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta Comercial — DNA Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-card: #0f0f13;
+      --accent-gold: #d4a87a;
+      --accent-gold-rgb: 212, 168, 122;
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.7);
+      --text-muted: rgba(255, 255, 255, 0.45);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --max-width: 840px;
+      --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding: 4rem 1rem 6rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Ambient lights */
+    .ambient-light {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(var(--accent-gold-rgb), 0.04) 0%, rgba(0, 0, 0, 0) 70%);
+      top: -150px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ERROR STATE SCREEN */
+    .error-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 60vh;
+      padding: 2rem;
+    }
+
+    .error-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 3rem;
+      font-style: italic;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
+
+    .error-desc {
+      color: var(--text-secondary);
+      max-width: 400px;
+      margin-bottom: 2rem;
+    }
+
+    /* MAIN PROPOSAL VIEW */
+    .proposal-view {
+      display: none; /* Shown dynamically if URL parameter exists */
+      animation: proposalFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes proposalFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* AGENCY HEADER BRANDING */
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+    }
+
+    .brand-logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--text-primary);
+    }
+
+    .brand-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* HERO COVER */
+    .proposal-hero {
+      margin-bottom: 4rem;
+    }
+
+    .proposal-meta {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .proposal-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(3rem, 6vw, 4.5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+    }
+
+    .proposal-client-card {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      border-left: 2px solid var(--accent-gold);
+      padding-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .client-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .client-company {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .client-name {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+    }
+
+    /* METRICS / STATS GRID */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 4.5rem;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .metric-card:hover {
+      border-color: rgba(var(--accent-gold-rgb), 0.3);
+      transform: translateY(-2px);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .metric-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .metric-value.highlight-gold {
+      color: var(--accent-gold);
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      font-weight: 400;
+    }
+
+    /* SECTION LAYOUT */
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.25rem;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--accent-gold);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: var(--border-color);
+    }
+
+    /* SCOPE ITEMS */
+    .scope-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+
+    .scope-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 2.25rem;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .scope-card:hover {
+      border-color: rgba(var(--accent-gold-rgb), 0.2);
+    }
+
+    .scope-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.25rem;
+      gap: 1rem;
+    }
+
+    .scope-number-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .scope-num {
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--accent-gold);
+      font-weight: 600;
+    }
+
+    .scope-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .scope-price-badge {
+      padding: 0.4rem 0.85rem;
+      background-color: rgba(var(--accent-gold-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.15);
+      color: var(--accent-gold);
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .scope-description {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.65;
+      white-space: pre-line; /* Preserves newlines formatted in generator */
+    }
+
+    /* FINANCIAL CONDITIONS */
+    .financials-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .financials-section::before {
+      content: "";
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(var(--accent-gold-rgb), 0.03) 0%, rgba(0, 0, 0, 0) 70%);
+      top: -150px;
+      right: -150px;
+      pointer-events: none;
+    }
+
+    .financial-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .total-invest-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.5rem;
+    }
+
+    .total-invest-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .total-invest-value {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .total-invest-value span {
+      color: var(--accent-gold);
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .payment-conditions-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .payment-label {
+      font-size: 0.85rem;
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-gold);
+    }
+
+    .payment-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    /* SIGNATURE BLOCK FOR PDF */
+    .print-signatures {
+      display: none; /* Only visible in print */
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      margin-top: 5rem;
+      margin-bottom: 3rem;
+    }
+
+    .sig-line {
+      border-top: 1px solid #000000;
+      padding-top: 0.5rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #333333;
+    }
+
+    .sig-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      color: #000000;
+    }
+
+    /* FOOTER ACTIONS (CTA & PDF) */
+    .proposal-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 3rem;
+    }
+
+    .accept-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 420px;
+      padding: 1.25rem;
+      background-color: var(--text-primary);
+      color: var(--bg-dark);
+      text-decoration: none;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+      border: 1px solid transparent;
+    }
+
+    .accept-btn:hover {
+      background-color: var(--accent-gold);
+      color: var(--bg-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(212, 168, 122, 0.2);
+    }
+
+    .accept-btn svg {
+      transition: transform 0.3s ease;
+    }
+
+    .accept-btn:hover svg {
+      transform: translateX(3px);
+    }
+
+    .print-trigger-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.75rem 1.5rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: var(--transition);
+    }
+
+    .print-trigger-btn:hover {
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+    }
+
+    .disclaimer {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 480px;
+      line-height: 1.5;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       MEDIA PRINT (IMPRESSÃO PDF PERFEITA A4)
+       ═══════════════════════════════════════════════════ */
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm 20mm 20mm 20mm;
+      }
+
+      body {
+        background-color: #ffffff !important;
+        color: #050505 !important;
+        padding: 0 !important;
+        font-size: 11pt;
+        line-height: 1.5;
+      }
+
+      .ambient-light, 
+      .proposal-actions, 
+      .print-trigger-btn, 
+      .accept-btn,
+      .scope-price-badge:empty {
+        display: none !important; /* Hide non-printable UI elements */
+      }
+
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .brand-header {
+        border-bottom: 2px solid #111111 !important;
+        margin-bottom: 3rem !important;
+        padding-bottom: 1rem !important;
+      }
+
+      .brand-logo {
+        color: #000000 !important;
+        font-size: 18pt !important;
+      }
+
+      .brand-tag {
+        color: #555555 !important;
+      }
+
+      .proposal-meta {
+        color: #8c6239 !important; /* Elegant darker gold for print readability */
+        font-weight: 700 !important;
+      }
+
+      .proposal-title {
+        color: #000000 !important;
+        font-size: 32pt !important;
+        line-height: 1.1 !important;
+        margin-bottom: 2.5rem !important;
+      }
+
+      .proposal-client-card {
+        border-left: 3px solid #8c6239 !important;
+        padding-left: 1.5rem !important;
+        margin-bottom: 3rem !important;
+      }
+
+      .client-label {
+        color: #555555 !important;
+      }
+
+      .client-company {
+        color: #000000 !important;
+        font-size: 15pt !important;
+      }
+
+      .client-name {
+        color: #333333 !important;
+      }
+
+      /* METRICS IN PRINT */
+      .metrics-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1.5rem !important;
+        margin-bottom: 3.5rem !important;
+      }
+
+      .metric-card {
+        background-color: #f9f9fb !important;
+        border: 1px solid #e1e1e6 !important;
+        border-radius: 12px !important;
+        padding: 1.25rem !important;
+      }
+
+      .metric-label {
+        color: #555555 !important;
+      }
+
+      .metric-value {
+        color: #000000 !important;
+        font-size: 13pt !important;
+      }
+
+      .metric-value.highlight-gold {
+        color: #8c6239 !important;
+        font-size: 18pt !important;
+      }
+
+      /* SECTIONS */
+      .section-title {
+        color: #8c6239 !important;
+        font-size: 20pt !important;
+        margin-top: 2.5rem !important;
+        margin-bottom: 1.5rem !important;
+        page-break-after: avoid;
+      }
+
+      .section-title::after {
+        background-color: #dddddd !important;
+      }
+
+      /* SCOPE CARDS IN PRINT */
+      .scope-list {
+        gap: 1.5rem !important;
+        margin-bottom: 3rem !important;
+      }
+
+      .scope-card {
+        background-color: #ffffff !important;
+        border: 1px solid #e1e1e6 !important;
+        border-radius: 12px !important;
+        padding: 1.75rem !important;
+        page-break-inside: avoid !important; /* Prevents split cards across pages */
+      }
+
+      .scope-title {
+        color: #000000 !important;
+        font-size: 13pt !important;
+      }
+
+      .scope-price-badge {
+        background-color: #f5f5f7 !important;
+        border: 1px solid #d1d1d6 !important;
+        color: #444444 !important;
+        font-size: 9pt !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .scope-description {
+        color: #333333 !important;
+        font-size: 10pt !important;
+      }
+
+      /* FINANCIALS */
+      .financials-section {
+        background-color: #f9f9fb !important;
+        border: 1px solid #e1e1e6 !important;
+        border-radius: 14px !important;
+        padding: 2rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .total-invest-block {
+        border-bottom: 1px solid #dddddd !important;
+        padding-bottom: 1.25rem !important;
+      }
+
+      .total-invest-label {
+        color: #555555 !important;
+      }
+
+      .total-invest-value {
+        color: #000000 !important;
+        font-size: 28pt !important;
+      }
+
+      .total-invest-value span {
+        color: #8c6239 !important;
+      }
+
+      .payment-label {
+        color: #8c6239 !important;
+      }
+
+      .payment-text {
+        color: #333333 !important;
+        font-size: 10pt !important;
+      }
+
+      /* SIGNATURES PRINT ONLY */
+      .print-signatures {
+        display: grid !important;
+        page-break-inside: avoid !important;
+      }
+    }
+
+    /* RESPONSIVE DIGITAL LAYOUT */
+    @media (max-width: 768px) {
+      body {
+        padding: 2rem 1rem 4rem 1rem;
+      }
+      .brand-header {
+        margin-bottom: 2.5rem;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .scope-card {
+        padding: 1.5rem;
+      }
+      .scope-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+      .scope-price-badge {
+        align-self: flex-start;
+      }
+      .financials-section {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AMBIENT DESIGN GLOW -->
+  <div class="ambient-light"></div>
+
+  <div class="container">
+    
+    <!-- TELA DE ERRO (URL SEM DADOS) -->
+    <div class="error-screen" id="errorScreen">
+      <div class="error-title">Proposta Inexistente</div>
+      <div class="error-desc">
+        O link que você está tentando acessar está incompleto ou não contém os parâmetros de dados necessários.
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">DNA Studio — Praia Grande, SP</p>
+    </div>
+
+    <!-- PÁGINA DA PROPOSTA OFICIAL -->
+    <main class="proposal-view" id="proposalView">
+      
+      <!-- CABEÇALHO BRANDING -->
+      <header class="brand-header">
+        <div class="brand-logo">DNA</div>
+        <div class="brand-tag">Estúdio de Design &amp; Estratégia</div>
+      </header>
+
+      <!-- HERO CAPA -->
+      <section class="proposal-hero">
+        <div class="proposal-meta">Proposta Comercial</div>
+        <h1 class="proposal-title" id="propTitle">Aceleração Digital</h1>
+        
+        <div class="proposal-client-card">
+          <span class="client-label">Preparado especialmente para</span>
+          <span class="client-company" id="clientCompany">Empresa Cliente</span>
+          <span class="client-name" id="clientContact">Aos cuidados de Felipe Silveira</span>
+        </div>
+      </section>
+
+      <!-- MÉTRICAS PRINCIPAIS -->
+      <section class="metrics-grid">
+        <div class="metric-card">
+          <span class="metric-label">Investimento Total</span>
+          <span class="metric-value highlight-gold" id="metricTotal">R$ 0,00</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Prazo Estimado</span>
+          <span class="metric-value" id="metricDeadline">30 dias</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Validade Proposta</span>
+          <span class="metric-value" id="metricValidity">7 dias</span>
+        </div>
+      </section>
+
+      <!-- ESCOPO DETALHADO -->
+      <section class="proposal-section">
+        <h2 class="section-title">Escopo de Trabalho</h2>
+        <div class="scope-list" id="scopeContainer">
+          <!-- Os cartões de escopo dinâmicos serão inseridos aqui -->
+        </div>
+      </section>
+
+      <!-- CONDIÇÕES FINANCEIRAS -->
+      <section class="proposal-section">
+        <h2 class="section-title">Valores &amp; Pagamento</h2>
+        <div class="financials-section">
+          <div class="financial-grid">
+            <div class="total-invest-block">
+              <span class="total-invest-label">Investimento Global</span>
+              <span class="total-invest-value" id="financialTotal">R$ 0,00 <span>*</span></span>
+            </div>
+            <div class="payment-conditions-block">
+              <span class="payment-label">Condições de Pagamento</span>
+              <p class="payment-text" id="financialConditions">
+                Condições customizadas a serem carregadas dinamicamente...
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO) -->
+      <div class="print-signatures">
+        <div class="sig-card">
+          <div class="sig-line">
+            <div class="sig-title">DNA Estúdio de Design &amp; Estratégia</div>
+            Representante Oficial DNA
+          </div>
+        </div>
+        <div class="sig-card">
+          <div class="sig-line">
+            <div class="sig-title" id="sigClientCompany">Nome da Empresa</div>
+            Aceite do Cliente / Responsável
+          </div>
+        </div>
+      </div>
+
+      <!-- AÇÕES FINAIS (WHATSAPP E PDF) -->
+      <footer class="proposal-actions">
+        <a href="#" class="accept-btn" id="acceptBtn" target="_blank" rel="noopener">
+          Aceitar Proposta &amp; Iniciar Projeto
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        
+        <button class="print-trigger-btn" onclick="window.print()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Salvar como PDF / Imprimir
+        </button>
+
+        <p class="disclaimer">
+          Ao clicar em "Aceitar Proposta", você será direcionado ao WhatsApp da nossa equipe de coordenação de projetos para formalizar as assinaturas e agendar a reunião de Kickoff.
+        </p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    // Decodificação Base64 com suporte UTF-8 total
+    function b64_to_utf8(str) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (err) {
+        console.error("Falha ao decodificar Base64", err);
+        return null;
+      }
+    }
+
+    // Carregar dados da URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+
+      if (!dataParam) {
+        showErrorScreen();
+        return;
+      }
+
+      // Decodificar payload
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) {
+        showErrorScreen();
+        return;
+      }
+
+      try {
+        const proposal = JSON.parse(decodedJson);
+        renderProposal(proposal);
+      } catch (err) {
+        console.error("Falha ao parsear JSON", err);
+        showErrorScreen();
+      }
+    });
+
+    function showErrorScreen() {
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    function renderProposal(data) {
+      // Popular Metadados da Proposta
+      document.getElementById('propTitle').textContent = data.title || 'Proposta Comercial';
+      document.getElementById('clientCompany').textContent = data.company || 'Empresa Cliente';
+      document.getElementById('clientContact').textContent = `Aos cuidados de: ${data.contact || ''}`;
+      
+      // Assinatura Print
+      document.getElementById('sigClientCompany').textContent = data.company || 'Empresa Cliente';
+
+      // Popular Cards Métricas
+      document.getElementById('metricTotal').textContent = data.total || 'Sob Consulta';
+      document.getElementById('metricDeadline').textContent = data.deadline || 'A definir';
+      document.getElementById('metricValidity').textContent = data.validity || 'A definir';
+
+      // Popular Sessão Financeira
+      document.getElementById('financialTotal').innerHTML = `${data.total || 'Sob Consulta'} <span>*</span>`;
+      document.getElementById('financialConditions').textContent = data.payment || '';
+
+      // Popular Lista de Escopos
+      const container = document.getElementById('scopeContainer');
+      container.innerHTML = ''; // Limpar default
+
+      if (data.items && Array.isArray(data.items)) {
+        data.items.forEach((item, index) => {
+          const itemNum = String(index + 1).padStart(2, '0');
+          const priceBadge = item.price ? `<span class="scope-price-badge">${item.price}</span>` : '';
+          
+          const itemHtml = `
+            <div class="scope-card">
+              <div class="scope-header">
+                <div class="scope-number-title">
+                  <span class="scope-num">ENTREGA // ${itemNum}</span>
+                  <h3 class="scope-title">${item.title}</h3>
+                </div>
+                ${priceBadge}
+              </div>
+              <p class="scope-description">${item.desc}</p>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', itemHtml);
+        });
+      }
+
+      // Configurar CTA de Aceite WhatsApp
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyNameEncoded = encodeURIComponent(data.company || '');
+      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyNameEncoded} e gostaria de dar o aceite oficial para darmos início!`;
+      const waLink = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      acceptBtn.href = waLink;
+
+      // Exibir página da Proposta
+      document.getElementById('proposalView').style.display = 'block';
+    }
+  </script>
+</body>
+</html>

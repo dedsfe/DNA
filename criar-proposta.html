@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Proposta Comercial — DNA Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #070709;
+      --bg-panel: #111115;
+      --bg-input: #181820;
+      --accent-gold: #d4a87a;
+      --accent-gold-hover: #e5b98b;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(212, 168, 122, 0.4);
+      --text-primary: #ffffff;
+      --text-secondary: rgba(255, 255, 255, 0.6);
+      --text-muted: rgba(255, 255, 255, 0.35);
+      --success: #2ab25e;
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Subtle background glow */
+    body::before {
+      content: "";
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(212, 168, 122, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+      top: -100px;
+      left: -100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(36, 91, 161, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
+      bottom: -100px;
+      right: -100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* LOCK SCREEN ACCESSO */
+    .lock-screen {
+      position: fixed;
+      inset: 0;
+      background-color: var(--bg-dark);
+      z-index: 10000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 1;
+      visibility: visible;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .lock-screen.unlocked {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .lock-card {
+      width: 100%;
+      max-width: 380px;
+      padding: 2.5rem;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      z-index: 10;
+    }
+
+    .lock-logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .lock-title {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+    }
+
+    .password-input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .password-input {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      letter-spacing: 0.2rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .password-input:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px var(--border-focus);
+    }
+
+    .lock-btn {
+      width: 100%;
+      padding: 1rem;
+      background-color: var(--text-primary);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lock-btn:hover {
+      background-color: var(--accent-gold);
+      transform: translateY(-1px);
+    }
+
+    .error-msg {
+      color: #ff4a4a;
+      font-size: 0.85rem;
+      margin-top: 0.75rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* DASHBOARD WRAPPER */
+    .dashboard-wrapper {
+      width: 100%;
+      max-width: 900px;
+      z-index: 1;
+      opacity: 0;
+      transform: scale(0.98);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dashboard-wrapper.visible {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    header.dashboard-header {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .header-left h1 {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.75rem;
+      font-weight: 400;
+      font-style: italic;
+      letter-spacing: -0.01em;
+      color: var(--accent-gold);
+      line-height: 1.1;
+    }
+
+    .header-left p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover {
+      border-color: var(--text-secondary);
+      color: var(--text-primary);
+    }
+
+    /* FORMS & PANELS */
+    .panel {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-title span {
+      color: var(--accent-gold);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      letter-spacing: 0.02em;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px var(--border-focus);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    /* DINAMIC SCOPE ITEMS */
+    .scope-item {
+      background-color: rgba(255, 255, 255, 0.02);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      position: relative;
+      animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scope-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .scope-item-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--accent-gold);
+    }
+
+    .remove-item-btn {
+      background: transparent;
+      border: none;
+      color: #ff4a4a;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      opacity: 0.7;
+      transition: var(--transition);
+    }
+
+    .remove-item-btn:hover {
+      opacity: 1;
+    }
+
+    .add-item-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 1rem;
+      background-color: transparent;
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: var(--transition);
+    }
+
+    .add-item-btn:hover {
+      border-color: var(--accent-gold);
+      color: var(--text-primary);
+      background-color: rgba(212, 168, 122, 0.02);
+    }
+
+    /* ACTION SECTION & LINK DISPLAY */
+    .actions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 1.15rem;
+      background-color: var(--accent-gold);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(212, 168, 122, 0.25);
+    }
+
+    .generate-btn:hover {
+      background-color: var(--accent-gold-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(212, 168, 122, 0.35);
+    }
+
+    .generate-btn:active {
+      transform: translateY(0);
+    }
+
+    .result-container {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.75rem;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .result-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .link-box-wrapper {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .link-box {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      background-color: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--accent-gold);
+      font-family: monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      white-space: nowrap;
+      outline: none;
+    }
+
+    .copy-btn {
+      background-color: var(--text-primary);
+      color: var(--bg-dark);
+      border: none;
+      border-radius: 8px;
+      padding: 0 1.25rem;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--accent-gold);
+    }
+
+    .copy-success-indicator {
+      font-size: 0.8rem;
+      color: var(--success);
+      align-self: flex-end;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+      .panel {
+        padding: 1.5rem;
+      }
+      header.dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .logout-btn {
+        align-self: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE ACESSO COM SENHA -->
+  <div class="lock-screen" id="lockScreen">
+    <div class="lock-card">
+      <div class="lock-logo">DNA</div>
+      <div class="lock-title">Painel de Propostas DNA Studio</div>
+      <form id="lockForm" onsubmit="handleLogin(event)">
+        <div class="password-input-group">
+          <input type="password" id="passwordField" class="password-input" placeholder="••••" required autocomplete="current-password">
+          <div class="error-msg" id="errorMsg">Senha incorreta. Tente novamente.</div>
+        </div>
+        <button type="submit" class="lock-btn">Acessar Painel</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div class="dashboard-wrapper" id="dashboardWrapper">
+    <header class="dashboard-header">
+      <div class="header-left">
+        <h1>Gerador de Proposta</h1>
+        <p>DNA — Estúdio de Design & Estratégia</p>
+      </div>
+      <button class="logout-btn" onclick="handleLogout()">Bloquear Painel</button>
+    </header>
+
+    <form id="proposalForm" onsubmit="generateProposal(event)">
+      <!-- CLIENTE INFO -->
+      <div class="panel">
+        <h2 class="panel-title"><span>01.</span> Identificação do Cliente</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="clientCompany">Empresa / Projeto</label>
+            <input type="text" id="clientCompany" placeholder="Ex: Loft Incorporações" required>
+          </div>
+          <div class="form-group">
+            <label for="clientName">Nome do Contato</label>
+            <input type="text" id="clientName" placeholder="Ex: Felipe Silveira" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="projectTitle">Título da Proposta</label>
+            <input type="text" id="projectTitle" placeholder="Ex: Proposta de Website Premium & Tráfego Pago" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESCOPO DO PROJETO (DINÂMICO) -->
+      <div class="panel">
+        <h2 class="panel-title"><span>02.</span> Escopo de Trabalho & Entregas</h2>
+        <div id="scopeItemsContainer">
+          <!-- Os itens de escopo dinâmicos entrarão aqui -->
+        </div>
+        <button type="button" class="add-item-btn" onclick="addScopeItem()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Adicionar Serviço ao Escopo
+        </button>
+      </div>
+
+      <!-- INVESTIMENTO E CONDIÇÕES -->
+      <div class="panel">
+        <h2 class="panel-title"><span>03.</span> Prazos e Condições Comerciais</h2>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="projectDeadline">Prazo de Entrega</label>
+            <input type="text" id="projectDeadline" placeholder="Ex: 30 a 45 dias úteis" required>
+          </div>
+          <div class="form-group">
+            <label for="proposalValidity">Validade da Proposta</label>
+            <input type="text" id="proposalValidity" placeholder="Ex: 7 dias corridos" required>
+          </div>
+          <div class="form-group">
+            <label for="projectTotal">Valor Total (R$)</label>
+            <input type="text" id="projectTotal" placeholder="Ex: R$ 8.500,00" required>
+          </div>
+          <div class="form-group">
+            <label for="whatsappContact">WhatsApp do Contato DNA</label>
+            <input type="text" id="whatsappContact" value="5513991863669" placeholder="Apenas números com DDD (Ex: 5513991863669)" required>
+          </div>
+          <div class="form-group full-width">
+            <label for="paymentConditions">Condições de Pagamento</label>
+            <textarea id="paymentConditions" placeholder="Ex: 50% de sinal + 50% na aprovação do design, ou em até 6x no cartão de crédito via link." required></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- AÇÕES -->
+      <div class="panel actions-panel">
+        <button type="submit" class="generate-btn">Gerar Link Oficial da Proposta</button>
+
+        <div class="result-container" id="resultContainer">
+          <div class="result-title">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            Proposta compilada e codificada com sucesso!
+          </div>
+          <div class="link-box-wrapper">
+            <div class="link-box" id="linkBox" readonly></div>
+            <button type="button" class="copy-btn" onclick="copyLink()">Copiar</button>
+          </div>
+          <div class="copy-success-indicator" id="copySuccessIndicator">Link copiado para a área de transferência!</div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Configuração de segurança simples
+    const SECRET_KEY = "dna2026"; // Senha para acesso
+    const STORAGE_KEY = "dna_proposal_dashboard_auth";
+
+    // Verificar se já está logado
+    window.addEventListener('DOMContentLoaded', () => {
+      const isAuth = sessionStorage.getItem(STORAGE_KEY) === "true" || localStorage.getItem(STORAGE_KEY) === "true";
+      if (isAuth) {
+        unlockDashboard();
+      }
+
+      // Adiciona o primeiro item de escopo por padrão
+      addScopeItem();
+    });
+
+    function handleLogin(event) {
+      event.preventDefault();
+      const pwd = document.getElementById('passwordField').value;
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (pwd === SECRET_KEY) {
+        errorMsg.style.opacity = '0';
+        sessionStorage.setItem(STORAGE_KEY, "true");
+        localStorage.setItem(STORAGE_KEY, "true");
+        unlockDashboard();
+      } else {
+        errorMsg.style.opacity = '1';
+        document.getElementById('passwordField').value = '';
+        document.getElementById('passwordField').focus();
+      }
+    }
+
+    function unlockDashboard() {
+      document.getElementById('lockScreen').classList.add('unlocked');
+      document.getElementById('dashboardWrapper').classList.add('visible');
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById('lockScreen').classList.remove('unlocked');
+      document.getElementById('dashboardWrapper').classList.remove('visible');
+      document.getElementById('passwordField').value = '';
+    }
+
+    // Gerenciador de itens de escopo
+    let scopeItemCounter = 0;
+
+    function addScopeItem(title = "", desc = "", price = "") {
+      scopeItemCounter++;
+      const container = document.getElementById('scopeItemsContainer');
+      const itemHtml = `
+        <div class="scope-item" id="scopeItem_${scopeItemCounter}">
+          <div class="scope-item-header">
+            <span class="scope-item-title">Item de Escopo #${scopeItemCounter}</span>
+            ${scopeItemCounter > 1 ? `<button type="button" class="remove-item-btn" onclick="removeScopeItem(${scopeItemCounter})">Remover</button>` : ''}
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Nome do Serviço / Entrega</label>
+              <input type="text" class="scope-title" placeholder="Ex: Identidade Visual Completa" value="${title}" required>
+            </div>
+            <div class="form-group">
+              <label>Valor deste Item (Opcional)</label>
+              <input type="text" class="scope-price" placeholder="Ex: R$ 3.500,00 ou Incluso" value="${price}">
+            </div>
+            <div class="form-group full-width">
+              <label>O que está incluído (Descrição)</label>
+              <textarea class="scope-desc" placeholder="Ex: Logomarca, manual de marca, paleta de cores, tipografia e 3 variações de mockups." required>${desc}</textarea>
+            </div>
+          </div>
+        </div>
+      `;
+      container.insertAdjacentHTML('beforeend', itemHtml);
+    }
+
+    function removeScopeItem(id) {
+      const item = document.getElementById(`scopeItem_${id}`);
+      if (item) {
+        item.remove();
+      }
+    }
+
+    // Codificação Base64 robusta suportando acentuação UTF-8 em português
+    function utf8_to_b64(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function generateProposal(event) {
+      event.preventDefault();
+
+      // Pegar dados essenciais
+      const company = document.getElementById('clientCompany').value.trim();
+      const contact = document.getElementById('clientName').value.trim();
+      const title = document.getElementById('projectTitle').value.trim();
+      const deadline = document.getElementById('projectDeadline').value.trim();
+      const validity = document.getElementById('proposalValidity').value.trim();
+      const total = document.getElementById('projectTotal').value.trim();
+      const whatsapp = document.getElementById('whatsappContact').value.trim();
+      const payment = document.getElementById('paymentConditions').value.trim();
+
+      // Pegar itens do escopo
+      const scopeItems = [];
+      const titleInputs = document.querySelectorAll('.scope-title');
+      const priceInputs = document.querySelectorAll('.scope-price');
+      const descInputs = document.querySelectorAll('.scope-desc');
+
+      for (let i = 0; i < titleInputs.length; i++) {
+        scopeItems.push({
+          title: titleInputs[i].value.trim(),
+          price: priceInputs[i].value.trim(),
+          desc: descInputs[i].value.trim()
+        });
+      }
+
+      // Montar objeto final
+      const proposalData = {
+        company,
+        contact,
+        title,
+        deadline,
+        validity,
+        total,
+        whatsapp,
+        payment,
+        items: scopeItems,
+        timestamp: Date.now()
+      };
+
+      // Codificar em Base64
+      const jsonStr = JSON.stringify(proposalData);
+      const base64Data = utf8_to_b64(jsonStr);
+
+      // Gerar link absoluto baseado no host atual
+      const currentUrl = window.location.origin;
+      // vercel.json has cleanUrls, so we point to /proposta
+      const proposalLink = `${currentUrl}/proposta?d=${base64Data}`;
+
+      // Exibir resultado
+      const resultContainer = document.getElementById('resultContainer');
+      const linkBox = document.getElementById('linkBox');
+      
+      linkBox.textContent = proposalLink;
+      resultContainer.style.display = 'flex';
+      
+      // Scroll suave até o resultado
+      resultContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function copyLink() {
+      const linkBox = document.getElementById('linkBox');
+      const selection = window.getSelection();
+      const range = document.createRange();
+      range.selectNodeContents(linkBox);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      
+      try {
+        navigator.clipboard.writeText(linkBox.textContent).then(() => {
+          showCopySuccess();
+        }).catch(() => {
+          // Fallback em navegadores mais antigos
+          document.execCommand('copy');
+          showCopySuccess();
+        });
+      } catch (err) {
+        document.execCommand('copy');
+        showCopySuccess();
+      }
+    }
+
+    function showCopySuccess() {
+      const indicator = document.getElementById('copySuccessIndicator');
+      indicator.style.opacity = '1';
+      setTimeout(() => {
+        indicator.style.opacity = '0';
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
