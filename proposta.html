@@ -14,25 +14,25 @@
   
   <style>
     :root {
-      --page-bg: #f5f5f7;
-      --surface-card: #ffffff;
-      --surface-input: #f8fafc;
-      --surface-soft: rgba(255, 255, 255, 0.82);
-      --ink-primary: #0a1628;
-      --ink-secondary: rgba(10, 22, 40, 0.7);
-      --ink-muted: rgba(10, 22, 40, 0.45);
-      --accent-blue: #245ba1;
-      --accent-blue-rgb: 36, 91, 161;
-      --accent-blue-hover: #1b4983;
-      --accent-blue-soft: rgba(36, 91, 161, 0.05);
-      --accent-blue-ring: rgba(36, 91, 161, 0.12);
-      --accent-gold: #dbe7f5;
-      --accent-gold-rgb: 219, 231, 245;
-      --accent-gold-soft: rgba(36, 91, 161, 0.05);
-      --accent-gold-dark: #245ba1;
-      --surface-warm: #fafaf8;
-      --border-color: rgba(10, 22, 40, 0.08);
-      --border-strong: rgba(10, 22, 40, 0.14);
+      --page-bg: #050508;
+      --surface-card: #0c0d12;
+      --surface-input: #12141c;
+      --surface-soft: rgba(12, 13, 18, 0.82);
+      --ink-primary: #ffffff;
+      --ink-secondary: #a0a5b5;
+      --ink-muted: #626875;
+      --accent-blue: #3b7cd3;
+      --accent-blue-rgb: 59, 124, 211;
+      --accent-blue-hover: #4a8deb;
+      --accent-blue-soft: rgba(59, 124, 211, 0.1);
+      --accent-blue-ring: rgba(59, 124, 211, 0.2);
+      --accent-gold: #d4a87a;
+      --accent-gold-rgb: 212, 168, 122;
+      --accent-gold-soft: rgba(212, 168, 122, 0.1);
+      --accent-gold-dark: #d4a87a;
+      --surface-warm: #0c0d12;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
       --success: #10b981;
       --error: #ef4444;
       --radius-sm: 8px;
@@ -194,11 +194,6 @@
       overflow: hidden;
       box-shadow: var(--shadow-lg);
       background-color: var(--surface-card);
-      background-image:
-        linear-gradient(to right, rgba(10, 22, 40, 0.018) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(10, 22, 40, 0.018) 1px, transparent 1px),
-        radial-gradient(circle at top right, rgba(36, 91, 161, 0.06) 0%, transparent 32%),
-        linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 250, 252, 0.99) 100%);
       background-size: 48px 48px, 48px 48px, auto, auto;
       animation: proposalFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
@@ -348,13 +343,13 @@
     }
 
     .metric-card {
-      display: flex;
+display: flex;
       flex-direction: column;
       gap: 0.55rem;
       padding: 1.5rem;
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-color);
-      background: rgba(255, 255, 255, 0.88);
+      background: var(--surface-input);
       box-shadow: var(--shadow-md);
       transition: var(--transition);
       break-inside: avoid;
@@ -415,10 +410,8 @@
       background: linear-gradient(90deg, rgba(10, 22, 40, 0.09) 0%, transparent 100%);
     }
 
-    .intro-card,
-    .financials-section,
-    .signature-section {
-      background: rgba(255, 255, 255, 0.92);
+    .intro-card, .financials-section, .signature-section {
+      background: var(--surface-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-md);
@@ -457,13 +450,13 @@
     }
 
     .objective-card {
-      display: flex;
+display: flex;
       align-items: flex-start;
       gap: 1rem;
       padding: 1.4rem 1.3rem;
       border-radius: var(--radius);
       border: 1px solid var(--border-color);
-      background: rgba(255, 255, 255, 0.85);
+      background: var(--surface-input);
       box-shadow: var(--shadow-sm);
       transition: var(--transition);
       break-inside: avoid;
@@ -510,7 +503,7 @@
     }
 
     .scope-card {
-      background: linear-gradient(180deg, #ffffff 0%, var(--surface-input) 100%);
+      background: var(--surface-card);
       border: 1px solid var(--border-color);
       border-left: 4px solid rgba(var(--accent-blue-rgb), 0.2);
       border-radius: var(--radius-lg);
@@ -551,7 +544,7 @@
     .scope-card.is-deselected {
       opacity: 0.45;
       filter: grayscale(0.35);
-      border-left-color: rgba(10, 22, 40, 0.14);
+      border-left-color: var(--ink-secondary);
       box-shadow: none;
     }
 
@@ -864,7 +857,7 @@
       max-width: 520px;
       padding: 1.4rem;
       border-radius: var(--radius);
-      background: rgba(255, 255, 255, 0.88);
+      background: var(--surface-input);
       border: 1px solid rgba(var(--accent-blue-rgb), 0.16);
       box-shadow: var(--shadow-sm);
     }
@@ -992,8 +985,8 @@
     .proposal-sheet {
       width: min(100%, 820px);
       min-height: 1120px;
-      background: #ffffff;
-      border: 1px solid rgba(var(--accent-blue-rgb), 0.14);
+      background: var(--surface-card);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.14);
       box-shadow: 0 20px 50px rgba(10, 22, 40, 0.08);
       padding: 3.2rem 3rem;
       position: relative;
@@ -1051,7 +1044,7 @@
       font-size: 0.68rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(10, 22, 40, 0.45);
+      color: var(--ink-secondary);
       font-weight: 700;
       text-align: right;
     }
@@ -1072,13 +1065,13 @@
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      color: #1d2238;
+      color: var(--ink-primary);
       margin-bottom: 0.9rem;
     }
 
     .cover-subtitle {
       font-size: 1.15rem;
-      color: rgba(10, 22, 40, 0.66);
+      color: var(--ink-secondary);
       margin-bottom: 1.6rem;
     }
 
@@ -1104,20 +1097,20 @@
       flex-direction: column;
       justify-content: center;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.99) 0%, rgba(36,91,161,0.025) 100%);
+      background: var(--surface-input);
     }
 
     .cover-card-title {
       font-size: 1rem;
       font-weight: 800;
-      color: #1d2238;
+      color: var(--ink-primary);
       margin-bottom: 0.8rem;
     }
 
     .cover-card-meta,
     .cover-card-detail {
       font-size: 0.92rem;
-      color: rgba(10, 22, 40, 0.68);
+      color: var(--ink-secondary);
       margin-bottom: 0.65rem;
     }
 
@@ -1136,13 +1129,13 @@
       gap: 0.6rem;
       align-items: center;
       text-align: center;
-      color: rgba(10, 22, 40, 0.68);
+      color: var(--ink-secondary);
       font-size: 0.98rem;
       line-height: 1.65;
     }
 
     .sheet-section-bar {
-      background: linear-gradient(135deg, var(--ink-primary) 0%, #17355f 100%);
+      background: linear-gradient(135deg, var(--surface-input) 0%, #0c0d12 100%); border-bottom: 1px solid var(--border-color);
       color: #ffffff;
       font-size: 0.92rem;
       font-weight: 800;
@@ -1161,7 +1154,7 @@
 
     .package-card {
       border: 1.5px solid rgba(var(--accent-blue-rgb), 0.18);
-      background: linear-gradient(180deg, rgba(255,255,255,0.99) 0%, rgba(36,91,161,0.022) 100%);
+      background: linear-gradient(180deg, var(--surface-input) 0%, rgba(36,91,161,0.022) 100%);
       padding: 1.25rem 1.3rem 1.1rem;
       display: flex;
       flex-direction: column;
@@ -1200,7 +1193,7 @@
 
     .package-checkbox:checked {
       background: #1f2037;
-      border-color: #1f2037;
+      border-color: var(--ink-primary);
     }
 
     .package-checkbox:checked::after {
@@ -1222,13 +1215,13 @@
     .package-title {
       font-size: 1rem;
       font-weight: 800;
-      color: #1f2037;
+      color: var(--ink-primary);
       line-height: 1.3;
     }
 
     .package-subline {
       font-size: 0.82rem;
-      color: rgba(10, 22, 40, 0.58);
+      color: var(--ink-secondary);
       font-style: italic;
       margin-top: 0.2rem;
     }
@@ -1247,7 +1240,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.34rem;
-      color: rgba(10, 22, 40, 0.78);
+      color: var(--ink-secondary);
       font-size: 0.87rem;
       line-height: 1.45;
     }
@@ -1261,7 +1254,7 @@
       content: '•';
       position: absolute;
       left: 0;
-      color: #1f2037;
+      color: var(--ink-primary);
     }
 
     .notes-layout {
@@ -1287,7 +1280,7 @@
     }
 
     .notes-text {
-      color: rgba(10, 22, 40, 0.74);
+      color: var(--ink-secondary);
       font-size: 0.9rem;
       line-height: 1.6;
     }
@@ -1303,7 +1296,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.45rem;
-      color: rgba(10, 22, 40, 0.76);
+      color: var(--ink-secondary);
       font-size: 0.88rem;
       line-height: 1.5;
     }
@@ -1325,7 +1318,7 @@
       padding-top: 1rem;
       text-align: center;
       font-size: 0.95rem;
-      color: rgba(10, 22, 40, 0.66);
+      color: var(--ink-secondary);
       font-style: italic;
     }
 
@@ -1349,7 +1342,7 @@
 
     .signature-copy {
       text-align: center;
-      color: rgba(10, 22, 40, 0.7);
+      color: var(--ink-secondary);
       font-size: 0.98rem;
       line-height: 1.65;
       max-width: 540px;
@@ -1373,13 +1366,13 @@
       font-size: 0.76rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: rgba(10, 22, 40, 0.5);
+      color: var(--ink-secondary);
       font-weight: 700;
       margin-bottom: 0.6rem;
     }
 
     .signature-meta-value {
-      color: #1f2037;
+      color: var(--ink-primary);
       font-size: 1rem;
       line-height: 1.5;
       font-weight: 700;
@@ -1402,7 +1395,7 @@
 
     .signature-title {
       text-align: left;
-      color: #1f2037;
+      color: var(--ink-primary);
       font-size: 1.1rem;
       font-weight: 800;
     }
@@ -1439,7 +1432,7 @@
 
     .signature-footer-note {
       text-align: center;
-      color: rgba(10, 22, 40, 0.62);
+      color: var(--ink-secondary);
       font-size: 0.9rem;
       line-height: 1.6;
       font-style: italic;
@@ -1529,6 +1522,10 @@
     }
 
     @media (max-width: 768px) {
+      .cover-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .metrics-grid, .objectives-grid, .signature-header, .notes-columns, .signature-meta-grid { grid-template-columns: 1fr !important; }
+      .client-meta-grid { grid-template-columns: 1fr !important; }
+      .proposal-sheet { padding: 1.5rem 1rem !important; min-height: auto; width: 100%; border: none; box-shadow: none; }
       .page-wrapper {
         padding: 1.5rem 1rem 4rem;
       }
