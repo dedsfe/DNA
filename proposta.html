@@ -649,6 +649,7 @@
       height: 200px;
       display: block;
       cursor: crosshair;
+      touch-action: none;
     }
 
     .signature-actions {
@@ -1716,6 +1717,15 @@
     document.addEventListener("DOMContentLoaded", () => {
       const canvas = document.getElementById('signaturePad');
       if (canvas && window.SignaturePad) {
+        function resizeCanvas() {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
         signaturePad = new SignaturePad(canvas, {
           penColor: "rgb(0, 0, 0)",
           backgroundColor: "rgb(255, 255, 255)"
@@ -1754,40 +1764,20 @@
         document.getElementById('printSignatureBox').style.display = 'block';
       }
       
-      const element = document.getElementById('proposalView');
-      
-      const opt = {
-        margin:       10,
-        filename:     'Proposta_DNA_Studio.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#070709' },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-
-      const ambient = document.querySelector('.ambient-light');
-      const actions = document.querySelector('.proposal-actions');
-      if(ambient) ambient.style.display = 'none';
-      if(actions) actions.style.display = 'none';
-      
-      document.getElementById('acceptBtnText').innerHTML = 'Gerando PDF...';
+      document.getElementById('acceptBtnText').innerHTML = 'Preparando Documento...';
       if(document.getElementById('acceptBtnIcon')) document.getElementById('acceptBtnIcon').style.display = 'none';
       
-      try {
-        await html2pdf().set(opt).from(element).save();
-      } catch (err) {
-        console.error("Erro ao gerar PDF", err);
-      }
-      
-      if(ambient) ambient.style.display = 'block';
-      if(actions) actions.style.display = 'flex';
-      
-      document.getElementById('acceptBtnText').innerHTML = 'Documento Salvo! Abrindo WhatsApp...';
-      
       setTimeout(() => {
-        if (window.currentWhatsappUrl) {
-          window.location.href = window.currentWhatsappUrl;
-        }
-      }, 1000);
+        window.print();
+        
+        document.getElementById('acceptBtnText').innerHTML = 'Documento Salvo! Abrindo WhatsApp...';
+        
+        setTimeout(() => {
+          if (window.currentWhatsappUrl) {
+            window.location.href = window.currentWhatsappUrl;
+          }
+        }, 1500);
+      }, 500);
     }
   </script>
 </body>
