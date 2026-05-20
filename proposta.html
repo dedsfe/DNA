@@ -8,6 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Bibliotecas Externas -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
   <style>
     :root {
       --bg-dark: #070709;
@@ -603,7 +607,86 @@
       line-height: 1.6;
     }
 
-    /* SIGNATURE BLOCK FOR PDF */
+    /* SIGNATURE BLOCK */
+    .signature-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .signature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-align: center;
+    }
+
+    .signature-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 400px;
+    }
+
+    .signature-pad-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 2px solid var(--border-color);
+      position: relative;
+    }
+    
+    .signature-pad-container canvas {
+      width: 100%;
+      height: 200px;
+      display: block;
+      cursor: crosshair;
+    }
+
+    .signature-actions {
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+      max-width: 500px;
+      justify-content: space-between;
+    }
+    
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .clear-btn:hover {
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+    }
+
+    .print-signature-box {
+      display: none;
+    }
+    
+    .print-signature-img {
+      max-width: 300px;
+      max-height: 120px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* SIGNATURE BLOCK FOR PDF NATIVO */
     .print-signatures {
       display: none; /* Only visible in print */
     }
@@ -638,6 +721,12 @@
       transition: var(--transition);
       box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
       border: 1px solid transparent;
+    }
+
+    .accept-btn.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      filter: grayscale(100%);
     }
 
     .accept-btn:hover {
@@ -1222,7 +1311,26 @@
           </div>
         </section>
 
-        <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO) -->
+        <!-- SIGNATURE BLOCK -->
+        <div class="signature-section" id="signatureSection">
+          <h3 class="signature-title">Assinatura Eletrônica</h3>
+          <p class="signature-subtitle">Desenhe sua assinatura no quadro abaixo para validar a aprovação do escopo selecionado e gerar o documento oficial.</p>
+          <div class="signature-pad-container">
+            <canvas id="signaturePad" width="500" height="200"></canvas>
+          </div>
+          <div class="signature-actions">
+            <button type="button" class="clear-btn" id="clearSignatureBtn">Limpar Assinatura</button>
+            <span style="color: #ff4a4a; font-size: 0.85rem; display: none; margin-top: 8px;" id="signatureError">Assinatura obrigatória</span>
+          </div>
+          
+          <!-- Elemento visível apenas no PDF renderizado -->
+          <div class="print-signature-box" id="printSignatureBox">
+            <img src="" id="printSignatureImg" class="print-signature-img" alt="Assinatura">
+            <p style="color: #555; font-size: 0.75rem; margin-top: 0.5rem;" id="printSignatureName">Assinado eletronicamente via DNA Studio</p>
+          </div>
+        </div>
+
+        <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO NATIVA) -->
         <div class="print-signatures" id="printSignatures">
           <div class="sig-block-title">ASSINATURA</div>
           <div class="sig-lines-container">
@@ -1234,9 +1342,9 @@
 
         <!-- AÇÕES FINAIS (WHATSAPP E PDF) -->
         <footer class="proposal-actions">
-          <a href="#" class="accept-btn" id="acceptBtn" target="_blank" rel="noopener">
-            Aceitar Proposta &amp; Iniciar Projeto
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <a href="#" class="accept-btn" id="acceptBtn" rel="noopener">
+            <span id="acceptBtnText">Aceitar Proposta &amp; Iniciar Projeto</span>
+            <svg id="acceptBtnIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12"></line>
               <polyline points="12 5 19 12 12 19"></polyline>
             </svg>
@@ -1518,12 +1626,17 @@
       let totalHtml = '';
       let simpleText = '';
       
+      const acceptBtn = document.getElementById('acceptBtn');
       if (oneOffTotal === 0 && monthlyTotal === 0) {
-        const rawTotal = data.total || 'Sob consulta';
-        totalHtml = `${rawTotal} <span>*</span>`;
-        simpleText = rawTotal;
-        updateWhatsAppCTAWithFallback(rawTotal);
+        totalHtml = `R$ 0,00 <span>*</span>`;
+        simpleText = `Nenhum serviço selecionado`;
+        if (acceptBtn) {
+          acceptBtn.classList.add('disabled');
+        }
       } else {
+        if (acceptBtn) {
+          acceptBtn.classList.remove('disabled');
+        }
         if (oneOffTotal > 0 && monthlyTotal > 0) {
           totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span> + ${formatCurrency(monthlyTotal)}<span>/mês</span>`;
           simpleText = `${formatCurrency(oneOffTotal)} + ${formatCurrency(monthlyTotal)}/mês`;
@@ -1555,7 +1668,7 @@
       
       const acceptBtn = document.getElementById('acceptBtn');
       if (acceptBtn) {
-        acceptBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
       }
     }
 
@@ -1594,8 +1707,87 @@
       
       const acceptBtn = document.getElementById('acceptBtn');
       if (acceptBtn) {
-        acceptBtn.href = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
       }
+    }
+
+    let signaturePad;
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      const canvas = document.getElementById('signaturePad');
+      if (canvas && window.SignaturePad) {
+        signaturePad = new SignaturePad(canvas, {
+          penColor: "rgb(0, 0, 0)",
+          backgroundColor: "rgb(255, 255, 255)"
+        });
+        
+        document.getElementById('clearSignatureBtn').addEventListener('click', () => {
+          signaturePad.clear();
+          document.getElementById('signatureError').style.display = 'none';
+        });
+      }
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', handleAcceptAndPDF);
+      }
+    });
+
+    async function handleAcceptAndPDF(e) {
+      e.preventDefault();
+      
+      if (document.getElementById('acceptBtn').classList.contains('disabled')) return;
+      
+      if (signaturePad && signaturePad.isEmpty()) {
+        document.getElementById('signatureError').style.display = 'inline-block';
+        document.getElementById('signatureSection').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      
+      document.getElementById('signatureError').style.display = 'none';
+      
+      if (signaturePad) {
+        const dataUrl = signaturePad.toDataURL();
+        document.getElementById('printSignatureImg').src = dataUrl;
+        document.getElementById('signaturePad').parentElement.style.display = 'none';
+        document.getElementById('clearSignatureBtn').style.display = 'none';
+        document.getElementById('printSignatureBox').style.display = 'block';
+      }
+      
+      const element = document.getElementById('proposalView');
+      
+      const opt = {
+        margin:       10,
+        filename:     'Proposta_DNA_Studio.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#070709' },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      const ambient = document.querySelector('.ambient-light');
+      const actions = document.querySelector('.proposal-actions');
+      if(ambient) ambient.style.display = 'none';
+      if(actions) actions.style.display = 'none';
+      
+      document.getElementById('acceptBtnText').innerHTML = 'Gerando PDF...';
+      if(document.getElementById('acceptBtnIcon')) document.getElementById('acceptBtnIcon').style.display = 'none';
+      
+      try {
+        await html2pdf().set(opt).from(element).save();
+      } catch (err) {
+        console.error("Erro ao gerar PDF", err);
+      }
+      
+      if(ambient) ambient.style.display = 'block';
+      if(actions) actions.style.display = 'flex';
+      
+      document.getElementById('acceptBtnText').innerHTML = 'Documento Salvo! Abrindo WhatsApp...';
+      
+      setTimeout(() => {
+        if (window.currentWhatsappUrl) {
+          window.location.href = window.currentWhatsappUrl;
+        }
+      }, 1000);
     }
   </script>
 </body>

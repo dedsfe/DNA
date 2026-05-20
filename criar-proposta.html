@@ -562,8 +562,27 @@
           <h2 class="panel-title"><span>02.</span> Apresentação &amp; Objetivos (PDF &amp; Web)</h2>
           <div class="form-grid">
             <div class="form-group full-width">
+              <label for="introPreset">Template de Apresentação</label>
+              <select id="introPreset" onchange="applyPreset('proposalIntro', INTRO_PRESETS, this.value)">
+                <option value="">-- Escolher Template (Ou preencher manual) --</option>
+                <option value="padrao">Padrão (Marketing e Design)</option>
+                <option value="luxo">Luxo (Posicionamento Premium)</option>
+                <option value="tech">Tech (Sistemas e Apps)</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
               <label for="proposalIntro">Apresentação Institucional</label>
               <textarea id="proposalIntro" required>A Agência DNA atua na criação de estratégias digitais completas, unindo marketing, design e tecnologia para transformar perfis e marcas em ferramentas reais de geração de clientes e vendas.</textarea>
+            </div>
+            
+            <div class="form-group full-width">
+              <label for="objectivePreset">Template de Objetivos</label>
+              <select id="objectivePreset" onchange="applyPreset('proposalObjectives', OBJECTIVE_PRESETS, this.value)">
+                <option value="">-- Escolher Template (Ou preencher manual) --</option>
+                <option value="conversao">Foco em Vendas e Conversão</option>
+                <option value="branding">Foco em Branding e Posicionamento</option>
+                <option value="tech">Foco em Sistemas e Automação</option>
+              </select>
             </div>
             <div class="form-group full-width">
               <label for="proposalObjectives">Objetivos do Projeto (Um por linha)</label>
@@ -596,6 +615,16 @@ Aumentar conversão e oportunidades de venda</textarea>
           <h2 class="panel-title"><span>04.</span> Prazos e Condições Comerciais</h2>
           <div class="form-grid">
             <div class="form-group">
+              <label for="deadlinePreset">Template de Prazo</label>
+              <select id="deadlinePreset" onchange="applyPreset('projectDeadline', DEADLINE_PRESETS, this.value)">
+                <option value="">-- Escolher Template --</option>
+                <option value="rapido">15 dias úteis</option>
+                <option value="padrao">30 dias úteis</option>
+                <option value="longo">45 dias úteis</option>
+                <option value="sob_medida">Sob Medida / A definir no cronograma</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label for="projectDeadline">Prazo de Entrega</label>
               <input type="text" id="projectDeadline" placeholder="Ex: 30 dias úteis" required>
             </div>
@@ -604,12 +633,22 @@ Aumentar conversão e oportunidades de venda</textarea>
               <input type="text" id="proposalValidity" placeholder="Ex: 7 dias corridos" required>
             </div>
             <div class="form-group">
-              <label for="projectTotal">Valor Total / Condição Resumida (Exibido nos Cards)</label>
-              <input type="text" id="projectTotal" placeholder="Ex: R$ 1.850,00" required>
-            </div>
-            <div class="form-group">
               <label for="whatsappContact">WhatsApp do Contato DNA</label>
               <input type="text" id="whatsappContact" value="5513991863669" placeholder="Apenas números com DDD (Ex: 5513991863669)" required>
+            </div>
+            <div class="form-group">
+              <label for="projectTotalNum">Valor Total Recomendado (Número)</label>
+              <input type="text" id="projectTotalNum" placeholder="Ex: R$ 1.850,00" required>
+            </div>
+            <div class="form-group">
+              <label for="projectTotalRecurrence">Tipo de Cobrança Total</label>
+              <select id="projectTotalRecurrence">
+                <option value="(único)">Único</option>
+                <option value="/mês">Mensal</option>
+                <option value="/ano">Anual</option>
+                <option value="/semana">Semanal</option>
+                <option value="">Sem sufixo</option>
+              </select>
             </div>
             <div class="form-group full-width">
               <label for="paymentPreset">Carregar Condições de Pagamento (Template)</label>
@@ -697,6 +736,25 @@ Aumentar conversão e oportunidades de venda</textarea>
       unico_desconto: "Pagamento único integral no ato do aceite\nDesconto de 10% aplicado para pagamento à vista\nValor total final líquido com desconto: R$ X.XXX\nPagamento via transferência Pix ou boleto"
     };
 
+    const INTRO_PRESETS = {
+      padrao: "A Agência DNA atua na criação de estratégias digitais completas, unindo marketing, design e tecnologia para transformar perfis e marcas em ferramentas reais de geração de clientes e vendas.",
+      luxo: "A DNA Studio desenvolve soluções digitais de alto padrão, focadas em sofisticação e conversão. Nosso objetivo é posicionar sua marca com exclusividade no mercado, unindo design premium e performance.",
+      tech: "Na DNA, transformamos desafios complexos em soluções tecnológicas inovadoras. Desenvolvemos sistemas sob medida com arquitetura robusta, focando em escalabilidade e usabilidade."
+    };
+
+    const OBJECTIVE_PRESETS = {
+      conversao: "Fortalecer a presença digital da marca\nAtrair novos clientes de forma estratégica\nOrganizar o processo de atendimento\nAutomatizar etapas operacionais\nAumentar conversão e oportunidades de venda",
+      branding: "Posicionar a marca no segmento premium\nPadronizar a identidade visual em todos os pontos de contato\nGerar percepção de valor imediata\nCriar uma comunicação visual assertiva\nConsolidar a credibilidade da empresa",
+      tech: "Automatizar fluxos de trabalho internos\nCentralizar a gestão de dados da empresa\nProver uma interface intuitiva para os usuários\nGarantir segurança e estabilidade do sistema\nFacilitar a escalabilidade das operações"
+    };
+
+    const DEADLINE_PRESETS = {
+      rapido: "15 dias úteis",
+      padrao: "30 dias úteis",
+      longo: "45 dias úteis",
+      sob_medida: "A definir no cronograma"
+    };
+
     window.addEventListener('DOMContentLoaded', () => {
       const isAuth = sessionStorage.getItem(STORAGE_KEY) === "true" || localStorage.getItem(STORAGE_KEY) === "true";
       if (isAuth) {
@@ -770,8 +828,18 @@ Aumentar conversão e oportunidades de venda</textarea>
               <input type="text" class="scope-title" placeholder="Ex: Gestão de Marketing" value="${title}" required>
             </div>
             <div class="form-group">
-              <label>Valor / Investimento deste Serviço</label>
-              <input type="text" class="scope-price" placeholder="Ex: R$ 850/mês ou sob demanda" value="${price}" required>
+              <label>Valor deste Serviço (Ex: R$ 850)</label>
+              <input type="text" class="scope-price-num" placeholder="Ex: R$ 850" value="${price.replace(/\/(mês|ano|semana)|\(único\)/gi, '').trim()}" required>
+            </div>
+            <div class="form-group">
+              <label>Recorrência</label>
+              <select class="scope-price-recurrence">
+                <option value="(único)" ${price.toLowerCase().includes('único') ? 'selected' : ''}>Único</option>
+                <option value="/mês" ${price.toLowerCase().includes('mês') ? 'selected' : ''}>Mensal</option>
+                <option value="/ano" ${price.toLowerCase().includes('ano') ? 'selected' : ''}>Anual</option>
+                <option value="/semana" ${price.toLowerCase().includes('semana') ? 'selected' : ''}>Semanal</option>
+                <option value="" ${!price.match(/\/(mês|ano|semana)|\(único\)/i) ? 'selected' : ''}>Nenhuma</option>
+              </select>
             </div>
             <div class="form-group full-width">
               <label>O que está incluído (Itens — Um por linha)</label>
@@ -795,7 +863,8 @@ Aumentar conversão e oportunidades de venda</textarea>
       if (!item) return;
       
       const titleInput = item.querySelector('.scope-title');
-      const priceInput = item.querySelector('.scope-price');
+      const priceNumInput = item.querySelector('.scope-price-num');
+      const priceRecInput = item.querySelector('.scope-price-recurrence');
       const descInput = item.querySelector('.scope-desc');
       
       if (!presetKey) {
@@ -805,7 +874,16 @@ Aumentar conversão e oportunidades de venda</textarea>
       const preset = SERVICE_PRESETS[presetKey];
       if (preset) {
         titleInput.value = preset.title;
-        priceInput.value = preset.price;
+        const rawPrice = preset.price;
+        priceNumInput.value = rawPrice.replace(/\/(mês|ano|semana)|\(único\)/gi, '').trim();
+        
+        let recVal = "";
+        if (rawPrice.toLowerCase().includes('único')) recVal = "(único)";
+        else if (rawPrice.toLowerCase().includes('mês')) recVal = "/mês";
+        else if (rawPrice.toLowerCase().includes('ano')) recVal = "/ano";
+        else if (rawPrice.toLowerCase().includes('semana')) recVal = "/semana";
+        
+        priceRecInput.value = recVal;
         descInput.value = preset.desc;
       }
     }
@@ -814,6 +892,13 @@ Aumentar conversão e oportunidades de venda</textarea>
       const textarea = document.getElementById('paymentConditions');
       if (key && PAYMENT_PRESETS[key]) {
         textarea.value = PAYMENT_PRESETS[key];
+      }
+    }
+
+    function applyPreset(inputId, presetObj, key) {
+      const el = document.getElementById(inputId);
+      if (el && key && presetObj[key]) {
+        el.value = presetObj[key];
       }
     }
 
@@ -831,19 +916,24 @@ Aumentar conversão e oportunidades de venda</textarea>
       const objectives = document.getElementById('proposalObjectives').value.trim();
       const deadline = document.getElementById('projectDeadline').value.trim();
       const validity = document.getElementById('proposalValidity').value.trim();
-      const total = document.getElementById('projectTotal').value.trim();
+      const totalNum = document.getElementById('projectTotalNum').value.trim();
+      const totalRecurrence = document.getElementById('projectTotalRecurrence').value;
+      const total = totalNum + (totalRecurrence ? (totalRecurrence.startsWith('/') ? totalRecurrence : " " + totalRecurrence) : "");
       const whatsapp = document.getElementById('whatsappContact').value.trim();
       const payment = document.getElementById('paymentConditions').value.trim();
 
       const scopeItems = [];
       const titleInputs = document.querySelectorAll('.scope-title');
-      const priceInputs = document.querySelectorAll('.scope-price');
+      const priceNumInputs = document.querySelectorAll('.scope-price-num');
+      const priceRecInputs = document.querySelectorAll('.scope-price-recurrence');
       const descInputs = document.querySelectorAll('.scope-desc');
 
       for (let i = 0; i < titleInputs.length; i++) {
+        const pNum = priceNumInputs[i].value.trim();
+        const pRec = priceRecInputs[i].value;
         scopeItems.push({
           title: titleInputs[i].value.trim(),
-          price: priceInputs[i].value.trim(),
+          price: pNum + (pRec ? (pRec.startsWith('/') ? pRec : " " + pRec) : ""),
           desc: descInputs[i].value.trim()
         });
       }
