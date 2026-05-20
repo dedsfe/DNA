@@ -1960,10 +1960,14 @@
       if (deadlineEl) deadlineEl.textContent = data.deadline || 'A definir';
       if (validityEl) validityEl.textContent = data.validity || 'A definir';
 
-      initializeInteractiveProposal();
-      calculateScopeTotals();
-      updateWhatsAppCTAWithFallback();
-      document.getElementById('proposalView').style.display = 'block';
+      const proposalView = document.getElementById('proposalView');
+      proposalView.style.display = 'block';
+
+      requestAnimationFrame(() => {
+        initializeInteractiveProposal();
+        calculateScopeTotals();
+        updateWhatsAppCTAWithFallback();
+      });
     }
 
     function toggleScopeItem(index) {
@@ -2021,6 +2025,119 @@
         currency: 'BRL',
         minimumFractionDigits: 2
       });
+    }
+
+    function createFallbackSignaturePad(canvas) {
+      const context = canvas.getContext('2d');
+      let isEmpty = true;
+      let isDrawing = false;
+      let lastPoint = null;
+      let activePointerId = null;
+
+      function configureContext() {
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.lineWidth = 2.4;
+        context.strokeStyle = 'rgb(10, 22, 40)';
+      }
+
+      function getPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+      }
+
+      function startStroke(event) {
+        if (event.button !== undefined && event.button !== 0) return;
+
+        activePointerId = event.pointerId ?? null;
+        isDrawing = true;
+        lastPoint = getPoint(event);
+        configureContext();
+        context.beginPath();
+        context.moveTo(lastPoint.x, lastPoint.y);
+        context.lineTo(lastPoint.x + 0.01, lastPoint.y + 0.01);
+        context.stroke();
+        isEmpty = false;
+
+        if (canvas.setPointerCapture && event.pointerId !== undefined) {
+          canvas.setPointerCapture(event.pointerId);
+        }
+
+        event.preventDefault();
+      }
+
+      function moveStroke(event) {
+        if (!isDrawing) return;
+        if (activePointerId !== null && event.pointerId !== undefined && event.pointerId !== activePointerId) {
+          return;
+        }
+
+        const point = getPoint(event);
+        configureContext();
+        context.beginPath();
+        context.moveTo(lastPoint.x, lastPoint.y);
+        context.lineTo(point.x, point.y);
+        context.stroke();
+        lastPoint = point;
+        isEmpty = false;
+        event.preventDefault();
+      }
+
+      function endStroke(event) {
+        if (activePointerId !== null && event?.pointerId !== undefined && event.pointerId !== activePointerId) {
+          return;
+        }
+
+        isDrawing = false;
+        lastPoint = null;
+        activePointerId = null;
+      }
+
+      canvas.addEventListener('pointerdown', startStroke);
+      canvas.addEventListener('pointermove', moveStroke);
+      canvas.addEventListener('pointerup', endStroke);
+      canvas.addEventListener('pointerleave', endStroke);
+      canvas.addEventListener('pointercancel', endStroke);
+
+      configureContext();
+
+      return {
+        clear() {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          configureContext();
+          isEmpty = true;
+        },
+        isEmpty() {
+          return isEmpty;
+        },
+        toDataURL(type = 'image/png') {
+          return canvas.toDataURL(type);
+        },
+        fromDataURL(dataUrl) {
+          return new Promise(resolve => {
+            const image = new Image();
+            image.onload = () => {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(image, 0, 0, canvas.width, canvas.height);
+              configureContext();
+              isEmpty = false;
+              resolve();
+            };
+            image.onerror = () => resolve();
+            image.src = dataUrl;
+          });
+        },
+        off() {
+          canvas.removeEventListener('pointerdown', startStroke);
+          canvas.removeEventListener('pointermove', moveStroke);
+          canvas.removeEventListener('pointerup', endStroke);
+          canvas.removeEventListener('pointerleave', endStroke);
+          canvas.removeEventListener('pointercancel', endStroke);
+        }
+      };
     }
 
     function calculateScopeTotals() {
@@ -2120,6 +2237,7 @@
 
     let signaturePad;
     let signatureResizeHandler;
+    let signaturePadCleanup;
     let isGeneratingPdf = false;
 
     function initializeInteractiveProposal() {
@@ -2142,7 +2260,7 @@
         acceptBtn.addEventListener('click', handleAcceptAndPDF);
       }
 
-      if (!canvas || !window.SignaturePad) {
+      if (!canvas) {
         return;
       }
 
@@ -2153,28 +2271,44 @@
       signatureResizeHandler = () => {
         const ratio = Math.max(window.devicePixelRatio || 1, 1);
         const rect = canvas.getBoundingClientRect();
+        if (rect.width < 2 || rect.height < 2) {
+          requestAnimationFrame(signatureResizeHandler);
+          return;
+        }
+
         const currentSignature = signaturePad && !signaturePad.isEmpty()
           ? signaturePad.toDataURL('image/png')
           : null;
 
-        canvas.width = rect.width * ratio;
-        canvas.height = rect.height * ratio;
+        canvas.width = Math.max(Math.floor(rect.width * ratio), 1);
+        canvas.height = Math.max(Math.floor(rect.height * ratio), 1);
         const context = canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.scale(ratio, ratio);
 
-        signaturePad = new SignaturePad(canvas, {
-          penColor: 'rgb(10, 22, 40)',
-          backgroundColor: 'rgb(255, 255, 255)'
-        });
+        if (signaturePadCleanup) {
+          signaturePadCleanup();
+          signaturePadCleanup = null;
+        }
+
+        if (window.SignaturePad) {
+          signaturePad = new SignaturePad(canvas, {
+            penColor: 'rgb(10, 22, 40)',
+            backgroundColor: 'rgb(255, 255, 255)'
+          });
+          signaturePadCleanup = () => signaturePad?.off?.();
+        } else {
+          signaturePad = createFallbackSignaturePad(canvas);
+          signaturePadCleanup = () => signaturePad?.off?.();
+        }
 
         if (currentSignature) {
           signaturePad.fromDataURL(currentSignature);
         }
       };
 
-      signatureResizeHandler();
       window.addEventListener('resize', signatureResizeHandler);
+      requestAnimationFrame(signatureResizeHandler);
 
       canvas.onpointerdown = () => {
         if (signatureError) {
