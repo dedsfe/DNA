@@ -637,7 +637,7 @@
     .signature-pad-container {
       width: 100%;
       max-width: 500px;
-      background-color: #ffffff;
+      background-color: #ffffff !important;
       border-radius: 12px;
       overflow: hidden;
       border: 2px solid var(--border-color);
@@ -1722,6 +1722,9 @@
           canvas.width = canvas.offsetWidth * ratio;
           canvas.height = canvas.offsetHeight * ratio;
           canvas.getContext("2d").scale(ratio, ratio);
+          if (signaturePad) {
+            signaturePad.clear();
+          }
         }
         window.addEventListener("resize", resizeCanvas);
         resizeCanvas();
