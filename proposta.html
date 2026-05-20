@@ -1770,13 +1770,17 @@
       setTimeout(() => {
         window.print();
         
-        document.getElementById('acceptBtnText').innerHTML = 'Documento Salvo! Abrindo WhatsApp...';
+        document.getElementById('acceptBtnText').innerHTML = 'Avançar para o WhatsApp';
+        if(document.getElementById('acceptBtnIcon')) {
+          document.getElementById('acceptBtnIcon').style.display = 'inline-block';
+        }
         
-        setTimeout(() => {
-          if (window.currentWhatsappUrl) {
-            window.location.href = window.currentWhatsappUrl;
-          }
-        }, 1500);
+        const acceptBtn = document.getElementById('acceptBtn');
+        if (acceptBtn && window.currentWhatsappUrl) {
+          acceptBtn.href = window.currentWhatsappUrl;
+          acceptBtn.target = '_blank';
+          acceptBtn.removeEventListener('click', handleAcceptAndPDF);
+        }
       }, 500);
     }
   </script>
