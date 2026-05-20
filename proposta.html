@@ -38,11 +38,24 @@
       font-family: 'Inter', sans-serif;
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      padding: 4rem 1rem 6rem 1rem;
       overflow-x: hidden;
+      padding: 0;
+      margin: 0;
     }
 
-    /* Ambient lights */
+    /* Mobile-stabilized viewport container */
+    .page-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 4rem 1.25rem 6rem 1.25rem;
+    }
+
+    /* Ambient background glows constrained inside wrapper */
     .ambient-light {
       position: absolute;
       width: 600px;
@@ -58,7 +71,7 @@
     /* Layout Container */
     .container {
       max-width: var(--max-width);
-      margin: 0 auto;
+      width: 100%;
       position: relative;
       z-index: 1;
     }
@@ -145,7 +158,7 @@
       line-height: 1.05;
       letter-spacing: -0.03em;
       color: var(--text-primary);
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .proposal-client-card {
@@ -225,6 +238,10 @@
     }
 
     /* SECTION LAYOUT */
+    .proposal-section {
+      margin-bottom: 4.5rem;
+    }
+
     .section-title {
       font-family: 'Instrument Serif', serif;
       font-size: 2.25rem;
@@ -245,12 +262,80 @@
       background-color: var(--border-color);
     }
 
+    /* APRESENTAÇÃO INSTITUCIONAL */
+    .intro-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: 20px;
+      padding: 2.25rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro-text {
+      font-size: 1.05rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* OBJETIVOS DO PROJETO */
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .objective-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 1.75rem;
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      transition: var(--transition);
+    }
+
+    .objective-card:hover {
+      border-color: rgba(var(--accent-gold-rgb), 0.25);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .objective-num-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      background-color: rgba(var(--accent-gold-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.2);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .objective-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.35rem;
+      font-style: italic;
+      color: var(--accent-gold);
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .objective-content {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
     /* SCOPE ITEMS */
     .scope-list {
       display: flex;
       flex-direction: column;
       gap: 2rem;
-      margin-bottom: 5rem;
     }
 
     .scope-card {
@@ -305,11 +390,36 @@
       white-space: nowrap;
     }
 
+    .scope-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      margin-top: 1.5rem;
+    }
+
+    .scope-features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .feature-icon {
+      color: var(--accent-gold);
+      margin-top: 0.2rem;
+      flex-shrink: 0;
+    }
+
+    .feature-text {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
     .scope-description {
       color: var(--text-secondary);
       font-size: 0.95rem;
       line-height: 1.65;
-      white-space: pre-line; /* Preserves newlines formatted in generator */
     }
 
     /* FINANCIAL CONDITIONS */
@@ -318,7 +428,6 @@
       border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 2.5rem;
-      margin-bottom: 5rem;
       position: relative;
       overflow: hidden;
     }
@@ -385,34 +494,43 @@
       color: var(--accent-gold);
     }
 
+    .payment-conditions-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .payment-conditions-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .payment-bullet {
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent-gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .payment-item-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
     .payment-text {
       color: var(--text-secondary);
       font-size: 1rem;
       line-height: 1.6;
-      white-space: pre-line;
     }
 
     /* SIGNATURE BLOCK FOR PDF */
     .print-signatures {
       display: none; /* Only visible in print */
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      margin-top: 5rem;
-      margin-bottom: 3rem;
-    }
-
-    .sig-line {
-      border-top: 1px solid #000000;
-      padding-top: 0.5rem;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #333333;
-    }
-
-    .sig-title {
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-      color: #000000;
     }
 
     /* FOOTER ACTIONS (CTA & PDF) */
@@ -423,6 +541,7 @@
       gap: 1.25rem;
       border-top: 1px solid var(--border-color);
       padding-top: 3rem;
+      margin-top: 1rem;
     }
 
     .accept-btn {
@@ -491,6 +610,7 @@
 
     /* ═══════════════════════════════════════════════════
        MEDIA PRINT (IMPRESSÃO PDF PERFEITA A4)
+       Refletindo o layout editorial elegante da Mozzi
        ═══════════════════════════════════════════════════ */
     @media print {
       @page {
@@ -498,20 +618,31 @@
         margin: 20mm 20mm 20mm 20mm;
       }
 
-      body {
+      html, body {
         background-color: #ffffff !important;
-        color: #050505 !important;
+        color: #000000 !important;
         padding: 0 !important;
-        font-size: 11pt;
-        line-height: 1.5;
+        margin: 0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+        overflow: visible !important;
+      }
+
+      .page-wrapper {
+        padding: 0 !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        display: block !important;
       }
 
       .ambient-light, 
       .proposal-actions, 
       .print-trigger-btn, 
       .accept-btn,
-      .scope-price-badge:empty {
-        display: none !important; /* Hide non-printable UI elements */
+      .scope-price-badge:empty,
+      #errorScreen {
+        display: none !important; /* Esconde botões, luzes e telas auxiliares */
       }
 
       .container {
@@ -521,57 +652,90 @@
         padding: 0 !important;
       }
 
+      /* Cabeçalho de Branding Centralizado Estilo Editorial */
       .brand-header {
         border-bottom: 2px solid #111111 !important;
-        margin-bottom: 3rem !important;
-        padding-bottom: 1rem !important;
+        margin-bottom: 3.5rem !important;
+        padding-bottom: 1.25rem !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-end !important;
       }
 
       .brand-logo {
         color: #000000 !important;
-        font-size: 18pt !important;
+        font-size: 20pt !important;
+        font-weight: 800 !important;
       }
 
       .brand-tag {
-        color: #555555 !important;
+        color: #444444 !important;
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+      }
+
+      /* Hero Alinhado com o PDF da Mozzi */
+      .proposal-hero {
+        margin-bottom: 3.5rem !important;
+        text-align: left !important;
+        page-break-inside: avoid !important;
       }
 
       .proposal-meta {
-        color: #8c6239 !important; /* Elegant darker gold for print readability */
+        color: #8c6239 !important; /* Tom elegante de ouro escuro para melhor legibilidade */
+        font-size: 11pt !important;
         font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+        margin-bottom: 0.5rem !important;
       }
 
       .proposal-title {
         color: #000000 !important;
+        font-family: 'Instrument Serif', serif !important;
         font-size: 32pt !important;
+        font-style: italic !important;
+        font-weight: 400 !important;
         line-height: 1.1 !important;
-        margin-bottom: 2.5rem !important;
+        margin-bottom: 2rem !important;
       }
 
       .proposal-client-card {
         border-left: 3px solid #8c6239 !important;
         padding-left: 1.5rem !important;
-        margin-bottom: 3rem !important;
+        margin-top: 0.5rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.2rem !important;
       }
 
       .client-label {
         color: #555555 !important;
+        font-size: 8.5pt !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
       }
 
       .client-company {
         color: #000000 !important;
-        font-size: 15pt !important;
+        font-size: 16pt !important;
+        font-weight: 700 !important;
       }
 
       .client-name {
-        color: #333333 !important;
+        color: #444444 !important;
+        font-size: 10.5pt !important;
       }
 
-      /* METRICS IN PRINT */
+      /* Métricas em Print */
       .metrics-grid {
         grid-template-columns: repeat(3, 1fr) !important;
         gap: 1.5rem !important;
         margin-bottom: 3.5rem !important;
+        page-break-inside: avoid !important;
       }
 
       .metric-card {
@@ -579,10 +743,13 @@
         border: 1px solid #e1e1e6 !important;
         border-radius: 12px !important;
         padding: 1.25rem !important;
+        box-shadow: none !important;
+        transform: none !important;
       }
 
       .metric-label {
         color: #555555 !important;
+        font-size: 8pt !important;
       }
 
       .metric-value {
@@ -595,73 +762,198 @@
         font-size: 18pt !important;
       }
 
-      /* SECTIONS */
+      /* Títulos de Seção com Linha Separadora Elegante */
       .section-title {
         color: #8c6239 !important;
-        font-size: 20pt !important;
-        margin-top: 2.5rem !important;
+        font-family: 'Instrument Serif', serif !important;
+        font-size: 18pt !important;
+        font-style: italic !important;
+        font-weight: 400 !important;
+        margin-top: 3.5rem !important;
         margin-bottom: 1.5rem !important;
-        page-break-after: avoid;
+        page-break-after: avoid !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
       }
 
       .section-title::after {
+        content: "" !important;
+        flex: 1 !important;
+        height: 1px !important;
         background-color: #dddddd !important;
       }
 
-      /* SCOPE CARDS IN PRINT */
+      /* Apresentação em Impressão */
+      .intro-card {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 2.5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .intro-text {
+        color: #222222 !important;
+        font-size: 11pt !important;
+        line-height: 1.6 !important;
+      }
+
+      /* Objetivos no Formato de Lista Limpa (Igual Mozzi) */
+      .objectives-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.85rem !important;
+        margin-bottom: 2.5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .objective-card {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        gap: 0.75rem !important;
+        align-items: flex-start !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .objective-num-wrapper {
+        background-color: transparent !important;
+        border: none !important;
+        width: auto !important;
+        height: auto !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+      }
+
+      .objective-num {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        font-style: normal !important;
+        font-weight: 700 !important;
+        color: #8c6239 !important;
+      }
+
+      .objective-num::after {
+        content: "." !important;
+      }
+
+      .objective-content {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        color: #222222 !important;
+        line-height: 1.5 !important;
+      }
+
+      /* Serviços / Escopo no Formato Escrito Mozzi */
       .scope-list {
-        gap: 1.5rem !important;
-        margin-bottom: 3rem !important;
+        gap: 2rem !important;
       }
 
       .scope-card {
-        background-color: #ffffff !important;
-        border: 1px solid #e1e1e6 !important;
-        border-radius: 12px !important;
-        padding: 1.75rem !important;
-        page-break-inside: avoid !important; /* Prevents split cards across pages */
+        background-color: transparent !important;
+        border: none !important;
+        border-bottom: 1px dashed #dddddd !important;
+        border-radius: 0 !important;
+        padding: 0 0 2rem 0 !important;
+        margin-bottom: 2rem !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important; /* Garante que serviços inteiros não quebrem no meio da folha */
+      }
+
+      .scope-header {
+        margin-bottom: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+      }
+
+      .scope-num {
+        color: #8c6239 !important;
+        font-size: 8.5pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.1em !important;
       }
 
       .scope-title {
         color: #000000 !important;
         font-size: 13pt !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.01em !important;
       }
 
       .scope-price-badge {
-        background-color: #f5f5f7 !important;
-        border: 1px solid #d1d1d6 !important;
-        color: #444444 !important;
-        font-size: 9pt !important;
-        print-color-adjust: exact;
-        -webkit-print-color-adjust: exact;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #8c6239 !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        margin-top: 0.25rem !important;
       }
 
-      .scope-description {
-        color: #333333 !important;
-        font-size: 10pt !important;
+      .scope-price-badge::before {
+        content: "Investimento: " !important;
+        color: #555555 !important;
+        font-weight: 500 !important;
       }
 
-      /* FINANCIALS */
+      /* Escopo de Trabalho com Marcadores Limpos */
+      .scope-features-list {
+        margin-top: 1rem !important;
+        gap: 0.5rem !important;
+      }
+
+      .scope-features-list li {
+        gap: 0.5rem !important;
+      }
+
+      .feature-icon {
+        display: none !important; /* Oculta ícone SVG */
+      }
+
+      .scope-features-list li::before {
+        content: "•" !important;
+        color: #8c6239 !important;
+        font-size: 12pt !important;
+        margin-right: 0.25rem !important;
+        line-height: 1 !important;
+        margin-top: 0.1rem !important;
+      }
+
+      .feature-text {
+        color: #222222 !important;
+        font-size: 10.5pt !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Condições de Pagamento e Valores */
       .financials-section {
-        background-color: #f9f9fb !important;
-        border: 1px solid #e1e1e6 !important;
-        border-radius: 14px !important;
-        padding: 2rem !important;
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 3rem !important;
         page-break-inside: avoid !important;
       }
 
       .total-invest-block {
-        border-bottom: 1px solid #dddddd !important;
-        padding-bottom: 1.25rem !important;
+        border-bottom: 1px solid #111111 !important;
+        padding-bottom: 1rem !important;
+        margin-bottom: 1.5rem !important;
       }
 
       .total-invest-label {
         color: #555555 !important;
+        font-size: 9pt !important;
       }
 
       .total-invest-value {
         color: #000000 !important;
-        font-size: 28pt !important;
+        font-size: 26pt !important;
       }
 
       .total-invest-value span {
@@ -670,23 +962,62 @@
 
       .payment-label {
         color: #8c6239 !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
       }
 
-      .payment-text {
-        color: #333333 !important;
-        font-size: 10pt !important;
+      .payment-conditions-list {
+        gap: 0.5rem !important;
+        margin-top: 0.5rem !important;
       }
 
-      /* SIGNATURES PRINT ONLY */
+      .payment-bullet {
+        background-color: #8c6239 !important;
+        width: 5px !important;
+        height: 5px !important;
+      }
+
+      .payment-item-text {
+        color: #222222 !important;
+        font-size: 11pt !important;
+      }
+
+      /* Bloco de Assinaturas Perfeito (Idêntico ao PDF da Mozzi) */
       .print-signatures {
-        display: grid !important;
+        display: block !important;
+        margin-top: 5rem !important;
         page-break-inside: avoid !important;
+      }
+
+      .sig-block-title {
+        font-size: 12pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.1em !important;
+        margin-bottom: 2rem !important;
+        color: #000000 !important;
+        border-bottom: 1px solid #111111 !important;
+        padding-bottom: 0.4rem !important;
+        text-transform: uppercase !important;
+      }
+
+      .sig-text-line {
+        font-size: 11pt !important;
+        color: #000000 !important;
+        margin-bottom: 2.5rem !important;
+        line-height: 1.5 !important;
+      }
+
+      .sig-date-line {
+        font-size: 11pt !important;
+        color: #000000 !important;
+        margin-top: 3rem !important;
+        font-weight: 500 !important;
       }
     }
 
     /* RESPONSIVE DIGITAL LAYOUT */
     @media (max-width: 768px) {
-      body {
+      .page-wrapper {
         padding: 2rem 1rem 4rem 1rem;
       }
       .brand-header {
@@ -715,125 +1046,138 @@
 </head>
 <body>
 
-  <!-- AMBIENT DESIGN GLOW -->
-  <div class="ambient-light"></div>
+  <!-- MOBILE OVERFLOW WRAPPER -->
+  <div class="page-wrapper">
+    <!-- AMBIENT DESIGN GLOW -->
+    <div class="ambient-light"></div>
 
-  <div class="container">
-    
-    <!-- TELA DE ERRO (URL SEM DADOS) -->
-    <div class="error-screen" id="errorScreen">
-      <div class="error-title">Proposta Inexistente</div>
-      <div class="error-desc">
-        O link que você está tentando acessar está incompleto ou não contém os parâmetros de dados necessários.
-      </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">DNA Studio — Praia Grande, SP</p>
-    </div>
-
-    <!-- PÁGINA DA PROPOSTA OFICIAL -->
-    <main class="proposal-view" id="proposalView">
+    <div class="container">
       
-      <!-- CABEÇALHO BRANDING -->
-      <header class="brand-header">
-        <div class="brand-logo">DNA</div>
-        <div class="brand-tag">Estúdio de Design &amp; Estratégia</div>
-      </header>
-
-      <!-- HERO CAPA -->
-      <section class="proposal-hero">
-        <div class="proposal-meta">Proposta Comercial</div>
-        <h1 class="proposal-title" id="propTitle">Aceleração Digital</h1>
-        
-        <div class="proposal-client-card">
-          <span class="client-label">Preparado especialmente para</span>
-          <span class="client-company" id="clientCompany">Empresa Cliente</span>
-          <span class="client-name" id="clientContact">Aos cuidados de Felipe Silveira</span>
+      <!-- TELA DE ERRO (URL SEM DADOS) -->
+      <div class="error-screen" id="errorScreen">
+        <div class="error-title">Proposta Inexistente</div>
+        <div class="error-desc">
+          O link que você está tentando acessar está incompleto ou não contém os parâmetros de dados necessários.
         </div>
-      </section>
-
-      <!-- MÉTRICAS PRINCIPAIS -->
-      <section class="metrics-grid">
-        <div class="metric-card">
-          <span class="metric-label">Investimento Total</span>
-          <span class="metric-value highlight-gold" id="metricTotal">R$ 0,00</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Prazo Estimado</span>
-          <span class="metric-value" id="metricDeadline">30 dias</span>
-        </div>
-        <div class="metric-card">
-          <span class="metric-label">Validade Proposta</span>
-          <span class="metric-value" id="metricValidity">7 dias</span>
-        </div>
-      </section>
-
-      <!-- ESCOPO DETALHADO -->
-      <section class="proposal-section">
-        <h2 class="section-title">Escopo de Trabalho</h2>
-        <div class="scope-list" id="scopeContainer">
-          <!-- Os cartões de escopo dinâmicos serão inseridos aqui -->
-        </div>
-      </section>
-
-      <!-- CONDIÇÕES FINANCEIRAS -->
-      <section class="proposal-section">
-        <h2 class="section-title">Valores &amp; Pagamento</h2>
-        <div class="financials-section">
-          <div class="financial-grid">
-            <div class="total-invest-block">
-              <span class="total-invest-label">Investimento Global</span>
-              <span class="total-invest-value" id="financialTotal">R$ 0,00 <span>*</span></span>
-            </div>
-            <div class="payment-conditions-block">
-              <span class="payment-label">Condições de Pagamento</span>
-              <p class="payment-text" id="financialConditions">
-                Condições customizadas a serem carregadas dinamicamente...
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO) -->
-      <div class="print-signatures">
-        <div class="sig-card">
-          <div class="sig-line">
-            <div class="sig-title">DNA Estúdio de Design &amp; Estratégia</div>
-            Representante Oficial DNA
-          </div>
-        </div>
-        <div class="sig-card">
-          <div class="sig-line">
-            <div class="sig-title" id="sigClientCompany">Nome da Empresa</div>
-            Aceite do Cliente / Responsável
-          </div>
-        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">DNA Studio — Praia Grande, SP</p>
       </div>
 
-      <!-- AÇÕES FINAIS (WHATSAPP E PDF) -->
-      <footer class="proposal-actions">
-        <a href="#" class="accept-btn" id="acceptBtn" target="_blank" rel="noopener">
-          Aceitar Proposta &amp; Iniciar Projeto
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
+      <!-- PÁGINA DA PROPOSTA OFICIAL -->
+      <main class="proposal-view" id="proposalView">
         
-        <button class="print-trigger-btn" onclick="window.print()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 6 2 18 2 18 9"></polyline>
-            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-            <rect x="6" y="14" width="12" height="8"></rect>
-          </svg>
-          Salvar como PDF / Imprimir
-        </button>
+        <!-- CABEÇALHO BRANDING -->
+        <header class="brand-header">
+          <div class="brand-logo">DNA</div>
+          <div class="brand-tag">Estúdio de Design &amp; Estratégia</div>
+        </header>
 
-        <p class="disclaimer">
-          Ao clicar em "Aceitar Proposta", você será direcionado ao WhatsApp da nossa equipe de coordenação de projetos para formalizar as assinaturas e agendar a reunião de Kickoff.
-        </p>
-      </footer>
+        <!-- HERO CAPA -->
+        <section class="proposal-hero">
+          <div class="proposal-meta">Proposta Comercial</div>
+          <h1 class="proposal-title" id="propTitle">Aceleração Digital</h1>
+          
+          <div class="proposal-client-card">
+            <span class="client-label">Preparado especialmente para</span>
+            <span class="client-company" id="clientCompany">Empresa Cliente</span>
+            <span class="client-name" id="clientContact">Aos cuidados de Felipe Silveira</span>
+          </div>
+        </section>
 
-    </main>
+        <!-- MÉTRICAS PRINCIPAIS -->
+        <section class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Investimento Total</span>
+            <span class="metric-value highlight-gold" id="metricTotal">R$ 0,00</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Prazo Estimado</span>
+            <span class="metric-value" id="metricDeadline">30 dias</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Validade Proposta</span>
+            <span class="metric-value" id="metricValidity">7 dias</span>
+          </div>
+        </section>
+
+        <!-- APRESENTAÇÃO INSTITUCIONAL -->
+        <section class="proposal-section" id="introSection">
+          <h2 class="section-title">Apresentação</h2>
+          <div class="intro-card">
+            <p class="intro-text" id="propIntro">A Agência DNA atua na criação de estratégias digitais completas...</p>
+          </div>
+        </section>
+
+        <!-- OBJETIVOS DO PROJETO -->
+        <section class="proposal-section" id="objectivesSection">
+          <h2 class="section-title">Objetivos do Projeto</h2>
+          <div class="objectives-grid" id="objectivesContainer">
+            <!-- Os objetivos dinâmicos serão inseridos aqui -->
+          </div>
+        </section>
+
+        <!-- ESCOPO DETALHADO -->
+        <section class="proposal-section">
+          <h2 class="section-title">Escopo de Trabalho</h2>
+          <div class="scope-list" id="scopeContainer">
+            <!-- Os cartões de escopo dinâmicos serão inseridos aqui -->
+          </div>
+        </section>
+
+        <!-- CONDIÇÕES FINANCEIRAS -->
+        <section class="proposal-section">
+          <h2 class="section-title">Valores &amp; Pagamento</h2>
+          <div class="financials-section">
+            <div class="financial-grid">
+              <div class="total-invest-block">
+                <span class="total-invest-label">Investimento Global</span>
+                <span class="total-invest-value" id="financialTotal">R$ 0,00 <span>*</span></span>
+              </div>
+              <div class="payment-conditions-block">
+                <span class="payment-label">Condições de Pagamento</span>
+                <div class="payment-text" id="financialConditions">
+                  Condições customizadas a serem carregadas dinamicamente...
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO) -->
+        <div class="print-signatures" id="printSignatures">
+          <div class="sig-block-title">ASSINATURA</div>
+          <div class="sig-lines-container">
+            <p class="sig-text-line"><strong>CONTRATADA:</strong> DNA Estúdio de Design e Estratégia (_______________________________________)</p>
+            <p class="sig-text-line"><strong>CONTRATANTE:</strong> <span id="sigClientCompany">Empresa Cliente</span> (_______________________________________)</p>
+            <p class="sig-date-line">Praia Grande, ____ de ______________________ de 2026</p>
+          </div>
+        </div>
+
+        <!-- AÇÕES FINAIS (WHATSAPP E PDF) -->
+        <footer class="proposal-actions">
+          <a href="#" class="accept-btn" id="acceptBtn" target="_blank" rel="noopener">
+            Aceitar Proposta &amp; Iniciar Projeto
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          
+          <button class="print-trigger-btn" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Salvar como PDF / Imprimir
+          </button>
+
+          <p class="disclaimer">
+            Ao clicar em "Aceitar Proposta", você será direcionado ao WhatsApp da nossa equipe de coordenação de projetos para formalizar as assinaturas e agendar a reunião de Kickoff.
+          </p>
+        </footer>
+
+      </main>
+    </div>
   </div>
 
   <script>
@@ -893,7 +1237,61 @@
 
       // Popular Sessão Financeira
       document.getElementById('financialTotal').innerHTML = `${data.total || 'Sob Consulta'} <span>*</span>`;
-      document.getElementById('financialConditions').textContent = data.payment || '';
+      
+      // Popular Apresentação (Apenas se preenchido)
+      const introSection = document.getElementById('introSection');
+      if (data.intro && data.intro.trim() !== '') {
+        document.getElementById('propIntro').textContent = data.intro;
+        introSection.style.display = 'block';
+      } else {
+        introSection.style.display = 'none';
+      }
+
+      // Popular Objetivos (Apenas se preenchido)
+      const objectivesSection = document.getElementById('objectivesSection');
+      const objectivesContainer = document.getElementById('objectivesContainer');
+      objectivesContainer.innerHTML = '';
+      if (data.objectives && data.objectives.trim() !== '') {
+        const objLines = data.objectives.split('\n').filter(line => line.trim() !== '');
+        if (objLines.length > 0) {
+          objLines.forEach((line, idx) => {
+            const cardHtml = `
+              <div class="objective-card">
+                <div class="objective-num-wrapper">
+                  <span class="objective-num">${idx + 1}</span>
+                </div>
+                <span class="objective-content">${line.trim()}</span>
+              </div>
+            `;
+            objectivesContainer.insertAdjacentHTML('beforeend', cardHtml);
+          });
+          objectivesSection.style.display = 'block';
+        } else {
+          objectivesSection.style.display = 'none';
+        }
+      } else {
+        objectivesSection.style.display = 'none';
+      }
+
+      // Popular Condições de Pagamento Detalhadas
+      const paymentContainer = document.getElementById('financialConditions');
+      const paymentLines = data.payment ? data.payment.split('\n').filter(line => line.trim() !== '') : [];
+      
+      if (paymentLines.length > 0) {
+        let paymentHtml = `<ul class="payment-conditions-list">`;
+        paymentLines.forEach(line => {
+          paymentHtml += `
+            <li>
+              <span class="payment-bullet"></span>
+              <span class="payment-item-text">${line.trim()}</span>
+            </li>
+          `;
+        });
+        paymentHtml += `</ul>`;
+        paymentContainer.innerHTML = paymentHtml;
+      } else {
+        paymentContainer.innerHTML = `<p class="payment-text">${data.payment || ''}</p>`;
+      }
 
       // Popular Lista de Escopos
       const container = document.getElementById('scopeContainer');
@@ -904,16 +1302,39 @@
           const itemNum = String(index + 1).padStart(2, '0');
           const priceBadge = item.price ? `<span class="scope-price-badge">${item.price}</span>` : '';
           
+          // Split features by newline
+          const descLines = item.desc ? item.desc.split('\n').filter(line => line.trim() !== '') : [];
+          let descHtml = '';
+          
+          if (descLines.length > 0) {
+            descHtml = `<ul class="scope-features-list">`;
+            descLines.forEach(line => {
+              descHtml += `
+                <li>
+                  <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span class="feature-text">${line.trim()}</span>
+                </li>
+              `;
+            });
+            descHtml += `</ul>`;
+          } else {
+            descHtml = `<p class="scope-description">${item.desc}</p>`;
+          }
+          
           const itemHtml = `
             <div class="scope-card">
               <div class="scope-header">
                 <div class="scope-number-title">
-                  <span class="scope-num">ENTREGA // ${itemNum}</span>
+                  <span class="scope-num">SERVIÇO // ${itemNum}</span>
                   <h3 class="scope-title">${item.title}</h3>
                 </div>
                 ${priceBadge}
               </div>
-              <p class="scope-description">${item.desc}</p>
+              <div class="scope-body">
+                ${descHtml}
+              </div>
             </div>
           `;
           container.insertAdjacentHTML('beforeend', itemHtml);

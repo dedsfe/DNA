@@ -39,30 +39,42 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 2rem 1rem;
+      padding: 0;
       overflow-x: hidden;
-      position: relative;
     }
 
-    /* Subtle background glow */
-    body::before {
+    /* Prevent mobile overflow layout shifts */
+    .page-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 3rem 1rem;
+    }
+
+    /* Ambient background glows constrained inside wrapper */
+    .page-wrapper::before {
       content: "";
       position: absolute;
       width: 500px;
       height: 500px;
-      background: radial-gradient(circle, rgba(212, 168, 122, 0.05) 0%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(212, 168, 122, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
       top: -100px;
       left: -100px;
       pointer-events: none;
       z-index: 0;
     }
 
-    body::after {
+    .page-wrapper::after {
       content: "";
       position: absolute;
       width: 600px;
       height: 600px;
-      background: radial-gradient(circle, rgba(36, 91, 161, 0.04) 0%, rgba(0, 0, 0, 0) 70%);
+      background: radial-gradient(circle, rgba(36, 91, 161, 0.03) 0%, rgba(0, 0, 0, 0) 70%);
       bottom: -100px;
       right: -100px;
       pointer-events: none;
@@ -497,129 +509,153 @@
 </head>
 <body>
 
-  <!-- TELA DE ACESSO COM SENHA -->
-  <div class="lock-screen" id="lockScreen">
-    <div class="lock-card">
-      <div class="lock-logo">DNA</div>
-      <div class="lock-title">Painel de Propostas DNA Studio</div>
-      <form id="lockForm" onsubmit="handleLogin(event)">
-        <div class="password-input-group">
-          <input type="password" id="passwordField" class="password-input" placeholder="••••" required autocomplete="current-password">
-          <div class="error-msg" id="errorMsg">Senha incorreta. Tente novamente.</div>
+  <!-- MOBILE OVERFLOW WRAPPER -->
+  <div class="page-wrapper">
+
+    <!-- TELA DE ACESSO COM SENHA -->
+    <div class="lock-screen" id="lockScreen">
+      <div class="lock-card">
+        <div class="lock-logo">DNA</div>
+        <div class="lock-title">Painel de Propostas DNA Studio</div>
+        <form id="lockForm" onsubmit="handleLogin(event)">
+          <div class="password-input-group">
+            <input type="password" id="passwordField" class="password-input" placeholder="••••" required autocomplete="current-password">
+            <div class="error-msg" id="errorMsg">Senha incorreta. Tente novamente.</div>
+          </div>
+          <button type="submit" class="lock-btn">Acessar Painel</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- DASHBOARD PRINCIPAL -->
+    <div class="dashboard-wrapper" id="dashboardWrapper">
+      <header class="dashboard-header">
+        <div class="header-left">
+          <h1>Gerador de Proposta</h1>
+          <p>DNA — Estúdio de Design & Estratégia</p>
         </div>
-        <button type="submit" class="lock-btn">Acessar Painel</button>
+        <button class="logout-btn" onclick="handleLogout()">Bloquear Painel</button>
+      </header>
+
+      <form id="proposalForm" onsubmit="generateProposal(event)">
+        <!-- CLIENTE INFO -->
+        <div class="panel">
+          <h2 class="panel-title"><span>01.</span> Identificação do Cliente</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="clientCompany">Empresa / Projeto</label>
+              <input type="text" id="clientCompany" placeholder="Ex: Loft Incorporações" required>
+            </div>
+            <div class="form-group">
+              <label for="clientName">Nome do Contato Principal</label>
+              <input type="text" id="clientName" placeholder="Ex: Felipe Silveira" required>
+            </div>
+            <div class="form-group full-width">
+              <label for="projectTitle">Título da Proposta</label>
+              <input type="text" id="projectTitle" placeholder="Ex: MOZZI's ASSESSORIA — MARKETING & WEBSITE" required>
+            </div>
+          </div>
+        </div>
+
+        <!-- APRESENTAÇÃO E OBJETIVO -->
+        <div class="panel">
+          <h2 class="panel-title"><span>02.</span> Apresentação &amp; Objetivos (PDF &amp; Web)</h2>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="proposalIntro">Apresentação Institucional</label>
+              <textarea id="proposalIntro" required>A Agência DNA atua na criação de estratégias digitais completas, unindo marketing, design e tecnologia para transformar perfis e marcas em ferramentas reais de geração de clientes e vendas.</textarea>
+            </div>
+            <div class="form-group full-width">
+              <label for="proposalObjectives">Objetivos do Projeto (Um por linha)</label>
+              <textarea id="proposalObjectives" style="min-height: 120px;" required>Fortalecer a presença digital da marca
+Atrair novos clientes de forma estratégica
+Organizar o processo de atendimento
+Automatizar etapas operacionais
+Aumentar conversão e oportunidades de venda</textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESCOPO DO PROJETO (DINÂMICO) -->
+        <div class="panel">
+          <h2 class="panel-title"><span>03.</span> Escopo de Trabalho &amp; Entregas</h2>
+          <div id="scopeItemsContainer">
+            <!-- Os itens de escopo dinâmicos entrarão aqui -->
+          </div>
+          <button type="button" class="add-item-btn" onclick="addScopeItem()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Adicionar Serviço ao Escopo
+          </button>
+        </div>
+
+        <!-- INVESTIMENTO E CONDIÇÕES -->
+        <div class="panel">
+          <h2 class="panel-title"><span>04.</span> Prazos e Condições Comerciais</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="projectDeadline">Prazo de Entrega</label>
+              <input type="text" id="projectDeadline" placeholder="Ex: 30 dias úteis" required>
+            </div>
+            <div class="form-group">
+              <label for="proposalValidity">Validade da Proposta</label>
+              <input type="text" id="proposalValidity" placeholder="Ex: 7 dias corridos" required>
+            </div>
+            <div class="form-group">
+              <label for="projectTotal">Valor Total / Condição Resumida (Exibido nos Cards)</label>
+              <input type="text" id="projectTotal" placeholder="Ex: R$ 1.850,00" required>
+            </div>
+            <div class="form-group">
+              <label for="whatsappContact">WhatsApp do Contato DNA</label>
+              <input type="text" id="whatsappContact" value="5513991863669" placeholder="Apenas números com DDD (Ex: 5513991863669)" required>
+            </div>
+            <div class="form-group full-width">
+              <label for="paymentConditions">Condições de Pagamento Detalhadas (PDF &amp; Web) — Um por linha</label>
+              <textarea id="paymentConditions" style="min-height: 100px;" placeholder="Ex: Valor do site: 1x de R$ 1.000&#10;Marketing cobrado mensalmente&#10;Data de pagamento definida entre as partes" required></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- AÇÕES -->
+        <div class="panel actions-panel">
+          <button type="submit" class="generate-btn">Gerar Link Oficial da Proposta</button>
+
+          <div class="result-container" id="resultContainer">
+            <div class="result-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+              Proposta compilada e codificada com sucesso!
+            </div>
+            <div class="link-box-wrapper">
+              <div class="link-box" id="linkBox" readonly></div>
+              <button type="button" class="copy-btn" onclick="copyLink()">Copiar</button>
+            </div>
+            <div class="copy-success-indicator" id="copySuccessIndicator">Link copiado para a área de transferência!</div>
+          </div>
+        </div>
       </form>
     </div>
   </div>
 
-  <!-- DASHBOARD PRINCIPAL -->
-  <div class="dashboard-wrapper" id="dashboardWrapper">
-    <header class="dashboard-header">
-      <div class="header-left">
-        <h1>Gerador de Proposta</h1>
-        <p>DNA — Estúdio de Design & Estratégia</p>
-      </div>
-      <button class="logout-btn" onclick="handleLogout()">Bloquear Painel</button>
-    </header>
-
-    <form id="proposalForm" onsubmit="generateProposal(event)">
-      <!-- CLIENTE INFO -->
-      <div class="panel">
-        <h2 class="panel-title"><span>01.</span> Identificação do Cliente</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="clientCompany">Empresa / Projeto</label>
-            <input type="text" id="clientCompany" placeholder="Ex: Loft Incorporações" required>
-          </div>
-          <div class="form-group">
-            <label for="clientName">Nome do Contato</label>
-            <input type="text" id="clientName" placeholder="Ex: Felipe Silveira" required>
-          </div>
-          <div class="form-group full-width">
-            <label for="projectTitle">Título da Proposta</label>
-            <input type="text" id="projectTitle" placeholder="Ex: Proposta de Website Premium & Tráfego Pago" required>
-          </div>
-        </div>
-      </div>
-
-      <!-- ESCOPO DO PROJETO (DINÂMICO) -->
-      <div class="panel">
-        <h2 class="panel-title"><span>02.</span> Escopo de Trabalho & Entregas</h2>
-        <div id="scopeItemsContainer">
-          <!-- Os itens de escopo dinâmicos entrarão aqui -->
-        </div>
-        <button type="button" class="add-item-btn" onclick="addScopeItem()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-          Adicionar Serviço ao Escopo
-        </button>
-      </div>
-
-      <!-- INVESTIMENTO E CONDIÇÕES -->
-      <div class="panel">
-        <h2 class="panel-title"><span>03.</span> Prazos e Condições Comerciais</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="projectDeadline">Prazo de Entrega</label>
-            <input type="text" id="projectDeadline" placeholder="Ex: 30 a 45 dias úteis" required>
-          </div>
-          <div class="form-group">
-            <label for="proposalValidity">Validade da Proposta</label>
-            <input type="text" id="proposalValidity" placeholder="Ex: 7 dias corridos" required>
-          </div>
-          <div class="form-group">
-            <label for="projectTotal">Valor Total (R$)</label>
-            <input type="text" id="projectTotal" placeholder="Ex: R$ 8.500,00" required>
-          </div>
-          <div class="form-group">
-            <label for="whatsappContact">WhatsApp do Contato DNA</label>
-            <input type="text" id="whatsappContact" value="5513991863669" placeholder="Apenas números com DDD (Ex: 5513991863669)" required>
-          </div>
-          <div class="form-group full-width">
-            <label for="paymentConditions">Condições de Pagamento</label>
-            <textarea id="paymentConditions" placeholder="Ex: 50% de sinal + 50% na aprovação do design, ou em até 6x no cartão de crédito via link." required></textarea>
-          </div>
-        </div>
-      </div>
-
-      <!-- AÇÕES -->
-      <div class="panel actions-panel">
-        <button type="submit" class="generate-btn">Gerar Link Oficial da Proposta</button>
-
-        <div class="result-container" id="resultContainer">
-          <div class="result-title">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-            Proposta compilada e codificada com sucesso!
-          </div>
-          <div class="link-box-wrapper">
-            <div class="link-box" id="linkBox" readonly></div>
-            <button type="button" class="copy-btn" onclick="copyLink()">Copiar</button>
-          </div>
-          <div class="copy-success-indicator" id="copySuccessIndicator">Link copiado para a área de transferência!</div>
-        </div>
-      </div>
-    </form>
-  </div>
-
   <script>
-    // Configuração de segurança simples
-    const SECRET_KEY = "dna2026"; // Senha para acesso
+    const SECRET_KEY = "dna2026";
     const STORAGE_KEY = "dna_proposal_dashboard_auth";
 
-    // Verificar se já está logado
     window.addEventListener('DOMContentLoaded', () => {
       const isAuth = sessionStorage.getItem(STORAGE_KEY) === "true" || localStorage.getItem(STORAGE_KEY) === "true";
       if (isAuth) {
         unlockDashboard();
       }
 
-      // Adiciona o primeiro item de escopo por padrão
-      addScopeItem();
+      // Pre-fill standard payment conditions based on common PDF patterns
+      document.getElementById('paymentConditions').value = "Valor do site: 1x de R$ 1.000\nMarketing cobrado mensalmente\nData de pagamento definida entre as partes";
+
+      // Adiciona o primeiro item de escopo por padrão com preenchimento sugestivo
+      addScopeItem("Site Profissional", "Página profissional completa e responsiva\nSistema de agendamento\nÁrea de serviços e pacotes\nSessão 'Sobre você'\nDepoimentos\nFAQ\nIntegração com Instagram\nBotão para WhatsApp\nÁrea interativa", "R$ 1.000 (único)");
     });
 
     function handleLogin(event) {
@@ -652,7 +688,6 @@
       document.getElementById('passwordField').value = '';
     }
 
-    // Gerenciador de itens de escopo
     let scopeItemCounter = 0;
 
     function addScopeItem(title = "", desc = "", price = "") {
@@ -661,21 +696,21 @@
       const itemHtml = `
         <div class="scope-item" id="scopeItem_${scopeItemCounter}">
           <div class="scope-item-header">
-            <span class="scope-item-title">Item de Escopo #${scopeItemCounter}</span>
+            <span class="scope-item-title">Serviço #${scopeItemCounter}</span>
             ${scopeItemCounter > 1 ? `<button type="button" class="remove-item-btn" onclick="removeScopeItem(${scopeItemCounter})">Remover</button>` : ''}
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label>Nome do Serviço / Entrega</label>
-              <input type="text" class="scope-title" placeholder="Ex: Identidade Visual Completa" value="${title}" required>
+              <label>Nome do Serviço (Ex: GESTÃO DE MARKETING)</label>
+              <input type="text" class="scope-title" placeholder="Ex: Gestão de Marketing" value="${title}" required>
             </div>
             <div class="form-group">
-              <label>Valor deste Item (Opcional)</label>
-              <input type="text" class="scope-price" placeholder="Ex: R$ 3.500,00 ou Incluso" value="${price}">
+              <label>Valor / Investimento deste Serviço</label>
+              <input type="text" class="scope-price" placeholder="Ex: R$ 850/mês ou sob demanda" value="${price}" required>
             </div>
             <div class="form-group full-width">
-              <label>O que está incluído (Descrição)</label>
-              <textarea class="scope-desc" placeholder="Ex: Logomarca, manual de marca, paleta de cores, tipografia e 3 variações de mockups." required>${desc}</textarea>
+              <label>O que está incluído (Itens — Um por linha)</label>
+              <textarea class="scope-desc" placeholder="Planejamento estratégico&#10;Organização do Instagram&#10;Criação de conteúdos&#10;Direcionamento de vídeos&#10;Acompanhamento" required>${desc}</textarea>
             </div>
           </div>
         </div>
@@ -690,7 +725,6 @@
       }
     }
 
-    // Codificação Base64 robusta suportando acentuação UTF-8 em português
     function utf8_to_b64(str) {
       return btoa(unescape(encodeURIComponent(str)));
     }
@@ -698,17 +732,17 @@
     function generateProposal(event) {
       event.preventDefault();
 
-      // Pegar dados essenciais
       const company = document.getElementById('clientCompany').value.trim();
       const contact = document.getElementById('clientName').value.trim();
       const title = document.getElementById('projectTitle').value.trim();
+      const intro = document.getElementById('proposalIntro').value.trim();
+      const objectives = document.getElementById('proposalObjectives').value.trim();
       const deadline = document.getElementById('projectDeadline').value.trim();
       const validity = document.getElementById('proposalValidity').value.trim();
       const total = document.getElementById('projectTotal').value.trim();
       const whatsapp = document.getElementById('whatsappContact').value.trim();
       const payment = document.getElementById('paymentConditions').value.trim();
 
-      // Pegar itens do escopo
       const scopeItems = [];
       const titleInputs = document.querySelectorAll('.scope-title');
       const priceInputs = document.querySelectorAll('.scope-price');
@@ -722,11 +756,12 @@
         });
       }
 
-      // Montar objeto final
       const proposalData = {
         company,
         contact,
         title,
+        intro,
+        objectives,
         deadline,
         validity,
         total,
@@ -736,23 +771,17 @@
         timestamp: Date.now()
       };
 
-      // Codificar em Base64
       const jsonStr = JSON.stringify(proposalData);
       const base64Data = utf8_to_b64(jsonStr);
 
-      // Gerar link absoluto baseado no host atual
       const currentUrl = window.location.origin;
-      // vercel.json has cleanUrls, so we point to /proposta
       const proposalLink = `${currentUrl}/proposta?d=${base64Data}`;
 
-      // Exibir resultado
       const resultContainer = document.getElementById('resultContainer');
       const linkBox = document.getElementById('linkBox');
       
       linkBox.textContent = proposalLink;
       resultContainer.style.display = 'flex';
-      
-      // Scroll suave até o resultado
       resultContainer.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -768,7 +797,6 @@
         navigator.clipboard.writeText(linkBox.textContent).then(() => {
           showCopySuccess();
         }).catch(() => {
-          // Fallback em navegadores mais antigos
           document.execCommand('copy');
           showCopySuccess();
         });
