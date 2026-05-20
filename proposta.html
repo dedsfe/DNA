@@ -835,42 +835,29 @@
     @media print {
       @page {
         size: A4;
-        margin: 20mm 20mm 20mm 20mm;
+        margin: 15mm;
       }
 
       html, body {
-        background-color: var(--text-primary) !important;
-        color: #000000 !important;
+        background-color: #ffffff !important;
+        color: #0a1628 !important;
         padding: 0 !important;
         margin: 0 !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 11pt !important;
         line-height: 1.5 !important;
-        overflow: visible !important;
       }
 
       .page-wrapper {
         padding: 0 !important;
         min-height: auto !important;
-        overflow: visible !important;
         display: block !important;
       }
 
-      .ambient-light, 
-      .bg-grid,
-      .bg-glow-1,
-      .bg-glow-2,
-      .proposal-actions, 
-      .print-trigger-btn, 
-      .accept-btn,
-      .scope-price-badge:empty,
-      #errorScreen,
-      .premium-checkbox-container {
+      .ambient-light, .bg-grid, .bg-glow-1, .bg-glow-2,
+      .proposal-actions, .print-trigger-btn, .accept-btn,
+      .scope-price-badge:empty, #errorScreen, .premium-checkbox-container {
         display: none !important;
-      }
-
-      .scope-select-wrap {
-        gap: 0 !important;
       }
 
       .container {
@@ -880,317 +867,164 @@
         padding: 0 !important;
       }
 
-      /* Cabeçalho de Branding Centralizado Estilo Editorial */
+      /* CABEÇALHO INICIAL DO PDF */
       .brand-header {
-        border-bottom: 2px solid #111111 !important;
-        margin-bottom: 3.5rem !important;
-        padding-bottom: 1.25rem !important;
+        border-bottom: 2px solid #d4a87a !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 20px !important;
         display: flex !important;
         justify-content: space-between !important;
-        align-items: flex-end !important;
+        align-items: center !important;
+        page-break-after: avoid !important;
       }
+      .brand-logo { color: #0a1628 !important; font-size: 16pt !important; font-weight: 800 !important; }
+      .brand-tag { color: #d4a87a !important; font-size: 9pt !important; font-weight: 600 !important;}
 
-      .brand-logo { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.05em; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; }
-
-      .brand-tag { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; color: var(--text-secondary); margin-top: 0.5rem; }
-
-      /* Hero Cover */
       .proposal-hero {
-        margin-bottom: 3.5rem !important;
-        text-align: left !important;
-        page-break-inside: avoid !important;
+        text-align: center !important;
+        margin-top: 80px !important;
+        margin-bottom: 80px !important;
+        page-break-after: always !important;
       }
 
-      .proposal-meta { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-
-      .proposal-title { font-size: clamp(3rem, 7vw, 5rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.04em; margin-bottom: 2rem; line-height: 1.05; }
-
-      .proposal-client-card {
-        border-left: 3px solid #8c6239 !important;
-        padding-left: 1.5rem !important;
-        margin-top: 0.5rem !important;
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 0.2rem !important;
+      .proposal-title {
+        color: #0a1628 !important;
+        font-size: 32pt !important;
+        font-weight: 800 !important;
+        margin-bottom: 20px !important;
       }
 
-      .client-label {
-        color: #555555 !important;
-        font-size: 8.5pt !important;
-        font-weight: 600 !important;
+      .client-company { color: #0a1628 !important; font-size: 16pt !important; font-weight: bold !important; }
+      
+      /* SEÇÕES (Ex: Site/Automação) */
+      .section-title {
+        background-color: #0a1628 !important;
+        color: #ffffff !important;
+        padding: 12px 20px !important;
+        text-align: center !important;
+        font-size: 14pt !important;
+        font-weight: 800 !important;
         text-transform: uppercase !important;
-        letter-spacing: 0.1em !important;
-      }
-
-      .client-company {
-        color: #000000 !important;
-        font-size: 16pt !important;
-        font-weight: 700 !important;
-      }
-
-      .client-name { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 0.2rem; }
-
-      /* Métricas em Print */
-      .metrics-grid {
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 1.5rem !important;
-        margin-bottom: 3.5rem !important;
+        margin-top: 30px !important;
+        margin-bottom: 20px !important;
+        page-break-after: avoid !important;
         page-break-inside: avoid !important;
       }
 
-      .metric-card {
-        background-color: #f9f9fb !important;
-        border: 1px solid #e1e1e6 !important;
-        border-radius: 12px !important;
-        padding: 1.25rem !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-
-      .metric-label {
-        color: #555555 !important;
-        font-size: 8pt !important;
-      }
-
-      .metric-value { font-size: 3.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; }
-
-      .metric-value.highlight-gold { color: var(--accent-gold); font-size: 2.1rem; font-weight: 700; font-style: normal; }
-
-      .section-title { font-size: 2.5rem; font-weight: 800; color: var(--accent-blue); letter-spacing: -0.03em; margin-bottom: 2.5rem; }
-
-      .section-title::after {
-        content: "" !important;
-        flex: 1 !important;
-        height: 1px !important;
-        background-color: #dddddd !important;
-      }
-
-      .intro-card {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin-bottom: 2.5rem !important;
-        page-break-inside: avoid !important;
-      }
-
-      .intro-text {
-        color: #222222 !important;
-        font-size: 11pt !important;
-        line-height: 1.6 !important;
-      }
-
-      /* Objetivos no Formato de Lista Limpa */
-      .objectives-grid {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 0.85rem !important;
-        margin-bottom: 2.5rem !important;
-        page-break-inside: avoid !important;
-      }
-
-      .objective-card {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        display: flex !important;
-        gap: 0.75rem !important;
-        align-items: flex-start !important;
-        box-shadow: none !important;
-        transform: none !important;
-      }
-
-      .objective-num-wrapper {
-        background-color: transparent !important;
-        border: none !important;
-        width: auto !important;
-        height: auto !important;
-        border-radius: 0 !important;
-        padding: 0 !important;
-      }
-
-      .objective-num {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 11pt !important;
-        font-style: normal !important;
-        font-weight: 700 !important;
-        color: #8c6239 !important;
-      }
-
-      .objective-num::after {
-        content: "." !important;
-      }
-
-      .objective-content {
-        font-family: 'Inter', sans-serif !important;
-        font-size: 11pt !important;
-        color: #222222 !important;
-        line-height: 1.5 !important;
-      }
-
-      /* Serviços / Escopo no Formato Escrito */
-      .scope-list {
-        gap: 2rem !important;
+      /* PACOTES DE ESCOPO - ESPAÇAMENTO INTELIGENTE (SEM BLOCOS RÍGIDOS) */
+      .scope-grid {
+        display: block !important;
       }
 
       .scope-card {
-        background-color: transparent !important;
+        background: transparent !important;
         border: none !important;
-        border-bottom: 1px dashed #dddddd !important;
+        border-top: 1px solid #d4a87a !important;
+        border-bottom: 1px solid #d4a87a !important;
         border-radius: 0 !important;
-        padding: 0 0 2rem 0 !important;
-        margin-bottom: 2rem !important;
-        box-shadow: none !important;
+        padding: 20px 0 !important;
+        margin-bottom: 25px !important;
         page-break-inside: avoid !important;
+        box-shadow: none !important;
       }
 
-      .scope-header {
-        margin-bottom: 1rem !important;
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: flex-start !important;
-        gap: 0.25rem !important;
-      }
-
-      .scope-num {
-        color: #8c6239 !important;
-        font-size: 8.5pt !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.1em !important;
-      }
-
-      .scope-title {
-        color: #000000 !important;
-        font-size: 13pt !important;
-        font-weight: 700 !important;
-        letter-spacing: -0.01em !important;
-      }
-
-      .scope-price-badge {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        color: #8c6239 !important;
-        font-size: 11pt !important;
-        font-weight: 700 !important;
-        margin-top: 0.25rem !important;
-      }
-
-      .scope-price-badge::before {
-        content: "Investimento: " !important;
-        color: #555555 !important;
-        font-weight: 500 !important;
-      }
-
-      .scope-features-list {
-        margin-top: 1rem !important;
-        gap: 0.5rem !important;
-      }
-
-      .scope-features-list li {
-        gap: 0.5rem !important;
-      }
-
-      .feature-icon {
+      .scope-card.is-deselected {
         display: none !important;
       }
 
-      .scope-features-list li::before {
-        content: "•" !important;
-        color: #8c6239 !important;
-        font-size: 12pt !important;
-        margin-right: 0.25rem !important;
-        line-height: 1 !important;
-        margin-top: 0.1rem !important;
+      .scope-header {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: baseline !important;
+        border-bottom: none !important; /* Removido pois já temos a borda do card */
+        padding-bottom: 0 !important;
+        margin-bottom: 15px !important;
       }
 
-      .feature-text {
-        color: #222222 !important;
-        font-size: 10.5pt !important;
-        line-height: 1.4 !important;
+      .scope-title {
+        font-size: 14pt !important;
+        font-weight: bold !important;
+        color: #0a1628 !important;
       }
 
-      /* Condições de Pagamento e Valores */
+      .scope-price {
+        font-size: 14pt !important;
+        color: #d4a87a !important;
+        font-weight: bold !important;
+      }
+
+      .scope-desc {
+        font-size: 11pt !important;
+        color: #0a1628 !important;
+      }
+
+      .scope-desc ul {
+        list-style-type: disc !important;
+        padding-left: 20px !important;
+      }
+
+      .scope-desc li {
+        margin-bottom: 5px !important;
+      }
+
+      /* INVESTIMENTO TOTAL E PAGAMENTO */
       .financials-section {
-        background-color: transparent !important;
-        border: none !important;
-        padding: 0 !important;
-        margin-bottom: 3rem !important;
-        page-break-inside: avoid !important;
+        page-break-before: always !important;
       }
 
-      .total-invest-block {
-        border-bottom: 1px solid #111111 !important;
-        padding-bottom: 1rem !important;
-        margin-bottom: 1.5rem !important;
+      .total-invest-box {
+        border-top: 2px solid #0a1628 !important;
+        border-bottom: 2px solid #0a1628 !important;
+        padding: 30px 0 !important;
+        text-align: center !important;
+        margin-bottom: 30px !important;
       }
 
-      .total-invest-label {
-        color: #555555 !important;
-        font-size: 9pt !important;
-      }
-
-      .total-invest-value {
-        color: #000000 !important;
-        font-size: 26pt !important;
-      }
-
-      .total-invest-value span {
-        color: #8c6239 !important;
-      }
-
-      .payment-label {
-        color: #8c6239 !important;
-        font-size: 11pt !important;
-        font-weight: 700 !important;
-      }
-
-      .payment-conditions-list {
-        gap: 0.5rem !important;
-        margin-top: 0.5rem !important;
-      }
-
-      .payment-bullet {
-        background-color: #8c6239 !important;
-        width: 5px !important;
-        height: 5px !important;
-      }
-
-      .payment-item-text {
-        color: #222222 !important;
-        font-size: 11pt !important;
-      }
-
-      /* Bloco de Assinaturas Perfeito */
-      .print-signatures {
+      .total-invest-label { color: #0a1628 !important; font-size: 12pt !important; font-weight: bold !important; }
+      .total-invest-value { color: #0a1628 !important; font-size: 28pt !important; font-weight: 800 !important; }
+      
+      .payment-methods-grid {
         display: block !important;
-        margin-top: 5rem !important;
+      }
+
+      .method-card {
+        border: none !important;
+        border-bottom: 1px dashed #d4a87a !important;
+        padding: 15px 0 !important;
+        margin-bottom: 10px !important;
         page-break-inside: avoid !important;
       }
-
-      .sig-block-title {
-        font-size: 12pt !important;
-        font-weight: 700 !important;
-        letter-spacing: 0.1em !important;
-        margin-bottom: 2rem !important;
-        color: #000000 !important;
-        border-bottom: 1px solid #111111 !important;
-        padding-bottom: 0.4rem !important;
-        text-transform: uppercase !important;
+      .method-card:last-child {
+        border-bottom: none !important;
       }
 
-      .sig-text-line {
-        font-size: 11pt !important;
-        color: #000000 !important;
-        margin-bottom: 2.5rem !important;
-        line-height: 1.5 !important;
+      /* ASSINATURA */
+      .signature-section {
+        page-break-inside: avoid !important;
+        margin-top: 50px !important;
+        border-top: 1px dashed #d4a87a !important;
+        padding-top: 30px !important;
       }
 
-      .sig-date-line {
-        font-size: 11pt !important;
-        color: #000000 !important;
-        margin-top: 3rem !important;
-        font-weight: 500 !important;
+      .print-signature-box {
+        display: block !important;
+        margin-top: 30px !important;
+        text-align: center !important;
+      }
+
+      /* CORRIGIR A ASSINATURA BRANCA NO PDF BRANCO */
+      .print-signature-img {
+        max-width: 300px !important;
+        max-height: 120px !important;
+        display: block !important;
+        margin: 0 auto !important;
+        background-color: #0a1628 !important; /* Fundo escuro no PDF para mostrar o pincel branco */
+        border-radius: 8px !important;
+        padding: 10px !important;
+      }
+
+      .signature-pad-container {
+        display: none !important;
       }
     }
 
@@ -1765,8 +1599,8 @@
         requestAnimationFrame(resizeCanvas);
 
         signaturePad = new SignaturePad(canvas, {
-          penColor: "rgb(0, 0, 0)",
-          backgroundColor: "rgb(255, 255, 255)"
+          penColor: "#ffffff",
+          backgroundColor: "rgba(0, 0, 0, 0)"
         });
         
         document.getElementById('clearSignatureBtn').addEventListener('click', () => {
