@@ -207,7 +207,7 @@
       background-color: var(--accent-gold-dark, #b88d5e);
     }
 
-    .proposal-title { font-size: clamp(3rem, 7vw, 5rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.04em; margin-bottom: 2rem; line-height: 1.05; }
+    .proposal-title { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 1.5rem; line-height: 1.1; }
 
     .proposal-client-card {
       display: inline-flex;
@@ -239,8 +239,8 @@
     .metrics-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
-      margin-bottom: 5rem;
+      gap: 1rem;
+      margin-bottom: 3rem;
     }
 
     .metric-card {
@@ -269,16 +269,16 @@
       font-weight: 600;
     }
 
-    .metric-value { font-size: 3.5rem; font-weight: 800; color: var(--text-primary); letter-spacing: -0.03em; line-height: 1; }
+    .metric-value { font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; line-height: 1.2; }
 
-    .metric-value.highlight-gold { color: var(--accent-gold); font-size: 2.1rem; font-weight: 700; font-style: normal; }
+    .metric-value.highlight-gold { color: var(--accent-gold); font-size: clamp(1.5rem, 4vw, 2.2rem); font-weight: 700; font-style: normal; }
 
     /* SECTION LAYOUT */
     .proposal-section {
       margin-bottom: 5rem;
     }
 
-    .section-title { font-size: 2.5rem; font-weight: 800; color: var(--accent-blue); letter-spacing: -0.03em; margin-bottom: 2.5rem; }
+    .section-title { font-size: clamp(1.75rem, 3vw, 2.2rem); font-weight: 800; color: var(--accent-blue); letter-spacing: -0.02em; margin-bottom: 1.5rem; line-height: 1.2; }
 
     .section-title::after {
       content: "";
@@ -367,7 +367,7 @@
       background-color: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-lg);
-      padding: 2.5rem;
+      padding: 1.75rem;
       position: relative;
       transition: var(--transition);
       box-shadow: var(--shadow-card);
@@ -766,8 +766,8 @@
       width: 100%;
       max-width: 440px;
       padding: 1.35rem;
-      background: linear-gradient(135deg, var(--text-primary) 0%, #e1e3e8 100%);
-      color: var(--bg-dark);
+      background: var(--text-primary);
+      color: #ffffff;
       text-decoration: none;
       border-radius: 99px;
       font-weight: 700;
@@ -887,29 +887,12 @@
         page-break-after: always !important;
       }
 
-      .proposal-title {
-        color: #0a1628 !important;
-        font-size: 32pt !important;
-        font-weight: 800 !important;
-        margin-bottom: 20px !important;
-      }
+      .proposal-title { font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 800; color: var(--text-primary); letter-spacing: -0.02em; margin-bottom: 1.5rem; line-height: 1.1; }
 
       .client-company { color: #0a1628 !important; font-size: 16pt !important; font-weight: bold !important; }
       
       /* SEÇÕES (Ex: Site/Automação) */
-      .section-title {
-        background-color: #0a1628 !important;
-        color: #ffffff !important;
-        padding: 12px 20px !important;
-        text-align: center !important;
-        font-size: 14pt !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        margin-top: 30px !important;
-        margin-bottom: 20px !important;
-        page-break-after: avoid !important;
-        page-break-inside: avoid !important;
-      }
+      .section-title { font-size: clamp(1.75rem, 3vw, 2.2rem); font-weight: 800; color: var(--accent-blue); letter-spacing: -0.02em; margin-bottom: 1.5rem; line-height: 1.2; }
 
       /* PACOTES DE ESCOPO - ESPAÇAMENTO INTELIGENTE (SEM BLOCOS RÍGIDOS) */
       .scope-grid {
