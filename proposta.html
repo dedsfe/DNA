@@ -1686,6 +1686,9 @@
       }
     });
 
+    let isPrintFlowActive = false;
+    let printDialogVisibilityChanged = false;
+
     function showPostDownloadStep() {
       const proposalView = document.getElementById('proposalView');
       const postDownloadStep = document.getElementById('postDownloadStep');
@@ -1707,18 +1710,26 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function finalizePrintFlow() {
+      if (!isPrintFlowActive) return;
+      isPrintFlowActive = false;
+      printDialogVisibilityChanged = false;
+      showPostDownloadStep();
+    }
+
+    function triggerPrintAndAdvance() {
+      isPrintFlowActive = true;
+      printDialogVisibilityChanged = false;
+      window.print();
+    }
+
     function handleDownloadAndAdvance(e) {
       if (e) e.preventDefault();
-
       const printBtn = document.getElementById('printTriggerBtn');
       if (printBtn) {
         printBtn.disabled = true;
       }
-
-      setTimeout(() => {
-        window.print();
-        showPostDownloadStep();
-      }, 120);
+      triggerPrintAndAdvance();
     }
 
     async function handleAcceptAndPDF(e) {
@@ -1755,9 +1766,41 @@
       if(document.getElementById('acceptBtnIcon')) document.getElementById('acceptBtnIcon').style.display = 'none';
       
       setTimeout(() => {
-        window.print();
-        showPostDownloadStep();
+        triggerPrintAndAdvance();
       }, 500);
+    }
+
+    window.addEventListener('afterprint', () => {
+      setTimeout(finalizePrintFlow, 120);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (!isPrintFlowActive) return;
+      if (document.visibilityState === 'hidden') {
+        printDialogVisibilityChanged = true;
+        return;
+      }
+      if (printDialogVisibilityChanged) {
+        setTimeout(finalizePrintFlow, 180);
+      }
+    });
+
+    if (window.matchMedia) {
+      const printMediaQuery = window.matchMedia('print');
+      const handlePrintMediaChange = (event) => {
+        if (!isPrintFlowActive) return;
+        if (event.matches) {
+          printDialogVisibilityChanged = true;
+          return;
+        }
+        setTimeout(finalizePrintFlow, 120);
+      };
+
+      if (typeof printMediaQuery.addEventListener === 'function') {
+        printMediaQuery.addEventListener('change', handlePrintMediaChange);
+      } else if (typeof printMediaQuery.addListener === 'function') {
+        printMediaQuery.addListener(handlePrintMediaChange);
+      }
     }
   </script>
 </body>
