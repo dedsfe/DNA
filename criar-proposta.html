@@ -895,32 +895,32 @@
               <label for="introPreset">Template de Apresentação <span class="field-hint">(Acelera o preenchimento)</span></label>
               <select id="introPreset" onchange="applyPreset('proposalIntro', INTRO_PRESETS, this.value)">
                 <option value="">-- Escolher Template (Ou preencher manual) --</option>
-                <option value="padrao">Padrão (Marketing e Design)</option>
-                <option value="luxo">Luxo (Posicionamento Premium)</option>
-                <option value="tech">Tech (Sistemas e Apps)</option>
+                <option value="geral">Geral (Apresentação de Serviços)</option>
+                <option value="site">Site / Automação</option>
+                <option value="marketing">Marketing</option>
               </select>
             </div>
             <div class="form-group full-width">
               <label for="proposalIntro">Apresentação Institucional</label>
-              <textarea id="proposalIntro" required>A Agência DNA atua na criação de estratégias digitais completas, unindo marketing, design e tecnologia para transformar perfis e marcas em ferramentas reais de geração de clientes e vendas.</textarea>
+              <textarea id="proposalIntro" required>Apresentamos soluções digitais completas para o seu negócio, com pacotes progressivos que vão do essencial ao totalmente personalizado em frentes como site, automação e marketing.</textarea>
             </div>
             
             <div class="form-group full-width">
               <label for="objectivePreset">Template de Objetivos</label>
               <select id="objectivePreset" onchange="applyPreset('proposalObjectives', OBJECTIVE_PRESETS, this.value)">
                 <option value="">-- Escolher Template (Ou preencher manual) --</option>
-                <option value="conversao">Foco em Vendas e Conversão</option>
-                <option value="branding">Foco em Branding e Posicionamento</option>
-                <option value="tech">Foco em Sistemas e Automação</option>
+                <option value="geral">Visão Geral da Proposta</option>
+                <option value="site">Foco em Site / Automação</option>
+                <option value="marketing">Foco em Marketing</option>
               </select>
             </div>
             <div class="form-group full-width">
               <label for="proposalObjectives">Objetivos do Projeto <span class="field-hint">(Escreva um objetivo por linha)</span></label>
-              <textarea id="proposalObjectives" style="min-height: 120px;" required>Fortalecer a presença digital da marca
-Atrair novos clientes de forma estratégica
-Organizar o processo de atendimento
-Automatizar etapas operacionais
-Aumentar conversão e oportunidades de venda</textarea>
+              <textarea id="proposalObjectives" style="min-height: 120px;" required>Apresentar pacotes progressivos conforme a necessidade do cliente
+Oferecer soluções que unem presença digital, organização e conversão
+Permitir personalização do escopo ideal para o projeto
+Agregar bônus exclusivos em todos os planos
+Facilitar a escolha entre opções essenciais, completas e personalizadas</textarea>
             </div>
           </div>
         </div>
@@ -1032,56 +1032,66 @@ Aumentar conversão e oportunidades de venda</textarea>
     const STORAGE_KEY = "dna_proposal_dashboard_auth";
 
     const SERVICE_PRESETS = {
-      site: {
-        title: "Sites que convertem (Site Profissional)",
-        price: "R$ 1.500 (único)",
-        desc: "Landing page completa de alto padrão\nDesign responsivo e otimizado para celulares\nSeções de apresentação, serviços e FAQ\nFormulário de contato inteligente\nIntegração com WhatsApp e redes sociais\nCopywriting focado em alta conversão\nSEO básico e velocidade de carregamento"
+      site_essencial: {
+        title: "Pacote 1 — Site Essencial",
+        price: "R$ 1.000 (único)",
+        desc: "Página profissional completa e responsiva\nSistema de solicitação de proposta com agenda (datas disponíveis e indisponíveis)\nSeleção de serviços e extras para orçamento\nExplicação do processo de trabalho\nÁrea \"Sobre você\"\nSessão de pacotes e serviços\nSessão de dúvidas frequentes (FAQ)\nIntegração com Instagram\nBotão direto para WhatsApp"
       },
-      redes: {
-        title: "Redes Sociais que vendem (Gestão de Redes)",
-        price: "R$ 1.200/mês",
-        desc: "Criação de cronograma e linha editorial mensal\nProdução e edição de posts para Feed (Imagens/Carrosséis)\nDirecionamento de gravação e roteirização de Reels/TikToks\nEdição profissional de vídeos curtos\nPlanejamento de Stories de engajamento diário\nOrganização visual e estética do perfil\nAcompanhamento semanal de métricas"
-      },
-      branding: {
-        title: "Branding & identidade (Branding Completo)",
+      site_completo: {
+        title: "Pacote 2 — Site Completo",
         price: "R$ 2.000 (único)",
-        desc: "Estudo de posicionamento estratégico de marca\nLogotipo principal, secundário e variações\nDefinição de paleta de cores e tipografia de luxo\nManual de identidade visual completo\nTemplates editáveis para redes sociais\nDesign de cartões de visitas ou materiais físicos básicos\nDirecionamento estético e guia de tom de voz"
+        desc: "Inclui tudo do Plano Essencial +\nDepoimentos com vídeo (link externo)\nÁrea interativa para clientes enviarem fotos e experiências\nMais páginas personalizadas (ex: galeria, blog, portfólio)\nPDF e Ebook para casamento perfeito\nMelhor organização estratégica do conteúdo\nLayout mais sofisticado e profissional\nEstrutura pensada para conversão de clientes\nPossibilidade de adicionar novas funcionalidades ao site"
       },
-      estrategia: {
-        title: "Estratégia digital (Tráfego & Consultoria)",
-        price: "R$ 900/mês",
-        desc: "Planejamento de funil de vendas digital\nConfiguração de contas de anúncios (Meta & Google Ads)\nCriação e otimização de campanhas de tráfego pago\nTestes de público, criativos e segmentação\nRelatório mensal detalhado de custos e retorno (ROI)\nReunião mensal de consultoria e alinhamento tático"
+      site_personalizado: {
+        title: "Pacote 3 — Site Personalizado Ilimitado",
+        price: "Valor sob demanda",
+        desc: "Inclui tudo dos planos anteriores +\nSite 100% personalizado (sem limitações)\nInserção de qualquer elemento desejado (vídeos, animações, seções exclusivas etc.)\nIntegrações avançadas com ferramentas externas\nEstrutura estratégica completa e otimizada\nTotal liberdade de criação conforme necessidade\nCriação de mini sites para clientes do evento\n+1 site de presente para portfólio/depoimento interativo com login dos clientes"
       },
-      apps: {
-        title: "Apps & experiências web (Sistemas sob Medida)",
-        price: "Sob consulta",
-        desc: "Desenvolvimento de sistema web exclusivo\nArquitetura de banco de dados robusta e segura\nPainel administrativo completo\nIntegrações com APIs externas e gateways de pagamento\nFluxo de trabalho personalizado sob medida\nHospedagem escalável e manutenção inclusa"
+      marketing_essencial: {
+        title: "Pacote 1 — Essencial e Inicial",
+        price: "R$ 1.000",
+        desc: "Criação/ajuste da identidade visual\nOrganização completa do Instagram (bio, destaques, feed)\nPlanejamento estratégico de conteúdo\nDirecionamento para gravação de vídeos\nEdição de conteúdos (carrossel, posts, vídeos simples)\nInício da movimentação do perfil"
       },
-      eventos: {
-        title: "Conteúdo para eventos (Cobertura Digital)",
-        price: "Sob consulta",
-        desc: "Planejamento de cobertura e cronograma do evento\nCaptação de imagens e vídeos no local (Mobile/Câmera)\nCriação e postagem de Stories em tempo real\nEdição e publicação de Reels resumo durante o evento\nDirecionamento estético das publicações no dia\nEntrega de acervo bruto pós-evento"
+      marketing_profissional: {
+        title: "Pacote 2 — Profissional",
+        price: "R$ 1.500",
+        desc: "Inclui tudo do Plano Essencial +\nCriação de campanhas temáticas estratégicas\nPlanejamento de conteúdo mais avançado\nGravações mais elaboradas\nConteúdos mais estratégicos para conversão\nCriação de outras redes (Pinterest, LinkedIn etc.)\nPosicionamento mais profissional da marca"
+      },
+      marketing_personalizado: {
+        title: "Pacote 3 — Personalizado",
+        price: "Valor sob demanda",
+        desc: "Inclui tudo dos planos anteriores +\nAcompanhamento próximo e estratégico\nPresença em eventos para captação de conteúdo\nProdução de vídeos mais cinematográficos\nUso de IA e edição avançada\nAlta disponibilidade para gravações\nPlanejamento e execução personalizados conforme necessidade"
+      },
+      bonus_automacao: {
+        title: "Bônus — A Combinar",
+        price: "A combinar",
+        desc: "Sistema de automação para agendamentos\nOrganização de visitas e atendimentos\nFluxos automáticos de tarefas e checklists\nRespostas automáticas no WhatsApp\nAutomação de respostas no Direct do Instagram"
+      },
+      bonus_parceria: {
+        title: "Bônus Exclusivo — Parceria Criativa",
+        price: "Desconto especial",
+        desc: "Ao fechar qualquer plano, o cliente terá acesso a serviços extras com desconto especial\nStory maker (bastidores e eventos)\nVideomaker\nVídeos de surpresa e homenagem\nRetrospectivas para eventos\nIdeias criativas para experiências e eventos"
       }
     };
 
     const PAYMENT_PRESETS = {
-      site_recorrente: "Valor do site profissional: 1x único de R$ 1.500\nGestão de Redes Sociais cobrada mensalmente (R$ 1.200/mês)\nData de pagamento mensal definida entre as partes\nVencimento no dia 10 de cada mês",
-      site_parcelado: "50% de entrada no aceite da proposta (R$ 750)\n50% restante na entrega do projeto aprovado (R$ 750)\nPagamento via Pix ou boleto bancário",
-      marketing_mensal: "Mensalidade de Marketing: R$ 1.200/mês cobrado mensalmente\nFaturamento recorrente todo dia 05\nSem fidelidade contratual, cancelamento com 30 dias de aviso prévio",
-      marketing_anual: "Fidelidade contratual de 12 meses (Anual)\nValor recorrente de R$ 900/mês cobrado mensalmente\nFaturamento todo dia 05 via boleto ou cartão\nMulta de rescisão antecipada de 20% do valor restante",
-      unico_desconto: "Pagamento único integral no ato do aceite\nDesconto de 10% aplicado para pagamento à vista\nValor total final líquido com desconto: R$ X.XXX\nPagamento via transferência Pix ou boleto"
+      site_recorrente: "Pacote de site conforme escopo selecionado\nPossibilidade de complementar com automações e funcionalidades extras\nValores progressivos conforme nível do pacote escolhido\nPersonalização do formato de pagamento a combinar",
+      site_parcelado: "Pacote de site conforme escopo selecionado\nInvestimento alinhado ao pacote Essencial, Completo ou Personalizado\nCondições comerciais e parcelamento a combinar\nPersonalização conforme necessidade do projeto",
+      marketing_mensal: "Pacote de marketing conforme escopo selecionado\nInvestimento progressivo conforme nível do pacote escolhido\nPossibilidade de incluir captação, edição avançada e presença em eventos\nCondições comerciais a combinar",
+      marketing_anual: "Projeto de marketing com acompanhamento estratégico contínuo\nEscopo ajustado conforme necessidade e nível de personalização\nPossibilidade de expansão para outras redes e campanhas temáticas\nCondições comerciais a combinar",
+      unico_desconto: "Investimento conforme pacote selecionado na proposta\nBônus e serviços extras podem ser agregados conforme necessidade\nFormato de pagamento definido no fechamento comercial\nCondições finais a combinar"
     };
 
     const INTRO_PRESETS = {
-      padrao: "A Agência DNA atua na criação de estratégias digitais completas, unindo marketing, design e tecnologia para transformar perfis e marcas em ferramentas reais de geração de clientes e vendas.",
-      luxo: "A DNA Studio desenvolve soluções digitais de alto padrão, focadas em sofisticação e conversão. Nosso objetivo é posicionar sua marca com exclusividade no mercado, unindo design premium e performance.",
-      tech: "Na DNA, transformamos desafios complexos em soluções tecnológicas inovadoras. Desenvolvemos sistemas sob medida com arquitetura robusta, focando em escalabilidade e usabilidade."
+      geral: "Apresentamos soluções digitais completas para o seu negócio, com pacotes progressivos que vão do essencial ao totalmente personalizado. Cada seção da proposta foi estruturada para facilitar a escolha do pacote ideal conforme sua necessidade.",
+      site: "Na frente de Site / Automação, trabalhamos com três pacotes progressivos: do essencial ao ilimitado. A proposta contempla desde uma estrutura profissional e responsiva até soluções totalmente personalizadas com automações e integrações avançadas.",
+      marketing: "Na frente de Marketing, trabalhamos com três pacotes progressivos: do essencial ao personalizado. O objetivo é estruturar presença digital, posicionamento e produção de conteúdo de forma estratégica, com possibilidade de ampliação conforme a demanda."
     };
 
     const OBJECTIVE_PRESETS = {
-      conversao: "Fortalecer a presença digital da marca\nAtrair novos clientes de forma estratégica\nOrganizar o processo de atendimento\nAutomatizar etapas operacionais\nAumentar conversão e oportunidades de venda",
-      branding: "Posicionar a marca no segmento premium\nPadronizar a identidade visual em todos os pontos de contato\nGerar percepção de valor imediata\nCriar uma comunicação visual assertiva\nConsolidar a credibilidade da empresa",
-      tech: "Automatizar fluxos de trabalho internos\nCentralizar a gestão de dados da empresa\nProver uma interface intuitiva para os usuários\nGarantir segurança e estabilidade do sistema\nFacilitar a escalabilidade das operações"
+      geral: "Apresentar pacotes progressivos conforme a necessidade do cliente\nOferecer soluções do essencial ao totalmente personalizado\nAgregar bônus exclusivos em todos os planos\nPermitir personalização do pacote ideal para o projeto\nFacilitar a tomada de decisão com escopos claros",
+      site: "Criar uma presença digital profissional e responsiva\nOrganizar a apresentação dos serviços e do processo de trabalho\nFacilitar pedidos de proposta com agenda e seleção de extras\nIntegrar canais como Instagram e WhatsApp\nPermitir expansão futura com novas funcionalidades e automações",
+      marketing: "Estruturar e fortalecer a presença da marca nas redes sociais\nOrganizar identidade visual, feed, bio e destaques\nPlanejar conteúdos com foco estratégico e conversão\nAmpliar posicionamento da marca com campanhas e novas redes\nAdaptar a execução conforme a necessidade e o nível de personalização"
     };
 
     const DEADLINE_PRESETS = {
@@ -1098,10 +1108,10 @@ Aumentar conversão e oportunidades de venda</textarea>
       }
 
       // Pre-fill standard payment conditions based on common PDF patterns
-      document.getElementById('paymentConditions').value = PAYMENT_PRESETS.site_recorrente;
+      document.getElementById('paymentConditions').value = PAYMENT_PRESETS.site_parcelado;
 
       // Adiciona o primeiro item de escopo por padrão com preenchimento sugestivo
-      const sitePreset = SERVICE_PRESETS.site;
+      const sitePreset = SERVICE_PRESETS.site_essencial;
       addScopeItem(sitePreset.title, sitePreset.desc, sitePreset.price);
     });
 
@@ -1151,12 +1161,14 @@ Aumentar conversão e oportunidades de venda</textarea>
               <label>Carregar de um Template (Opcional — Preenchimento Rápido)</label>
               <select class="scope-preset" onchange="loadPresetToItem(${scopeItemCounter}, this.value)">
                 <option value="">-- Personalizado (Em Branco) --</option>
-                <option value="site">Sites que convertem (Site Profissional) — R$ 1.500 (único)</option>
-                <option value="redes">Redes Sociais que vendem (Gestão de Redes) — R$ 1.200/mês</option>
-                <option value="branding">Branding &amp; identidade (Branding Completo) — R$ 2.000 (único)</option>
-                <option value="estrategia">Estratégia digital (Tráfego &amp; Consultoria) — R$ 900/mês</option>
-                <option value="apps">Apps &amp; experiências web (Sistemas sob Medida) — Sob consulta</option>
-                <option value="eventos">Conteúdo para eventos (Cobertura Digital) — Sob consulta</option>
+                <option value="site_essencial">Pacote 1 — Site Essencial — R$ 1.000 (único)</option>
+                <option value="site_completo">Pacote 2 — Site Completo — R$ 2.000 (único)</option>
+                <option value="site_personalizado">Pacote 3 — Site Personalizado Ilimitado — Valor sob demanda</option>
+                <option value="marketing_essencial">Pacote 1 — Essencial e Inicial — R$ 1.000</option>
+                <option value="marketing_profissional">Pacote 2 — Profissional — R$ 1.500</option>
+                <option value="marketing_personalizado">Pacote 3 — Personalizado — Valor sob demanda</option>
+                <option value="bonus_automacao">Bônus — A Combinar</option>
+                <option value="bonus_parceria">Bônus Exclusivo — Parceria Criativa</option>
               </select>
             </div>
             <div class="form-group">
