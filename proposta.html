@@ -158,6 +158,53 @@
       font-size: 1.05rem;
     }
 
+    /* POST-DOWNLOAD STEP */
+    .post-download-screen {
+      display: none;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1.5rem;
+      min-height: 60vh;
+      padding: clamp(2rem, 4vw, 3.5rem);
+      background-color: var(--bg-card);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.18);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-premium);
+      animation: proposalFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .post-download-kicker {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--accent-blue);
+    }
+
+    .post-download-title {
+      font-size: clamp(2.3rem, 5vw, 3.8rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      color: var(--text-primary);
+      max-width: 10ch;
+    }
+
+    .post-download-copy {
+      max-width: 620px;
+      font-size: 1.08rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+    }
+
+    .post-download-note {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .post-download-screen .accept-btn {
+      max-width: 480px;
+    }
+
     /* MAIN PROPOSAL VIEW */
     .proposal-view {
       display: none; /* Shown dynamically if URL parameter exists */
@@ -683,7 +730,7 @@
     .signature-pad-container {
       width: 100%;
       max-width: 500px;
-      background-color: var(--text-primary) !important;
+      background-color: #f8f5f0 !important;
       border-radius: var(--radius-md);
       overflow: hidden;
       border: 1px solid rgba(var(--accent-gold-rgb), 0.25);
@@ -855,7 +902,7 @@
       }
 
       .ambient-light, .bg-grid, .bg-glow-1, .bg-glow-2,
-      .proposal-actions, .print-trigger-btn, .accept-btn,
+      .proposal-actions, .print-trigger-btn, .accept-btn, #postDownloadStep,
       .scope-price-badge:empty, #errorScreen, .premium-checkbox-container {
         display: none !important;
       }
@@ -953,6 +1000,10 @@
       /* INVESTIMENTO TOTAL E PAGAMENTO */
       .financials-section {
         page-break-before: always !important;
+        overflow: visible !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
       }
 
       .total-invest-box {
@@ -995,19 +1046,29 @@
         text-align: center !important;
       }
 
-      /* CORRIGIR A ASSINATURA BRANCA NO PDF BRANCO */
       .print-signature-img {
         max-width: 300px !important;
         max-height: 120px !important;
         display: block !important;
         margin: 0 auto !important;
-        background-color: #0a1628 !important; /* Fundo escuro no PDF para mostrar o pincel branco */
         border-radius: 8px !important;
-        padding: 10px !important;
       }
 
       .signature-pad-container {
         display: none !important;
+      }
+
+      /* ESCONDER PSEUDO-ELEMENTOS DECORATIVOS QUE APARECEM NO PDF */
+      .financials-section::before,
+      .financials-section::after,
+      .scope-card::before,
+      .scope-card::after {
+        display: none !important;
+        content: none !important;
+        background: none !important;
+        background-image: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
       }
     }
 
@@ -1015,6 +1076,13 @@
     @media (max-width: 768px) {
       .page-wrapper {
         padding: 3rem 1rem 5rem 1rem;
+      }
+      .post-download-screen {
+        min-height: auto;
+        padding: 2rem 1.5rem;
+      }
+      .post-download-title {
+        max-width: none;
       }
       .brand-header {
         margin-bottom: 3rem;
@@ -1073,6 +1141,24 @@
         </div>
         <p style="font-size: 0.8rem; color: var(--text-muted);">DNA Studio — Praia Grande, SP</p>
       </div>
+
+      <section class="post-download-screen" id="postDownloadStep">
+        <span class="post-download-kicker">Etapa Final</span>
+        <h1 class="post-download-title">Está quase tudo pronto.</h1>
+        <p class="post-download-copy">
+          Sua proposta já foi aberta para download. Agora basta clicar no botão abaixo, abrir o WhatsApp e enviar o PDF baixado para o nosso time para seguirmos com a formalização e início do projeto.
+        </p>
+        <p class="post-download-note">
+          Se o arquivo ainda não estiver salvo no seu aparelho, finalize o download antes de enviar a mensagem.
+        </p>
+        <a href="#" class="accept-btn" id="postDownloadWhatsappBtn" rel="noopener">
+          <span>Ir para o WhatsApp e enviar a proposta</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </section>
 
       <!-- PÁGINA DA PROPOSTA OFICIAL -->
       <main class="proposal-view" id="proposalView">
@@ -1193,7 +1279,7 @@
             </svg>
           </a>
           
-          <button class="print-trigger-btn" onclick="window.print()">
+          <button class="print-trigger-btn" id="printTriggerBtn" onclick="handleDownloadAndAdvance(event)">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 6 2 18 2 18 9"></polyline>
               <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
@@ -1203,7 +1289,7 @@
           </button>
 
           <p class="disclaimer">
-            Ao clicar em "Aceitar Proposta", você será direcionado ao WhatsApp da nossa equipe de coordenação de projetos para formalizar as assinaturas e agendar a reunião de Kickoff.
+            Depois de baixar a proposta em PDF, você seguirá para a etapa final de envio no WhatsApp da nossa equipe para formalizar o início do projeto.
           </p>
         </footer>
 
@@ -1375,6 +1461,7 @@
       }
 
       // Realizar o primeiro cálculo de investimento com base nas seleções iniciais
+      updateWhatsAppCTAWithFallback(data.total);
       calculateScopeTotals();
 
       // Exibir página da Proposta
@@ -1473,6 +1560,7 @@
       if (oneOffTotal === 0 && monthlyTotal === 0) {
         totalHtml = `R$ 0,00 <span>*</span>`;
         simpleText = `Nenhum serviço selecionado`;
+        updateWhatsAppCTAWithFallback(data.total);
         if (acceptBtn) {
           acceptBtn.classList.add('disabled');
         }
@@ -1582,7 +1670,7 @@
         requestAnimationFrame(resizeCanvas);
 
         signaturePad = new SignaturePad(canvas, {
-          penColor: "#ffffff",
+          penColor: "#1a1a1a",
           backgroundColor: "rgba(0, 0, 0, 0)"
         });
         
@@ -1598,6 +1686,41 @@
       }
     });
 
+    function showPostDownloadStep() {
+      const proposalView = document.getElementById('proposalView');
+      const postDownloadStep = document.getElementById('postDownloadStep');
+      const whatsappBtn = document.getElementById('postDownloadWhatsappBtn');
+
+      if (whatsappBtn && window.currentWhatsappUrl) {
+        whatsappBtn.href = window.currentWhatsappUrl;
+        whatsappBtn.target = '_blank';
+      }
+
+      if (proposalView) {
+        proposalView.style.display = 'none';
+      }
+
+      if (postDownloadStep) {
+        postDownloadStep.style.display = 'flex';
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function handleDownloadAndAdvance(e) {
+      if (e) e.preventDefault();
+
+      const printBtn = document.getElementById('printTriggerBtn');
+      if (printBtn) {
+        printBtn.disabled = true;
+      }
+
+      setTimeout(() => {
+        window.print();
+        showPostDownloadStep();
+      }, 120);
+    }
+
     async function handleAcceptAndPDF(e) {
       e.preventDefault();
       
@@ -1612,7 +1735,16 @@
       document.getElementById('signatureError').style.display = 'none';
       
       if (signaturePad) {
-        const dataUrl = signaturePad.toDataURL();
+        // Renderiza a assinatura (traço preto) em fundo off-white para o PDF
+        const originalCanvas = document.getElementById('signaturePad');
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = originalCanvas.width;
+        exportCanvas.height = originalCanvas.height;
+        const ctx = exportCanvas.getContext('2d');
+        ctx.fillStyle = '#f8f5f0';
+        ctx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+        ctx.drawImage(originalCanvas, 0, 0);
+        const dataUrl = exportCanvas.toDataURL('image/png');
         document.getElementById('printSignatureImg').src = dataUrl;
         document.getElementById('signaturePad').parentElement.style.display = 'none';
         document.getElementById('clearSignatureBtn').style.display = 'none';
@@ -1624,18 +1756,7 @@
       
       setTimeout(() => {
         window.print();
-        
-        document.getElementById('acceptBtnText').innerHTML = 'Avançar para o WhatsApp';
-        if(document.getElementById('acceptBtnIcon')) {
-          document.getElementById('acceptBtnIcon').style.display = 'inline-block';
-        }
-        
-        const acceptBtn = document.getElementById('acceptBtn');
-        if (acceptBtn && window.currentWhatsappUrl) {
-          acceptBtn.href = window.currentWhatsappUrl;
-          acceptBtn.target = '_blank';
-          acceptBtn.removeEventListener('click', handleAcceptAndPDF);
-        }
+        showPostDownloadStep();
       }, 500);
     }
   </script>
