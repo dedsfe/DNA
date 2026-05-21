@@ -696,6 +696,38 @@
       line-height: 1.6;
     }
 
+    .payment-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .payment-meta-card {
+      background-color: rgba(var(--accent-gold-rgb), 0.06);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.16);
+      border-radius: var(--radius-md);
+      padding: 1.1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .payment-meta-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .payment-meta-value {
+      color: var(--text-primary);
+      font-size: 0.98rem;
+      line-height: 1.5;
+      font-weight: 600;
+    }
+
     /* SIGNATURE BLOCK */
     .signature-section {
       background-color: var(--bg-card);
@@ -725,6 +757,44 @@
       text-align: center;
       max-width: 460px;
       line-height: 1.6;
+    }
+
+    .signature-party-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .signature-party-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: rgba(10, 22, 40, 0.025);
+      padding: 1.2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-align: left;
+    }
+
+    .signature-party-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .signature-party-name {
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .signature-party-meta {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
     }
 
     .signature-pad-container {
@@ -1041,6 +1111,18 @@
         display: block !important;
       }
 
+      .payment-meta-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        margin-top: 16px !important;
+      }
+
+      .payment-meta-card {
+        background: transparent !important;
+        border: 1px solid rgba(10, 22, 40, 0.1) !important;
+        padding: 10px 12px !important;
+      }
+
       .method-card {
         border: none !important;
         border-bottom: 1px dashed #d4a87a !important;
@@ -1064,6 +1146,32 @@
         display: block !important;
         margin-top: 30px !important;
         text-align: center !important;
+      }
+
+      .print-signatures {
+        display: block !important;
+        margin-top: 28px !important;
+      }
+
+      .sig-block-title {
+        font-size: 10pt !important;
+        letter-spacing: 0.16em !important;
+        color: #b88d5e !important;
+        font-weight: 700 !important;
+        margin-bottom: 14px !important;
+      }
+
+      .sig-lines-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
+
+      .sig-text-line,
+      .sig-date-line {
+        font-size: 10.5pt !important;
+        color: #0a1628 !important;
+        line-height: 1.55 !important;
       }
 
       .print-signature-img {
@@ -1130,6 +1238,10 @@
       }
       .financials-section {
         padding: 1.75rem;
+      }
+      .payment-meta-grid,
+      .signature-party-grid {
+        grid-template-columns: 1fr;
       }
       .signature-section {
         padding: 1.75rem;
@@ -1255,6 +1367,16 @@
                 <div class="payment-text" id="financialConditions">
                   Condições customizadas a serem carregadas dinamicamente...
                 </div>
+                <div class="payment-meta-grid">
+                  <div class="payment-meta-card" id="paymentDueDateCard">
+                    <span class="payment-meta-label">Data de Pagamento</span>
+                    <span class="payment-meta-value" id="paymentDueDateValue">A definir</span>
+                  </div>
+                  <div class="payment-meta-card" id="lateFeeNoticeCard">
+                    <span class="payment-meta-label">Multa por Atraso</span>
+                    <span class="payment-meta-value" id="lateFeeNoticeValue">A definir</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1262,8 +1384,20 @@
 
         <!-- SIGNATURE BLOCK -->
         <div class="signature-section" id="signatureSection">
-          <h3 class="signature-title">Assinatura Eletrônica</h3>
-          <p class="signature-subtitle">Desenhe sua assinatura no quadro abaixo para validar a aprovação do escopo selecionado e gerar o documento oficial.</p>
+          <h3 class="signature-title">Assinaturas da Proposta</h3>
+          <p class="signature-subtitle">A proposta será formalizada com a assinatura da DNA Digital Space e a assinatura do cliente. O cliente assina eletronicamente abaixo.</p>
+          <div class="signature-party-grid">
+            <div class="signature-party-card">
+              <span class="signature-party-label">DNA Digital Space</span>
+              <strong class="signature-party-name">Parte Contratada</strong>
+              <span class="signature-party-meta" id="dnaSignerSummary">Representante(s) a definir.</span>
+            </div>
+            <div class="signature-party-card">
+              <span class="signature-party-label">Cliente</span>
+              <strong class="signature-party-name" id="clientSignerCompany">Empresa Cliente</strong>
+              <span class="signature-party-meta" id="clientSignerName">Responsável: Contato principal</span>
+            </div>
+          </div>
           <div class="signature-pad-container">
             <canvas id="signaturePad" width="500" height="200"></canvas>
           </div>
@@ -1282,9 +1416,9 @@
         <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO NATIVA) -->
         <div class="print-signatures" id="printSignatures">
           <div class="sig-block-title">ASSINATURA</div>
-          <div class="sig-lines-container">
-            <p class="sig-text-line"><strong>CONTRATADA:</strong> DNA Estúdio de Design e Estratégia (_______________________________________)</p>
-            <p class="sig-text-line"><strong>CONTRATANTE:</strong> <span id="sigClientCompany">Empresa Cliente</span> (_______________________________________)</p>
+          <div class="sig-lines-container" id="printSignatureLines">
+            <p class="sig-text-line"><strong>CONTRATADA:</strong> DNA Digital Space</p>
+            <p class="sig-text-line"><strong>CONTRATANTE:</strong> Empresa Cliente</p>
             <p class="sig-date-line">Praia Grande, ____ de ______________________ de 2026</p>
           </div>
         </div>
@@ -1358,14 +1492,78 @@
       document.getElementById('errorScreen').style.display = 'flex';
     }
 
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function getDnaSignerNames(mode, rawNames) {
+      const names = (rawNames || '')
+        .split('\n')
+        .map(name => name.trim())
+        .filter(Boolean);
+
+      if (mode === 'single') {
+        return names.slice(0, 1);
+      }
+
+      if (mode === 'both') {
+        return names.slice(0, 2);
+      }
+
+      return names;
+    }
+
+    function getDnaSignerSummary(mode, rawNames) {
+      const names = getDnaSignerNames(mode, rawNames);
+      if (names.length === 0) {
+        return 'Representante(s) da DNA definidos na formalização final.';
+      }
+
+      if (mode === 'single') {
+        return `Assinatura da DNA por ${names[0]}.`;
+      }
+
+      if (names.length === 1) {
+        return `Assinatura da DNA por ${names[0]}.`;
+      }
+
+      return `Assinaturas da DNA por ${names.join(' e ')}.`;
+    }
+
+    function buildPrintSignatureLines(data) {
+      const dnaSignerNames = getDnaSignerNames(data.dnaSignerMode, data.dnaSignerNames);
+      const clientCompany = data.company || 'Empresa Cliente';
+      const clientContact = data.contact || 'Responsável do cliente';
+      const dnaSignatureLines = dnaSignerNames.length > 0
+        ? dnaSignerNames.map(name => `<p class="sig-text-line"><strong>Representante DNA:</strong> ${escapeHtml(name)} (_______________________________________)</p>`).join('')
+        : `<p class="sig-text-line"><strong>Representante DNA:</strong> Representante(s) a definir (_______________________________________)</p>`;
+
+      return `
+        <p class="sig-text-line"><strong>CONTRATADA:</strong> DNA Digital Space</p>
+        ${dnaSignatureLines}
+        <p class="sig-text-line"><strong>CONTRATANTE:</strong> ${escapeHtml(clientCompany)}</p>
+        <p class="sig-text-line"><strong>Responsável do Cliente:</strong> ${escapeHtml(clientContact)} (_______________________________________)</p>
+        <p class="sig-date-line">Praia Grande, ____ de ______________________ de 2026</p>
+      `;
+    }
+
     function renderProposal(data) {
       // Popular Metadados da Proposta
       document.getElementById('propTitle').textContent = data.title || 'Proposta Comercial';
       document.getElementById('clientCompany').textContent = data.company || 'Empresa Cliente';
       document.getElementById('clientContact').textContent = `Aos cuidados de: ${data.contact || ''}`;
-      
-      // Assinatura Print
-      document.getElementById('sigClientCompany').textContent = data.company || 'Empresa Cliente';
+
+      // Assinaturas e partes
+      document.getElementById('clientSignerCompany').textContent = data.company || 'Empresa Cliente';
+      document.getElementById('clientSignerName').textContent = `Responsável: ${data.contact || 'Contato principal'}`;
+      document.getElementById('dnaSignerSummary').textContent = getDnaSignerSummary(data.dnaSignerMode, data.dnaSignerNames);
+      document.getElementById('printSignatureLines').innerHTML = buildPrintSignatureLines(data);
+      document.getElementById('printSignatureName').textContent = `Assinado eletronicamente por ${data.contact || 'Responsável do cliente'} via DNA Digital Space`;
 
       // Popular Cards Métricas
       document.getElementById('metricDeadline').textContent = data.deadline || 'A definir';
@@ -1425,6 +1623,9 @@
       } else {
         paymentContainer.innerHTML = `<p class="payment-text">${data.payment || ''}</p>`;
       }
+
+      document.getElementById('paymentDueDateValue').textContent = data.paymentDueDate || 'A definir';
+      document.getElementById('lateFeeNoticeValue').textContent = data.lateFeeNotice || 'A definir';
 
       // Popular Lista de Escopos
       const container = document.getElementById('scopeContainer');

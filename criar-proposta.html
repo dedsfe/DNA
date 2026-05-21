@@ -995,6 +995,26 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
               <label for="paymentConditions">Condições de Pagamento Detalhadas <span class="field-hint">(Escreva uma condição por linha)</span></label>
               <textarea id="paymentConditions" style="min-height: 100px;" placeholder="Ex: Valor do site: 1x de R$ 1.000&#10;Marketing cobrado mensalmente&#10;Data de pagamento definida entre as partes" required></textarea>
             </div>
+            <div class="form-group">
+              <label for="paymentDueDate">Data de Pagamento</label>
+              <input type="text" id="paymentDueDate" placeholder="Ex: Todo dia 10 de cada mês" required>
+            </div>
+            <div class="form-group">
+              <label for="dnaSignerMode">Assinatura da DNA Digital Space</label>
+              <select id="dnaSignerMode" required>
+                <option value="both">Assinatura dos dois sócios</option>
+                <option value="single">Assinatura de um sócio</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </div>
+            <div class="form-group full-width">
+              <label for="lateFeeNotice">Aviso de Multa por Atraso <span class="field-hint">(Pode ser percentual ou valor fixo)</span></label>
+              <textarea id="lateFeeNotice" style="min-height: 100px;" placeholder="Ex: Em caso de pagamento após a data acordada, incidirá multa de 2% sobre o valor do contrato, além de juros de 1% ao mês." required></textarea>
+            </div>
+            <div class="form-group full-width">
+              <label for="dnaSignerNames">Nome(s) do(s) representante(s) da DNA <span class="field-hint">(Um por linha)</span></label>
+              <textarea id="dnaSignerNames" style="min-height: 90px;" placeholder="Ex: André Felipe&#10;Nome do outro sócio" required></textarea>
+            </div>
           </div>
         </div>
 
@@ -1109,6 +1129,8 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
 
       // Pre-fill standard payment conditions based on common PDF patterns
       document.getElementById('paymentConditions').value = PAYMENT_PRESETS.site_parcelado;
+      document.getElementById('paymentDueDate').value = 'Data definida entre as partes';
+      document.getElementById('lateFeeNotice').value = 'Em caso de pagamento após a data acordada, incidirá multa conforme definido nesta proposta, podendo ser aplicada em valor fixo ou percentual sobre o contrato.';
 
       // Adiciona o primeiro item de escopo por padrão com preenchimento sugestivo
       const sitePreset = SERVICE_PRESETS.site_essencial;
@@ -1269,6 +1291,10 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
       const total = totalNum + (totalRecurrence ? (totalRecurrence.startsWith('/') ? totalRecurrence : " " + totalRecurrence) : "");
       const whatsapp = document.getElementById('whatsappContact').value.trim();
       const payment = document.getElementById('paymentConditions').value.trim();
+      const paymentDueDate = document.getElementById('paymentDueDate').value.trim();
+      const lateFeeNotice = document.getElementById('lateFeeNotice').value.trim();
+      const dnaSignerMode = document.getElementById('dnaSignerMode').value;
+      const dnaSignerNames = document.getElementById('dnaSignerNames').value.trim();
 
       const scopeItems = [];
       const titleInputs = document.querySelectorAll('.scope-title');
@@ -1297,6 +1323,10 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
         total,
         whatsapp,
         payment,
+        paymentDueDate,
+        lateFeeNotice,
+        dnaSignerMode,
+        dnaSignerNames,
         items: scopeItems,
         timestamp: Date.now()
       };
