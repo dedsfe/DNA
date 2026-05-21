@@ -939,7 +939,22 @@
       .client-company { color: #0a1628 !important; font-size: 16pt !important; font-weight: bold !important; }
       
       /* SEÇÕES (Ex: Site/Automação) */
-      .section-title { font-size: clamp(1.75rem, 3vw, 2.2rem); font-weight: 800; color: var(--accent-blue); letter-spacing: -0.02em; margin-bottom: 1.5rem; line-height: 1.2; }
+      .proposal-section {
+        margin-bottom: 28px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+      }
+
+      .section-title {
+        font-size: clamp(1.75rem, 3vw, 2.2rem);
+        font-weight: 800;
+        color: var(--accent-blue);
+        letter-spacing: -0.02em;
+        margin-bottom: 0.9rem !important;
+        line-height: 1.2;
+        page-break-after: avoid !important;
+        break-after: avoid-page !important;
+      }
 
       /* PACOTES DE ESCOPO - ESPAÇAMENTO INTELIGENTE (SEM BLOCOS RÍGIDOS) */
       .scope-grid {
@@ -999,11 +1014,16 @@
 
       /* INVESTIMENTO TOTAL E PAGAMENTO */
       .financials-section {
-        page-break-before: always !important;
+        page-break-before: auto !important;
+        break-before: auto !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid-page !important;
+        margin-top: 0 !important;
         overflow: visible !important;
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
+        padding: 0 !important;
       }
 
       .total-invest-box {
@@ -1035,9 +1055,9 @@
       /* ASSINATURA */
       .signature-section {
         page-break-inside: avoid !important;
-        margin-top: 50px !important;
+        margin-top: 28px !important;
         border-top: 1px dashed #d4a87a !important;
-        padding-top: 30px !important;
+        padding-top: 22px !important;
       }
 
       .print-signature-box {
