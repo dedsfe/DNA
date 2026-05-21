@@ -1965,6 +1965,44 @@
       }
       
       document.getElementById('signatureError').style.display = 'none';
+
+      // --- CRM WEBHOOK TRIGGER ---
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataParam = urlParams.get('d');
+        if (dataParam) {
+          const decodedJson = b64_to_utf8(dataParam);
+          const data = JSON.parse(decodedJson);
+          
+          // Pegar os serviços selecionados
+          const checkedCards = [];
+          const checkboxes = document.querySelectorAll('.scope-checkbox');
+          checkboxes.forEach(cb => {
+            if (cb.checked) {
+              const card = cb.closest('.scope-card');
+              const title = card.querySelector('.scope-title').textContent;
+              checkedCards.push(title);
+            }
+          });
+
+          const payload = {
+            company: data.company,
+            contact: data.contact,
+            whatsapp: data.whatsapp,
+            selectedServices: checkedCards
+          };
+
+          // Chamada assíncrona para não travar a UI de gerar o PDF
+          fetch('/api/acceptProposal', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(err => console.error("Webhook falhou:", err));
+        }
+      } catch (err) {
+        console.error("Erro ao preparar Webhook do CRM", err);
+      }
+      // ---------------------------
       
       if (signaturePad) {
         // Renderiza a assinatura (traço preto) em fundo off-white para o PDF

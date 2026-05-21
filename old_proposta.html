@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta Comercial — DNA Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Bibliotecas Externas -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-dark: #050508;
+      --bg-card: #0c0d12;
+      --bg-card-hover: #12141c;
+      --accent-gold: #d4a87a;
+      --accent-gold-rgb: 212, 168, 122;
+      --accent-blue: #3b7cd3;
+      --accent-blue-rgb: 59, 124, 211;
+      --text-primary: #ffffff;
+      --text-secondary: #a0a5b5;
+      --text-muted: #626875;
+      --border-color: rgba(255, 255, 255, 0.05);
+      --border-hover: rgba(212, 168, 122, 0.25);
+      --border-active: rgba(212, 168, 122, 0.5);
+      --max-width: 840px;
+      --transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      --shadow-premium: 0 20px 50px rgba(0, 0, 0, 0.5);
+      --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+      --shadow-hover: 0 20px 45px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 168, 122, 0.2);
+      --radius-sm: 8px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      padding: 0;
+      margin: 0;
+    }
+
+    /* Elegant dark mode custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-gold);
+    }
+
+    /* Grid pattern background */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-size: 60px 60px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Glowing ambient lights (extremely high performance) */
+    .bg-glow-1 {
+      position: fixed;
+      top: -15%;
+      left: 15%;
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(212, 168, 122, 0.02) 0%, rgba(0, 0, 0, 0) 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    .bg-glow-2 {
+      position: fixed;
+      bottom: -10%;
+      right: -10%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(59, 124, 211, 0.018) 0%, rgba(0, 0, 0, 0) 70%);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Mobile-stabilized viewport container */
+    .page-wrapper {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5rem 1.5rem 8rem 1.5rem;
+      z-index: 1;
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: var(--max-width);
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ERROR STATE SCREEN */
+    .error-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 60vh;
+      padding: 3rem;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-premium);
+    }
+
+    .error-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 3.5rem;
+      font-style: italic;
+      color: var(--accent-gold);
+      margin-bottom: 1rem;
+    }
+
+    .error-desc {
+      color: var(--text-secondary);
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+      font-size: 1.05rem;
+    }
+
+    /* MAIN PROPOSAL VIEW */
+    .proposal-view {
+      display: none; /* Shown dynamically if URL parameter exists */
+      animation: proposalFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes proposalFadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* AGENCY HEADER BRANDING */
+    .brand-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+      position: relative;
+    }
+
+    .brand-logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-logo::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-gold);
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .brand-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* HERO COVER */
+    .proposal-hero {
+      margin-bottom: 5rem;
+    }
+
+    .proposal-meta {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .proposal-meta::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background-color: var(--accent-gold);
+    }
+
+    .proposal-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(3rem, 7vw, 5rem);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      margin-bottom: 3rem;
+    }
+
+    .proposal-client-card {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      border-left: 2px solid var(--accent-gold);
+      padding-left: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .client-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .client-company {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .client-name {
+      font-size: 1rem;
+      color: var(--text-secondary);
+    }
+
+    /* METRICS / STATS GRID */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 5rem;
+    }
+
+    .metric-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.75rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: var(--transition);
+      box-shadow: var(--shadow-card);
+    }
+
+    .metric-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .metric-value {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .metric-value.highlight-gold {
+      color: var(--accent-gold);
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.1rem;
+      font-style: italic;
+      font-weight: 400;
+      line-height: 1.1;
+    }
+
+    /* SECTION LAYOUT */
+    .proposal-section {
+      margin-bottom: 5rem;
+    }
+
+    .section-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2.5rem;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      color: var(--accent-gold);
+      margin-bottom: 2.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .section-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--border-color) 0%, transparent 100%);
+    }
+
+    /* APRESENTAÇÃO INSTITUCIONAL */
+    .intro-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-left: 3px solid var(--accent-gold);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .intro-text {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+
+    /* OBJETIVOS DO PROJETO */
+    .objectives-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .objective-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      display: flex;
+      gap: 1.25rem;
+      align-items: flex-start;
+      transition: var(--transition);
+      box-shadow: var(--shadow-card);
+    }
+
+    .objective-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .objective-num-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(var(--accent-gold-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.15);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .objective-num {
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.5rem;
+      font-style: italic;
+      color: var(--accent-gold);
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .objective-content {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* SCOPE ITEMS */
+    .scope-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2.25rem;
+    }
+
+    .scope-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      position: relative;
+      transition: var(--transition);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+
+    .scope-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(var(--accent-gold-rgb), 0.15), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .scope-card:not(.is-deselected):hover {
+      border-color: var(--border-hover);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .scope-card:not(.is-deselected) {
+      border-color: rgba(var(--accent-gold-rgb), 0.15);
+    }
+
+    .scope-card:not(.is-deselected)::before {
+      opacity: 1;
+    }
+
+    .scope-card.is-deselected {
+      opacity: 0.35;
+      filter: grayscale(85%);
+      border-color: rgba(255, 255, 255, 0.02);
+      transform: scale(0.99);
+      box-shadow: none;
+    }
+
+    /* PREMIUM CHECKBOX STYLING */
+    .scope-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .premium-checkbox-container {
+      display: block;
+      position: relative;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .premium-checkbox-container input {
+      position: absolute;
+      opacity: 0;
+      cursor: pointer;
+      height: 0;
+      width: 0;
+    }
+
+    .premium-checkbox-checkmark {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 28px;
+      width: 28px;
+      background-color: transparent;
+      border: 2px solid rgba(var(--accent-gold-rgb), 0.35);
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .premium-checkbox-container:hover input ~ .premium-checkbox-checkmark {
+      border-color: var(--accent-gold);
+      background-color: rgba(var(--accent-gold-rgb), 0.05);
+    }
+
+    .premium-checkbox-container input:checked ~ .premium-checkbox-checkmark {
+      background-color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 15px rgba(var(--accent-gold-rgb), 0.4);
+    }
+
+    .premium-checkbox-checkmark:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    .premium-checkbox-container input:checked ~ .premium-checkbox-checkmark:after {
+      display: block;
+    }
+
+    .premium-checkbox-container .premium-checkbox-checkmark:after {
+      left: 9px;
+      top: 4px;
+      width: 6px;
+      height: 12px;
+      border: solid var(--bg-dark);
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+
+    .scope-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.75rem;
+      gap: 1.25rem;
+    }
+
+    .scope-number-title {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .scope-num {
+      font-size: 0.75rem;
+      font-family: monospace;
+      color: var(--accent-gold);
+      font-weight: 700;
+      letter-spacing: 0.1em;
+    }
+
+    .scope-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    .scope-price-badge {
+      padding: 0.45rem 1rem;
+      background-color: rgba(var(--accent-gold-rgb), 0.08);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.2);
+      color: var(--accent-gold);
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .scope-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      margin-top: 1.75rem;
+    }
+
+    .scope-features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+    }
+
+    .feature-icon {
+      color: var(--accent-gold);
+      margin-top: 0.25rem;
+      flex-shrink: 0;
+    }
+
+    .feature-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .scope-description {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    /* FINANCIAL CONDITIONS */
+    .financials-section {
+      background-color: var(--bg-card);
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.15);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+
+    .financials-section::before {
+      content: "";
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(var(--accent-gold-rgb), 0.035) 0%, rgba(0, 0, 0, 0) 70%);
+      top: -200px;
+      right: -200px;
+      pointer-events: none;
+    }
+
+    .financial-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    .total-invest-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 2rem;
+    }
+
+    .total-invest-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .total-invest-value {
+      font-size: clamp(2.75rem, 6vw, 4rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .total-invest-value span {
+      color: var(--accent-gold);
+      font-family: 'Instrument Serif', serif;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    .payment-conditions-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .payment-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--accent-gold);
+    }
+
+    .payment-conditions-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      margin-top: 0.5rem;
+    }
+
+    .payment-bullet {
+      width: 6px;
+      height: 6px;
+      background-color: var(--accent-gold);
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 8px var(--accent-gold);
+    }
+
+    .payment-item-text {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      line-height: 1.5;
+    }
+
+    .payment-text {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* SIGNATURE BLOCK */
+    .signature-section {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 3rem;
+      margin-top: 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+
+    .signature-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+
+    .signature-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      text-align: center;
+      max-width: 460px;
+      line-height: 1.6;
+    }
+
+    .signature-pad-container {
+      width: 100%;
+      max-width: 500px;
+      background-color: #ffffff !important;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid rgba(var(--accent-gold-rgb), 0.25);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      transition: var(--transition);
+    }
+    
+    .signature-pad-container:hover {
+      border-color: rgba(var(--accent-gold-rgb), 0.5);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .signature-pad-container canvas {
+      width: 100%;
+      height: 200px;
+      display: block;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .signature-actions {
+      display: flex;
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 500px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .clear-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.6rem 1.25rem;
+      border-radius: 99px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    
+    .clear-btn:hover {
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .print-signature-box {
+      display: none;
+    }
+    
+    .print-signature-img {
+      max-width: 300px;
+      max-height: 120px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .print-signatures {
+      display: none; /* Only visible in print */
+    }
+
+    /* FOOTER ACTIONS (CTA & PDF) */
+    .proposal-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+      border-top: 1px solid var(--border-color);
+      padding-top: 4rem;
+      margin-top: 2rem;
+    }
+
+    .accept-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 440px;
+      padding: 1.35rem;
+      background: linear-gradient(135deg, var(--text-primary) 0%, #e1e3e8 100%);
+      color: var(--bg-dark);
+      text-decoration: none;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 10px 30px rgba(255, 255, 255, 0.08);
+      border: 1px solid transparent;
+    }
+
+    .accept-btn.disabled {
+      opacity: 0.35;
+      pointer-events: none;
+      filter: grayscale(100%);
+    }
+
+    .accept-btn:hover {
+      background: linear-gradient(135deg, var(--accent-gold) 0%, #b88d5e 100%);
+      color: var(--bg-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(212, 168, 122, 0.25);
+    }
+
+    .accept-btn svg {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .accept-btn:hover svg {
+      transform: translateX(4px);
+    }
+
+    .print-trigger-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.85rem 1.75rem;
+      border-radius: 99px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: var(--transition);
+    }
+
+    .print-trigger-btn:hover {
+      border-color: var(--text-primary);
+      color: var(--text-primary);
+      background-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .disclaimer {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-align: center;
+      max-width: 520px;
+      line-height: 1.6;
+    }
+
+    /* ═══════════════════════════════════════════════════
+       MEDIA PRINT (IMPRESSÃO PDF PERFEITA A4)
+       ═══════════════════════════════════════════════════ */
+    @media print {
+      @page {
+        size: A4;
+        margin: 20mm 20mm 20mm 20mm;
+      }
+
+      html, body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        line-height: 1.5 !important;
+        overflow: visible !important;
+      }
+
+      .page-wrapper {
+        padding: 0 !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+      }
+
+      .ambient-light, 
+      .bg-grid,
+      .bg-glow-1,
+      .bg-glow-2,
+      .proposal-actions, 
+      .print-trigger-btn, 
+      .accept-btn,
+      .scope-price-badge:empty,
+      #errorScreen,
+      .premium-checkbox-container {
+        display: none !important;
+      }
+
+      .scope-select-wrap {
+        gap: 0 !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Cabeçalho de Branding Centralizado Estilo Editorial */
+      .brand-header {
+        border-bottom: 2px solid #111111 !important;
+        margin-bottom: 3.5rem !important;
+        padding-bottom: 1.25rem !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: flex-end !important;
+      }
+
+      .brand-logo {
+        color: #000000 !important;
+        font-size: 20pt !important;
+        font-weight: 800 !important;
+      }
+
+      .brand-tag {
+        color: #444444 !important;
+        font-size: 9pt !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+      }
+
+      /* Hero Cover */
+      .proposal-hero {
+        margin-bottom: 3.5rem !important;
+        text-align: left !important;
+        page-break-inside: avoid !important;
+      }
+
+      .proposal-meta {
+        color: #8c6239 !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.15em !important;
+        margin-bottom: 0.5rem !important;
+      }
+
+      .proposal-title {
+        color: #000000 !important;
+        font-family: 'Instrument Serif', serif !important;
+        font-size: 32pt !important;
+        font-style: italic !important;
+        font-weight: 400 !important;
+        line-height: 1.1 !important;
+        margin-bottom: 2rem !important;
+      }
+
+      .proposal-client-card {
+        border-left: 3px solid #8c6239 !important;
+        padding-left: 1.5rem !important;
+        margin-top: 0.5rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.2rem !important;
+      }
+
+      .client-label {
+        color: #555555 !important;
+        font-size: 8.5pt !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.1em !important;
+      }
+
+      .client-company {
+        color: #000000 !important;
+        font-size: 16pt !important;
+        font-weight: 700 !important;
+      }
+
+      .client-name {
+        color: #444444 !important;
+        font-size: 10.5pt !important;
+      }
+
+      /* Métricas em Print */
+      .metrics-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1.5rem !important;
+        margin-bottom: 3.5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .metric-card {
+        background-color: #f9f9fb !important;
+        border: 1px solid #e1e1e6 !important;
+        border-radius: 12px !important;
+        padding: 1.25rem !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .metric-label {
+        color: #555555 !important;
+        font-size: 8pt !important;
+      }
+
+      .metric-value {
+        color: #000000 !important;
+        font-size: 13pt !important;
+      }
+
+      .metric-value.highlight-gold {
+        color: #8c6239 !important;
+        font-size: 18pt !important;
+      }
+
+      .section-title {
+        color: #8c6239 !important;
+        font-family: 'Instrument Serif', serif !important;
+        font-size: 18pt !important;
+        font-style: italic !important;
+        font-weight: 400 !important;
+        margin-top: 3.5rem !important;
+        margin-bottom: 1.5rem !important;
+        page-break-after: avoid !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+      }
+
+      .section-title::after {
+        content: "" !important;
+        flex: 1 !important;
+        height: 1px !important;
+        background-color: #dddddd !important;
+      }
+
+      .intro-card {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 2.5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .intro-text {
+        color: #222222 !important;
+        font-size: 11pt !important;
+        line-height: 1.6 !important;
+      }
+
+      /* Objetivos no Formato de Lista Limpa */
+      .objectives-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.85rem !important;
+        margin-bottom: 2.5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .objective-card {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        display: flex !important;
+        gap: 0.75rem !important;
+        align-items: flex-start !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+
+      .objective-num-wrapper {
+        background-color: transparent !important;
+        border: none !important;
+        width: auto !important;
+        height: auto !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+      }
+
+      .objective-num {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        font-style: normal !important;
+        font-weight: 700 !important;
+        color: #8c6239 !important;
+      }
+
+      .objective-num::after {
+        content: "." !important;
+      }
+
+      .objective-content {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11pt !important;
+        color: #222222 !important;
+        line-height: 1.5 !important;
+      }
+
+      /* Serviços / Escopo no Formato Escrito */
+      .scope-list {
+        gap: 2rem !important;
+      }
+
+      .scope-card {
+        background-color: transparent !important;
+        border: none !important;
+        border-bottom: 1px dashed #dddddd !important;
+        border-radius: 0 !important;
+        padding: 0 0 2rem 0 !important;
+        margin-bottom: 2rem !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+      }
+
+      .scope-header {
+        margin-bottom: 1rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+      }
+
+      .scope-num {
+        color: #8c6239 !important;
+        font-size: 8.5pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.1em !important;
+      }
+
+      .scope-title {
+        color: #000000 !important;
+        font-size: 13pt !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.01em !important;
+      }
+
+      .scope-price-badge {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #8c6239 !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        margin-top: 0.25rem !important;
+      }
+
+      .scope-price-badge::before {
+        content: "Investimento: " !important;
+        color: #555555 !important;
+        font-weight: 500 !important;
+      }
+
+      .scope-features-list {
+        margin-top: 1rem !important;
+        gap: 0.5rem !important;
+      }
+
+      .scope-features-list li {
+        gap: 0.5rem !important;
+      }
+
+      .feature-icon {
+        display: none !important;
+      }
+
+      .scope-features-list li::before {
+        content: "•" !important;
+        color: #8c6239 !important;
+        font-size: 12pt !important;
+        margin-right: 0.25rem !important;
+        line-height: 1 !important;
+        margin-top: 0.1rem !important;
+      }
+
+      .feature-text {
+        color: #222222 !important;
+        font-size: 10.5pt !important;
+        line-height: 1.4 !important;
+      }
+
+      /* Condições de Pagamento e Valores */
+      .financials-section {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        margin-bottom: 3rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .total-invest-block {
+        border-bottom: 1px solid #111111 !important;
+        padding-bottom: 1rem !important;
+        margin-bottom: 1.5rem !important;
+      }
+
+      .total-invest-label {
+        color: #555555 !important;
+        font-size: 9pt !important;
+      }
+
+      .total-invest-value {
+        color: #000000 !important;
+        font-size: 26pt !important;
+      }
+
+      .total-invest-value span {
+        color: #8c6239 !important;
+      }
+
+      .payment-label {
+        color: #8c6239 !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+      }
+
+      .payment-conditions-list {
+        gap: 0.5rem !important;
+        margin-top: 0.5rem !important;
+      }
+
+      .payment-bullet {
+        background-color: #8c6239 !important;
+        width: 5px !important;
+        height: 5px !important;
+      }
+
+      .payment-item-text {
+        color: #222222 !important;
+        font-size: 11pt !important;
+      }
+
+      /* Bloco de Assinaturas Perfeito */
+      .print-signatures {
+        display: block !important;
+        margin-top: 5rem !important;
+        page-break-inside: avoid !important;
+      }
+
+      .sig-block-title {
+        font-size: 12pt !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.1em !important;
+        margin-bottom: 2rem !important;
+        color: #000000 !important;
+        border-bottom: 1px solid #111111 !important;
+        padding-bottom: 0.4rem !important;
+        text-transform: uppercase !important;
+      }
+
+      .sig-text-line {
+        font-size: 11pt !important;
+        color: #000000 !important;
+        margin-bottom: 2.5rem !important;
+        line-height: 1.5 !important;
+      }
+
+      .sig-date-line {
+        font-size: 11pt !important;
+        color: #000000 !important;
+        margin-top: 3rem !important;
+        font-weight: 500 !important;
+      }
+    }
+
+    /* RESPONSIVE DIGITAL LAYOUT */
+    @media (max-width: 768px) {
+      .page-wrapper {
+        padding: 3rem 1rem 5rem 1rem;
+      }
+      .brand-header {
+        margin-bottom: 3rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .metric-card {
+        padding: 1.5rem;
+      }
+      .scope-card {
+        padding: 1.75rem;
+      }
+      .scope-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+      .scope-price-badge {
+        align-self: flex-start;
+      }
+      .financials-section {
+        padding: 1.75rem;
+      }
+      .signature-section {
+        padding: 1.75rem;
+      }
+      .signature-actions {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE OVERFLOW WRAPPER -->
+  <div class="page-wrapper">
+    <!-- STATIC HIGH PERFORMANCE BACKGROUND DECORATIONS -->
+    <div class="bg-grid"></div>
+    <div class="bg-glow-1"></div>
+    <div class="bg-glow-2"></div>
+
+    <div class="container">
+      
+      <!-- TELA DE ERRO (URL SEM DADOS) -->
+      <div class="error-screen" id="errorScreen">
+        <div class="error-title">Proposta Inexistente</div>
+        <div class="error-desc">
+          O link que você está tentando acessar está incompleto ou não contém os parâmetros de dados necessários.
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-muted);">DNA Studio — Praia Grande, SP</p>
+      </div>
+
+      <!-- PÁGINA DA PROPOSTA OFICIAL -->
+      <main class="proposal-view" id="proposalView">
+        
+        <!-- CABEÇALHO BRANDING -->
+        <header class="brand-header">
+          <div class="brand-logo">DNA</div>
+          <div class="brand-tag">Estúdio de Design &amp; Estratégia</div>
+        </header>
+
+        <!-- HERO CAPA -->
+        <section class="proposal-hero">
+          <div class="proposal-meta">Proposta Comercial</div>
+          <h1 class="proposal-title" id="propTitle">Aceleração Digital</h1>
+          
+          <div class="proposal-client-card">
+            <span class="client-label">Preparado especialmente para</span>
+            <span class="client-company" id="clientCompany">Empresa Cliente</span>
+            <span class="client-name" id="clientContact">Aos cuidados de Felipe Silveira</span>
+          </div>
+        </section>
+
+        <!-- MÉTRICAS PRINCIPAIS -->
+        <section class="metrics-grid">
+          <div class="metric-card">
+            <span class="metric-label">Investimento Total</span>
+            <span class="metric-value highlight-gold" id="metricTotal">R$ 0,00</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Prazo Estimado</span>
+            <span class="metric-value" id="metricDeadline">30 dias</span>
+          </div>
+          <div class="metric-card">
+            <span class="metric-label">Validade Proposta</span>
+            <span class="metric-value" id="metricValidity">7 dias</span>
+          </div>
+        </section>
+
+        <!-- APRESENTAÇÃO INSTITUCIONAL -->
+        <section class="proposal-section" id="introSection">
+          <h2 class="section-title">Apresentação</h2>
+          <div class="intro-card">
+            <p class="intro-text" id="propIntro">A Agência DNA atua na criação de estratégias digitais completas...</p>
+          </div>
+        </section>
+
+        <!-- OBJETIVOS DO PROJETO -->
+        <section class="proposal-section" id="objectivesSection">
+          <h2 class="section-title">Objetivos do Projeto</h2>
+          <div class="objectives-grid" id="objectivesContainer">
+            <!-- Os objetivos dinâmicos serão inseridos aqui -->
+          </div>
+        </section>
+
+        <!-- ESCOPO DETALHADO -->
+        <section class="proposal-section">
+          <h2 class="section-title">Escopo de Trabalho</h2>
+          <div class="scope-list" id="scopeContainer">
+            <!-- Os cartões de escopo dinâmicos serão inseridos aqui -->
+          </div>
+        </section>
+
+        <!-- CONDIÇÕES FINANCEIRAS -->
+        <section class="proposal-section">
+          <h2 class="section-title">Valores &amp; Pagamento</h2>
+          <div class="financials-section">
+            <div class="financial-grid">
+              <div class="total-invest-block">
+                <span class="total-invest-label">Investimento Global</span>
+                <span class="total-invest-value" id="financialTotal">R$ 0,00 <span>*</span></span>
+              </div>
+              <div class="payment-conditions-block">
+                <span class="payment-label">Condições de Pagamento</span>
+                <div class="payment-text" id="financialConditions">
+                  Condições customizadas a serem carregadas dinamicamente...
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- SIGNATURE BLOCK -->
+        <div class="signature-section" id="signatureSection">
+          <h3 class="signature-title">Assinatura Eletrônica</h3>
+          <p class="signature-subtitle">Desenhe sua assinatura no quadro abaixo para validar a aprovação do escopo selecionado e gerar o documento oficial.</p>
+          <div class="signature-pad-container">
+            <canvas id="signaturePad" width="500" height="200"></canvas>
+          </div>
+          <div class="signature-actions">
+            <button type="button" class="clear-btn" id="clearSignatureBtn">Limpar Assinatura</button>
+            <span style="color: #ff4a4a; font-size: 0.85rem; display: none; margin-top: 8px;" id="signatureError">Assinatura obrigatória</span>
+          </div>
+          
+          <!-- Elemento visível apenas no PDF renderizado -->
+          <div class="print-signature-box" id="printSignatureBox">
+            <img src="" id="printSignatureImg" class="print-signature-img" alt="Assinatura">
+            <p style="color: #555; font-size: 0.75rem; margin-top: 0.5rem;" id="printSignatureName">Assinado eletronicamente via DNA Studio</p>
+          </div>
+        </div>
+
+        <!-- SIGNATURE BLOCK (EXCLUSIVO PARA IMPRESSÃO NATIVA) -->
+        <div class="print-signatures" id="printSignatures">
+          <div class="sig-block-title">ASSINATURA</div>
+          <div class="sig-lines-container">
+            <p class="sig-text-line"><strong>CONTRATADA:</strong> DNA Estúdio de Design e Estratégia (_______________________________________)</p>
+            <p class="sig-text-line"><strong>CONTRATANTE:</strong> <span id="sigClientCompany">Empresa Cliente</span> (_______________________________________)</p>
+            <p class="sig-date-line">Praia Grande, ____ de ______________________ de 2026</p>
+          </div>
+        </div>
+
+        <!-- AÇÕES FINAIS (WHATSAPP E PDF) -->
+        <footer class="proposal-actions">
+          <a href="#" class="accept-btn" id="acceptBtn" rel="noopener">
+            <span id="acceptBtnText">Aceitar Proposta &amp; Iniciar Projeto</span>
+            <svg id="acceptBtnIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+              <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+          </a>
+          
+          <button class="print-trigger-btn" onclick="window.print()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"></polyline>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+              <rect x="6" y="14" width="12" height="8"></rect>
+            </svg>
+            Salvar como PDF / Imprimir
+          </button>
+
+          <p class="disclaimer">
+            Ao clicar em "Aceitar Proposta", você será direcionado ao WhatsApp da nossa equipe de coordenação de projetos para formalizar as assinaturas e agendar a reunião de Kickoff.
+          </p>
+        </footer>
+
+      </main>
+    </div>
+  </div>
+
+  <script>
+    // Decodificação Base64 com suporte UTF-8 total
+    function b64_to_utf8(str) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (err) {
+        console.error("Falha ao decodificar Base64", err);
+        return null;
+      }
+    }
+
+    // Carregar dados da URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+
+      if (!dataParam) {
+        showErrorScreen();
+        return;
+      }
+
+      // Decodificar payload
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) {
+        showErrorScreen();
+        return;
+      }
+
+      try {
+        const proposal = JSON.parse(decodedJson);
+        renderProposal(proposal);
+      } catch (err) {
+        console.error("Falha ao parsear JSON", err);
+        showErrorScreen();
+      }
+    });
+
+    function showErrorScreen() {
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    function renderProposal(data) {
+      // Popular Metadados da Proposta
+      document.getElementById('propTitle').textContent = data.title || 'Proposta Comercial';
+      document.getElementById('clientCompany').textContent = data.company || 'Empresa Cliente';
+      document.getElementById('clientContact').textContent = `Aos cuidados de: ${data.contact || ''}`;
+      
+      // Assinatura Print
+      document.getElementById('sigClientCompany').textContent = data.company || 'Empresa Cliente';
+
+      // Popular Cards Métricas
+      document.getElementById('metricDeadline').textContent = data.deadline || 'A definir';
+      document.getElementById('metricValidity').textContent = data.validity || 'A definir';
+
+      // Popular Apresentação (Apenas se preenchido)
+      const introSection = document.getElementById('introSection');
+      if (data.intro && data.intro.trim() !== '') {
+        document.getElementById('propIntro').textContent = data.intro;
+        introSection.style.display = 'block';
+      } else {
+        introSection.style.display = 'none';
+      }
+
+      // Popular Objetivos (Apenas se preenchido)
+      const objectivesSection = document.getElementById('objectivesSection');
+      const objectivesContainer = document.getElementById('objectivesContainer');
+      objectivesContainer.innerHTML = '';
+      if (data.objectives && data.objectives.trim() !== '') {
+        const objLines = data.objectives.split('\n').filter(line => line.trim() !== '');
+        if (objLines.length > 0) {
+          objLines.forEach((line, idx) => {
+            const cardHtml = `
+              <div class="objective-card">
+                <div class="objective-num-wrapper">
+                  <span class="objective-num">${idx + 1}</span>
+                </div>
+                <span class="objective-content">${line.trim()}</span>
+              </div>
+            `;
+            objectivesContainer.insertAdjacentHTML('beforeend', cardHtml);
+          });
+          objectivesSection.style.display = 'block';
+        } else {
+          objectivesSection.style.display = 'none';
+        }
+      } else {
+        objectivesSection.style.display = 'none';
+      }
+
+      // Popular Condições de Pagamento Detalhadas
+      const paymentContainer = document.getElementById('financialConditions');
+      const paymentLines = data.payment ? data.payment.split('\n').filter(line => line.trim() !== '') : [];
+      
+      if (paymentLines.length > 0) {
+        let paymentHtml = `<ul class="payment-conditions-list">`;
+        paymentLines.forEach(line => {
+          paymentHtml += `
+            <li>
+              <span class="payment-bullet"></span>
+              <span class="payment-item-text">${line.trim()}</span>
+            </li>
+          `;
+        });
+        paymentHtml += `</ul>`;
+        paymentContainer.innerHTML = paymentHtml;
+      } else {
+        paymentContainer.innerHTML = `<p class="payment-text">${data.payment || ''}</p>`;
+      }
+
+      // Popular Lista de Escopos
+      const container = document.getElementById('scopeContainer');
+      container.innerHTML = ''; // Limpar default
+
+      if (data.items && Array.isArray(data.items)) {
+        data.items.forEach((item, index) => {
+          const itemNum = String(index + 1).padStart(2, '0');
+          const priceBadge = item.price ? `<span class="scope-price-badge">${item.price}</span>` : '';
+          
+          // Split features by newline
+          const descLines = item.desc ? item.desc.split('\n').filter(line => line.trim() !== '') : [];
+          let descHtml = '';
+          
+          if (descLines.length > 0) {
+            descHtml = `<ul class="scope-features-list">`;
+            descLines.forEach(line => {
+              descHtml += `
+                <li>
+                  <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span class="feature-text">${line.trim()}</span>
+                </li>
+              `;
+            });
+            descHtml += `</ul>`;
+          } else {
+            descHtml = `<p class="scope-description">${item.desc}</p>`;
+          }
+          
+          const itemHtml = `
+            <div class="scope-card" id="scopeCard_${index}">
+              <div class="scope-header">
+                <div class="scope-select-wrap">
+                  <label class="premium-checkbox-container">
+                    <input type="checkbox" checked onchange="toggleScopeItem(${index})" data-price="${item.price}" class="scope-checkbox">
+                    <span class="premium-checkbox-checkmark"></span>
+                  </label>
+                  <div class="scope-number-title">
+                    <span class="scope-num">SERVIÇO // ${itemNum}</span>
+                    <h3 class="scope-title">${item.title}</h3>
+                  </div>
+                </div>
+                ${priceBadge}
+              </div>
+              <div class="scope-body">
+                ${descHtml}
+              </div>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', itemHtml);
+        });
+      }
+
+      // Realizar o primeiro cálculo de investimento com base nas seleções iniciais
+      calculateScopeTotals();
+
+      // Exibir página da Proposta
+      document.getElementById('proposalView').style.display = 'block';
+    }
+
+    // --- FUNÇÕES DE CÁLCULO E INTERATIVIDADE (ITERAÇÃO 3) ---
+
+    function toggleScopeItem(index) {
+      const card = document.getElementById(`scopeCard_${index}`);
+      if (!card) return;
+      
+      const cb = card.querySelector('.scope-checkbox');
+      if (cb) {
+        if (cb.checked) {
+          card.classList.remove('is-deselected');
+        } else {
+          card.classList.add('is-deselected');
+        }
+      }
+      
+      calculateScopeTotals();
+    }
+
+    function parsePriceString(priceStr) {
+      if (!priceStr) return 0;
+      let cleaned = priceStr.toLowerCase().replace(/\s/g, '');
+      if (!/\d/.test(cleaned)) {
+        return 0;
+      }
+      cleaned = cleaned.replace(/r\$/g, '');
+      
+      const matches = cleaned.match(/[0-9.,]+/);
+      if (!matches) return 0;
+      
+      let numStr = matches[0];
+      const hasComma = numStr.includes(',');
+      const hasDot = numStr.includes('.');
+      
+      if (hasComma && hasDot) {
+        numStr = numStr.replace(/\./g, '').replace(/,/g, '.');
+      } else if (hasComma) {
+        numStr = numStr.replace(/,/g, '.');
+      } else if (hasDot) {
+        const parts = numStr.split('.');
+        const lastPart = parts[parts.length - 1];
+        if (lastPart.length === 3 && parts.length === 2) {
+          numStr = numStr.replace(/\./g, '');
+        }
+      }
+      
+      const parsed = parseFloat(numStr);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    function isMonthlyPrice(priceStr) {
+      if (!priceStr) return false;
+      const lower = priceStr.toLowerCase();
+      return lower.includes('mês') || lower.includes('mensal') || lower.includes('/m') || lower.includes('recorrente');
+    }
+
+    function calculateScopeTotals() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      let oneOffTotal = 0;
+      let monthlyTotal = 0;
+      
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const priceStr = cb.getAttribute('data-price');
+          const value = parsePriceString(priceStr);
+          if (isMonthlyPrice(priceStr)) {
+            monthlyTotal += value;
+          } else {
+            oneOffTotal += value;
+          }
+        }
+      });
+      
+      const formatCurrency = (val) => {
+        return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+      };
+      
+      const totalBlock = document.getElementById('financialTotal');
+      const headerTotalBlock = document.getElementById('metricTotal');
+      
+      let totalHtml = '';
+      let simpleText = '';
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (oneOffTotal === 0 && monthlyTotal === 0) {
+        totalHtml = `R$ 0,00 <span>*</span>`;
+        simpleText = `Nenhum serviço selecionado`;
+        if (acceptBtn) {
+          acceptBtn.classList.add('disabled');
+        }
+      } else {
+        if (acceptBtn) {
+          acceptBtn.classList.remove('disabled');
+        }
+        if (oneOffTotal > 0 && monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span> + ${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)} + ${formatCurrency(monthlyTotal)}/mês`;
+        } else if (oneOffTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)}`;
+        } else if (monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(monthlyTotal)}/mês`;
+        }
+        
+        updateWhatsAppCTADynamic(oneOffTotal, monthlyTotal);
+      }
+      
+      if (totalBlock) totalBlock.innerHTML = totalHtml;
+      if (headerTotalBlock) headerTotalBlock.textContent = simpleText;
+    }
+
+    function updateWhatsAppCTAWithFallback(rawTotal) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyName} e gostaria de dar o aceite oficial para darmos início!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
+    }
+
+    function updateWhatsAppCTADynamic(oneOff, monthly) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      
+      const checkedCards = [];
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const card = cb.closest('.scope-card');
+          const title = card.querySelector('.scope-title').textContent;
+          checkedCards.push(title);
+        }
+      });
+      
+      const servicesList = checkedCards.map(s => `• ${s}`).join('\n');
+      
+      let priceText = '';
+      if (oneOff > 0 && monthly > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único) + R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      } else if (oneOff > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único)`;
+      } else if (monthly > 0) {
+        priceText = `R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      }
+      
+      const message = `Olá! Acabei de aprovar a proposta da DNA Studio para o projeto da ${companyName}!\n\n*Escopo Selecionado:*\n${servicesList}\n\n*Investimento:* ${priceText}\n\nGostaria de dar o aceite oficial e prosseguir!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
+    }
+
+    let signaturePad;
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      const canvas = document.getElementById('signaturePad');
+      if (canvas && window.SignaturePad) {
+        function resizeCanvas() {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+          if (signaturePad) {
+            signaturePad.clear();
+          }
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        signaturePad = new SignaturePad(canvas, {
+          penColor: "rgb(0, 0, 0)",
+          backgroundColor: "rgb(255, 255, 255)"
+        });
+        
+        document.getElementById('clearSignatureBtn').addEventListener('click', () => {
+          signaturePad.clear();
+          document.getElementById('signatureError').style.display = 'none';
+        });
+      }
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', handleAcceptAndPDF);
+      }
+    });
+
+    async function handleAcceptAndPDF(e) {
+      e.preventDefault();
+      
+      if (document.getElementById('acceptBtn').classList.contains('disabled')) return;
+      
+      if (signaturePad && signaturePad.isEmpty()) {
+        document.getElementById('signatureError').style.display = 'inline-block';
+        document.getElementById('signatureSection').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      
+      document.getElementById('signatureError').style.display = 'none';
+      
+      if (signaturePad) {
+        const dataUrl = signaturePad.toDataURL();
+        document.getElementById('printSignatureImg').src = dataUrl;
+        document.getElementById('signaturePad').parentElement.style.display = 'none';
+        document.getElementById('clearSignatureBtn').style.display = 'none';
+        document.getElementById('printSignatureBox').style.display = 'block';
+      }
+      
+      document.getElementById('acceptBtnText').innerHTML = 'Preparando Documento...';
+      if(document.getElementById('acceptBtnIcon')) document.getElementById('acceptBtnIcon').style.display = 'none';
+      
+      setTimeout(() => {
+        window.print();
+        
+        document.getElementById('acceptBtnText').innerHTML = 'Avançar para o WhatsApp';
+        if(document.getElementById('acceptBtnIcon')) {
+          document.getElementById('acceptBtnIcon').style.display = 'inline-block';
+        }
+        
+        const acceptBtn = document.getElementById('acceptBtn');
+        if (acceptBtn && window.currentWhatsappUrl) {
+          acceptBtn.href = window.currentWhatsappUrl;
+          acceptBtn.target = '_blank';
+          acceptBtn.removeEventListener('click', handleAcceptAndPDF);
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>

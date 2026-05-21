@@ -1,0 +1,861 @@
+  <script>
+    // Decodificação Base64 com suporte UTF-8 total
+    function b64_to_utf8(str) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (err) {
+        console.error("Falha ao decodificar Base64", err);
+        return null;
+      }
+    }
+
+    function getProposalDataFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      if (!dataParam) {
+        return null;
+      }
+
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) {
+        return null;
+      }
+
+      try {
+        return JSON.parse(decodedJson);
+      } catch (err) {
+        console.error("Falha ao parsear JSON", err);
+        return null;
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const proposal = getProposalDataFromUrl();
+      if (!proposal) {
+        showErrorScreen();
+        return;
+      }
+
+      renderProposal(proposal);
+    });
+
+    function showErrorScreen() {
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function splitLines(value) {
+      return String(value || '')
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean);
+    }
+
+    function chunkItems(items, size) {
+      const chunks = [];
+      for (let i = 0; i < items.length; i += size) {
+        chunks.push(items.slice(i, i + size));
+      }
+      return chunks;
+    }
+
+    function buildCoverPage(data, refs) {
+      const company = escapeHtml(data.company || 'Empresa Cliente');
+      const contact = escapeHtml(data.contact || 'Contato principal');
+      const subtitle = escapeHtml(data.title || `Proposta comercial personalizada para ${data.company || 'o seu negócio'}`);
+
+      return `
+        <section class="proposal-sheet cover-sheet">
+          <div>
+            <div class="sheet-brand-row">
+              <div class="sheet-brand">DNA</div>
+              <div class="sheet-brand-tag">Estúdio de Design &amp; Estratégia</div>
+            </div>
+
+            <div class="cover-heading">
+              <div class="cover-kicker">APRESENTAÇÃO DE SERVIÇOS</div>
+              <div class="cover-subtitle">${subtitle}</div>
+              <div class="cover-divider"></div>
+            </div>
+
+            <div class="cover-grid">
+              <article class="cover-card">
+                <div class="cover-card-title">Pacotes &amp; Entregas</div>
+                <div class="cover-card-meta">${data.items.length} blocos detalhados</div>
+                <div class="cover-card-detail">Serviços, entregas e diferenciais organizados por página.</div>
+                <div class="cover-card-page">Página ${refs.servicesStart}</div>
+              </article>
+
+              <article class="cover-card">
+                <div class="cover-card-title">Condições &amp; Formalização</div>
+                <div class="cover-card-meta" id="metricTotal">Investimento a calcular</div>
+                <div class="cover-card-detail">Objetivos, pagamento, prazo e aceite final do projeto.</div>
+                <div class="cover-card-page">Página ${refs.objectives}</div>
+              </article>
+            </div>
+          </div>
+
+          <div class="cover-footer-note">
+            <div class="sheet-foot-divider"></div>
+            <div>Preparado especialmente para <strong>${company}</strong>.</div>
+            <div>Aos cuidados de ${contact}. Cada seção abaixo traduz o escopo do projeto em páginas objetivas, comerciais e prontas para apresentação.</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function buildScopeCard(item, globalIndex) {
+      const features = splitLines(item.desc);
+      const title = escapeHtml(item.title || `Serviço ${globalIndex + 1}`);
+      const price = escapeHtml(item.price || 'A combinar');
+      const subline = globalIndex === 0
+        ? 'Escopo base do projeto conforme briefing inicial.'
+        : 'Complemento estratégico e personalização sob medida conforme necessidade.';
+
+      const listHtml = features.length > 0
+        ? `<ul class="package-list">${features.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>`
+        : `<div class="notes-text">Escopo personalizado a ser detalhado entre as partes.</div>`;
+
+      return `
+        <article class="package-card scope-card" id="scopeCard_${globalIndex}">
+          <div class="package-header">
+            <div class="package-heading">
+              <input
+                type="checkbox"
+                checked
+                onchange="toggleScopeItem(${globalIndex})"
+                data-price="${escapeHtml(item.price || '')}"
+                class="package-checkbox scope-checkbox"
+                aria-label="Incluir ${title}"
+              >
+              <div class="package-title-wrap">
+                <div class="package-title scope-title">Pacote ${globalIndex + 1} — ${title}</div>
+                <div class="package-subline">${subline}</div>
+              </div>
+            </div>
+            <div class="package-price">${price}</div>
+          </div>
+          ${listHtml}
+        </article>
+      `;
+    }
+
+    function buildScopePages(groups, refs) {
+      return groups.map((group, groupIndex) => {
+        const sectionTitle = groupIndex === 0 ? 'Pacotes / Entregas' : `Pacotes Complementares ${groupIndex + 1}`;
+        const cards = group.map((item, itemIndex) => buildScopeCard(item, groupIndex * 3 + itemIndex)).join('');
+        return `
+          <section class="proposal-sheet">
+            <div class="sheet-section-bar">${escapeHtml(sectionTitle)}</div>
+            <div class="sheet-stack">${cards}</div>
+          <div class="sheet-contact-line">Estrutura comercial organizada em formato editorial para apresentação clara do escopo. Página ${refs.servicesStart + groupIndex}.</div>
+        </section>
+      `;
+      }).join('');
+    }
+
+    function buildObjectivesPage(data, refs) {
+      const intro = data.intro && data.intro.trim()
+        ? `<div class="notes-box"><div class="notes-title">Apresentação</div><div class="notes-text">${escapeHtml(data.intro)}</div></div>`
+        : '';
+
+      const objectives = splitLines(data.objectives);
+      const objectiveList = objectives.length
+        ? objectives.map(line => `<li>${escapeHtml(line)}</li>`).join('')
+        : '<li>Objetivos definidos de forma personalizada entre as partes.</li>';
+
+      return `
+        <section class="proposal-sheet">
+          <div class="sheet-section-bar">Observações do Projeto</div>
+          <div class="notes-layout">
+            ${intro}
+            <div class="notes-box">
+              <div class="notes-title">Objetivos Principais</div>
+              <ul class="notes-list">${objectiveList}</ul>
+            </div>
+            <div class="notes-columns">
+              <div class="notes-box">
+                <div class="notes-title">Cliente</div>
+                <div class="notes-text"><strong>${escapeHtml(data.company || 'Empresa Cliente')}</strong><br>${escapeHtml(data.contact || 'Contato principal')}</div>
+              </div>
+              <div class="notes-box">
+                <div class="notes-title">Mapa da Proposta</div>
+                <div class="notes-text">Escopo: página ${refs.servicesStart}<br>Comercial: página ${refs.commercial}<br>Formalização: página ${refs.signature}</div>
+              </div>
+            </div>
+          </div>
+          <div class="sheet-contact-line">Entre em contato para personalizar o pacote ideal e alinhar detalhes finais da operação.</div>
+        </section>
+      `;
+    }
+
+    function buildCommercialPage() {
+      return `
+        <section class="proposal-sheet">
+          <div class="sheet-section-bar">Condições Comerciais</div>
+          <div class="commercial-grid">
+            <article class="package-card">
+              <div class="package-header">
+                <div class="package-title-wrap">
+                  <div class="package-title">Investimento Global</div>
+                  <div class="package-subline">Soma dos escopos atualmente selecionados.</div>
+                </div>
+                <div class="package-price" id="financialTotal">R$ 0,00</div>
+              </div>
+              <ul class="package-list">
+                <li>Os valores são atualizados conforme os blocos de escopo ativos nesta proposta.</li>
+                <li>O aceite formal considera apenas os itens selecionados no momento da aprovação.</li>
+              </ul>
+            </article>
+
+            <article class="package-card">
+              <div class="package-header">
+                <div class="package-title-wrap">
+                  <div class="package-title">Condições de Pagamento</div>
+                  <div class="package-subline">Condições comerciais definidas para este projeto.</div>
+                </div>
+              </div>
+              <div class="notes-text" id="financialConditions">Condições customizadas a serem carregadas dinamicamente.</div>
+            </article>
+
+            <article class="package-card">
+              <div class="package-header">
+                <div class="package-title-wrap">
+                  <div class="package-title">Prazo &amp; Validade</div>
+                  <div class="package-subline">Marco operacional para tomada de decisão.</div>
+                </div>
+              </div>
+              <ul class="package-list">
+                <li>Prazo estimado: <span id="metricDeadline">A definir</span></li>
+                <li>Validade da proposta: <span id="metricValidity">A definir</span></li>
+              </ul>
+            </article>
+
+            <div class="notes-box">
+              <div class="notes-title">Próximos Passos</div>
+              <ul class="notes-list">
+                <li>Revisar os blocos selecionados e confirmar o escopo ideal.</li>
+                <li>Assinar eletronicamente a proposta para liberar o PDF oficial.</li>
+                <li>Seguir para o WhatsApp da equipe DNA para formalização e kickoff.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function buildSignaturePage(data) {
+      return `
+        <section class="proposal-sheet signature-sheet">
+          <div>
+            <div class="sheet-section-bar">Formalização Final</div>
+            <div class="signature-sheet-main">
+              <div class="signature-copy">Esta última página concentra os dados essenciais para formalização do projeto. Após a assinatura, o PDF oficial será gerado exatamente nesta estrutura e liberado para registro.</div>
+
+              <div class="signature-meta-grid">
+                <div class="signature-meta-card">
+                  <div class="signature-meta-label">Cliente</div>
+                  <div class="signature-meta-value" id="sigClientCompany">${escapeHtml(data.company || 'Empresa Cliente')}</div>
+                </div>
+                <div class="signature-meta-card">
+                  <div class="signature-meta-label">Contato Responsável</div>
+                  <div class="signature-meta-value">${escapeHtml(data.contact || 'Contato principal')}</div>
+                </div>
+              </div>
+
+              <div class="signature-section" id="signatureSection">
+                <h3 class="signature-title">Assinatura Eletrônica</h3>
+                <p class="signature-subtitle">Desenhe sua assinatura no quadro abaixo para validar a aprovação do escopo selecionado e gerar o documento oficial.</p>
+                <div class="signature-pad-container">
+                  <canvas id="signaturePad" width="500" height="200"></canvas>
+                </div>
+                <div class="signature-actions">
+                  <button type="button" class="clear-btn" id="clearSignatureBtn">Limpar Assinatura</button>
+                  <span style="color: #ef4444; font-size: 0.85rem; display: none; margin-top: 8px;" id="signatureError">Assinatura obrigatória</span>
+                </div>
+                <div class="print-signature-box" id="printSignatureBox">
+                  <img src="" id="printSignatureImg" class="print-signature-img" alt="Assinatura">
+                  <p class="signature-note" id="printSignatureName">Assinado eletronicamente via DNA Studio</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="signature-footer-note">Entre em contato para personalizar o pacote ideal para você e alinhar o kickoff oficial do projeto.</div>
+        </section>
+      `;
+    }
+
+    function renderProposal(data) {
+      const items = Array.isArray(data.items) ? data.items : [];
+      const groups = items.length > 0 ? chunkItems(items, 3) : chunkItems([{ title: 'Escopo personalizado', price: 'A combinar', desc: 'Escopo a ser definido entre as partes' }], 3);
+      const refs = {
+        servicesStart: 2,
+        objectives: 2 + groups.length,
+        commercial: 3 + groups.length,
+        signature: 4 + groups.length
+      };
+
+      document.getElementById('proposalPages').innerHTML = [
+        buildCoverPage({ ...data, items }, refs),
+        buildScopePages(groups, refs),
+        buildObjectivesPage(data, refs),
+        buildCommercialPage(),
+        buildSignaturePage(data)
+      ].join('');
+
+      const paymentContainer = document.getElementById('financialConditions');
+      const paymentLines = splitLines(data.payment);
+      if (paymentLines.length > 0) {
+        paymentContainer.innerHTML = `<ul class="notes-list">${paymentLines.map(line => `<li>${escapeHtml(line)}</li>`).join('')}</ul>`;
+      } else {
+        paymentContainer.innerHTML = `<div class="notes-text">${escapeHtml(data.payment || 'Condições comerciais definidas sob medida entre as partes.')}</div>`;
+      }
+
+      const deadlineEl = document.getElementById('metricDeadline');
+      const validityEl = document.getElementById('metricValidity');
+      if (deadlineEl) deadlineEl.textContent = data.deadline || 'A definir';
+      if (validityEl) validityEl.textContent = data.validity || 'A definir';
+
+      const proposalView = document.getElementById('proposalView');
+      proposalView.style.display = 'block';
+
+      requestAnimationFrame(() => {
+        initializeInteractiveProposal();
+        calculateScopeTotals();
+        updateWhatsAppCTAWithFallback();
+      });
+    }
+
+    function toggleScopeItem(index) {
+      const card = document.getElementById(`scopeCard_${index}`);
+      if (!card) return;
+
+      const checkbox = card.querySelector('.scope-checkbox');
+      if (checkbox) {
+        card.classList.toggle('is-deselected', !checkbox.checked);
+      }
+
+      calculateScopeTotals();
+    }
+
+    function parsePriceString(priceStr) {
+      if (!priceStr) return 0;
+
+      let cleaned = priceStr.toLowerCase().replace(/\s/g, '');
+      if (!/\d/.test(cleaned)) {
+        return 0;
+      }
+
+      cleaned = cleaned.replace(/r\$/g, '');
+      const matches = cleaned.match(/[0-9.,]+/);
+      if (!matches) return 0;
+
+      let numStr = matches[0];
+      const hasComma = numStr.includes(',');
+      const hasDot = numStr.includes('.');
+
+      if (hasComma && hasDot) {
+        numStr = numStr.replace(/\./g, '').replace(/,/g, '.');
+      } else if (hasComma) {
+        numStr = numStr.replace(/,/g, '.');
+      } else if (hasDot) {
+        const parts = numStr.split('.');
+        if (parts.length === 2 && parts[1].length === 3) {
+          numStr = numStr.replace(/\./g, '');
+        }
+      }
+
+      const parsed = parseFloat(numStr);
+      return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    function isMonthlyPrice(priceStr) {
+      if (!priceStr) return false;
+      const lower = priceStr.toLowerCase();
+      return lower.includes('mês') || lower.includes('mensal') || lower.includes('/m') || lower.includes('recorrente');
+    }
+
+    function formatCurrency(value) {
+      return value.toLocaleString('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2
+      });
+    }
+
+    function createFallbackSignaturePad(canvas) {
+      const context = canvas.getContext('2d');
+      let isEmpty = true;
+      let isDrawing = false;
+      let lastPoint = null;
+      let activePointerId = null;
+
+      function configureContext() {
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+        context.lineWidth = 2.4;
+        context.strokeStyle = 'rgb(10, 22, 40)';
+      }
+
+      function getPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: event.clientX - rect.left,
+          y: event.clientY - rect.top
+        };
+      }
+
+      function startStroke(event) {
+        if (event.button !== undefined && event.button !== 0) return;
+
+        activePointerId = event.pointerId ?? null;
+        isDrawing = true;
+        lastPoint = getPoint(event);
+        configureContext();
+        context.beginPath();
+        context.moveTo(lastPoint.x, lastPoint.y);
+        context.lineTo(lastPoint.x + 0.01, lastPoint.y + 0.01);
+        context.stroke();
+        isEmpty = false;
+
+        if (canvas.setPointerCapture && event.pointerId !== undefined) {
+          canvas.setPointerCapture(event.pointerId);
+        }
+
+        event.preventDefault();
+      }
+
+      function moveStroke(event) {
+        if (!isDrawing) return;
+        if (activePointerId !== null && event.pointerId !== undefined && event.pointerId !== activePointerId) {
+          return;
+        }
+
+        const point = getPoint(event);
+        configureContext();
+        context.beginPath();
+        context.moveTo(lastPoint.x, lastPoint.y);
+        context.lineTo(point.x, point.y);
+        context.stroke();
+        lastPoint = point;
+        isEmpty = false;
+        event.preventDefault();
+      }
+
+      function endStroke(event) {
+        if (activePointerId !== null && event?.pointerId !== undefined && event.pointerId !== activePointerId) {
+          return;
+        }
+
+        isDrawing = false;
+        lastPoint = null;
+        activePointerId = null;
+      }
+
+      canvas.addEventListener('pointerdown', startStroke);
+      canvas.addEventListener('pointermove', moveStroke);
+      canvas.addEventListener('pointerup', endStroke);
+      canvas.addEventListener('pointerleave', endStroke);
+      canvas.addEventListener('pointercancel', endStroke);
+
+      configureContext();
+
+      return {
+        clear() {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+          configureContext();
+          isEmpty = true;
+        },
+        isEmpty() {
+          return isEmpty;
+        },
+        toDataURL(type = 'image/png') {
+          return canvas.toDataURL(type);
+        },
+        fromDataURL(dataUrl) {
+          return new Promise(resolve => {
+            const image = new Image();
+            image.onload = () => {
+              context.clearRect(0, 0, canvas.width, canvas.height);
+              context.drawImage(image, 0, 0, canvas.width, canvas.height);
+              configureContext();
+              isEmpty = false;
+              resolve();
+            };
+            image.onerror = () => resolve();
+            image.src = dataUrl;
+          });
+        },
+        off() {
+          canvas.removeEventListener('pointerdown', startStroke);
+          canvas.removeEventListener('pointermove', moveStroke);
+          canvas.removeEventListener('pointerup', endStroke);
+          canvas.removeEventListener('pointerleave', endStroke);
+          canvas.removeEventListener('pointercancel', endStroke);
+        }
+      };
+    }
+
+    function calculateScopeTotals() {
+      let oneOffTotal = 0;
+      let monthlyTotal = 0;
+
+      document.querySelectorAll('.scope-checkbox').forEach(checkbox => {
+        if (!checkbox.checked) return;
+
+        const priceStr = checkbox.getAttribute('data-price');
+        const value = parsePriceString(priceStr);
+        if (isMonthlyPrice(priceStr)) {
+          monthlyTotal += value;
+        } else {
+          oneOffTotal += value;
+        }
+      });
+
+      const totalBlock = document.getElementById('financialTotal');
+      const headerTotalBlock = document.getElementById('metricTotal');
+      const acceptBtn = document.getElementById('acceptBtn');
+
+      let totalHtml = '';
+      let simpleText = '';
+
+      if (oneOffTotal === 0 && monthlyTotal === 0) {
+        totalHtml = 'R$ 0,00 <span>*</span>';
+        simpleText = 'Nenhum serviço selecionado';
+        if (acceptBtn) {
+          acceptBtn.classList.add('disabled');
+        }
+      } else {
+        if (acceptBtn) {
+          acceptBtn.classList.remove('disabled');
+        }
+
+        if (oneOffTotal > 0 && monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span> + ${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)} + ${formatCurrency(monthlyTotal)}/mês`;
+        } else if (oneOffTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span>`;
+          simpleText = formatCurrency(oneOffTotal);
+        } else {
+          totalHtml = `${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(monthlyTotal)}/mês`;
+        }
+
+        updateWhatsAppCTADynamic(oneOffTotal, monthlyTotal);
+      }
+
+      if (totalBlock) totalBlock.innerHTML = totalHtml;
+      if (headerTotalBlock) headerTotalBlock.textContent = simpleText;
+    }
+
+    function updateWhatsAppCTAWithFallback() {
+      const data = getProposalDataFromUrl();
+      if (!data) return;
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyName} e gostaria de dar o aceite oficial para darmos início!`;
+      window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    }
+
+    function updateWhatsAppCTADynamic(oneOff, monthly) {
+      const data = getProposalDataFromUrl();
+      if (!data) return;
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      const checkedCards = [];
+
+      document.querySelectorAll('.scope-checkbox').forEach(checkbox => {
+        if (!checkbox.checked) return;
+
+        const card = checkbox.closest('.scope-card');
+        const title = card?.querySelector('.scope-title')?.textContent;
+        if (title) {
+          checkedCards.push(title);
+        }
+      });
+
+      const servicesList = checkedCards.map(service => `• ${service}`).join('\n');
+
+      let priceText = '';
+      if (oneOff > 0 && monthly > 0) {
+        priceText = `${formatCurrency(oneOff)} (Único) + ${formatCurrency(monthly)}/mês`;
+      } else if (oneOff > 0) {
+        priceText = `${formatCurrency(oneOff)} (Único)`;
+      } else if (monthly > 0) {
+        priceText = `${formatCurrency(monthly)}/mês`;
+      }
+
+      const message = `Olá! Acabei de aprovar a proposta da DNA Studio para o projeto da ${companyName}!\n\n*Escopo Selecionado:*\n${servicesList}\n\n*Investimento:* ${priceText}\n\nGostaria de dar o aceite oficial e prosseguir!`;
+      window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    }
+
+    let signaturePad;
+    let signatureResizeHandler;
+    let signaturePadCleanup;
+    let isGeneratingPdf = false;
+
+    function initializeInteractiveProposal() {
+      const canvas = document.getElementById('signaturePad');
+      const clearBtn = document.getElementById('clearSignatureBtn');
+      const acceptBtn = document.getElementById('acceptBtn');
+      const signatureError = document.getElementById('signatureError');
+      const signatureName = document.getElementById('printSignatureName');
+      const data = getProposalDataFromUrl() || {};
+
+      if (signatureName) {
+        const signerName = data.contact || data.company || 'Cliente';
+        signatureName.textContent = `Assinado eletronicamente por ${signerName} via DNA Studio`;
+      }
+
+      if (acceptBtn) {
+        acceptBtn.href = '#';
+        acceptBtn.target = '';
+        acceptBtn.removeEventListener('click', handleAcceptAndPDF);
+        acceptBtn.addEventListener('click', handleAcceptAndPDF);
+      }
+
+      if (!canvas) {
+        return;
+      }
+
+      if (signatureResizeHandler) {
+        window.removeEventListener('resize', signatureResizeHandler);
+      }
+
+      signatureResizeHandler = () => {
+        const ratio = Math.max(window.devicePixelRatio || 1, 1);
+        const rect = canvas.getBoundingClientRect();
+        if (rect.width < 2 || rect.height < 2) {
+          requestAnimationFrame(signatureResizeHandler);
+          return;
+        }
+
+        const currentSignature = signaturePad && !signaturePad.isEmpty()
+          ? signaturePad.toDataURL('image/png')
+          : null;
+
+        canvas.width = Math.max(Math.floor(rect.width * ratio), 1);
+        canvas.height = Math.max(Math.floor(rect.height * ratio), 1);
+        const context = canvas.getContext('2d');
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.scale(ratio, ratio);
+
+        if (signaturePadCleanup) {
+          signaturePadCleanup();
+          signaturePadCleanup = null;
+        }
+
+        if (window.SignaturePad) {
+          signaturePad = new SignaturePad(canvas, {
+            penColor: 'rgb(10, 22, 40)',
+            backgroundColor: 'rgb(255, 255, 255)'
+          });
+          signaturePadCleanup = () => signaturePad?.off?.();
+        } else {
+          signaturePad = createFallbackSignaturePad(canvas);
+          signaturePadCleanup = () => signaturePad?.off?.();
+        }
+
+        if (currentSignature) {
+          signaturePad.fromDataURL(currentSignature);
+        }
+      };
+
+      window.addEventListener('resize', signatureResizeHandler);
+      requestAnimationFrame(signatureResizeHandler);
+
+      canvas.onpointerdown = () => {
+        if (signatureError) {
+          signatureError.style.display = 'none';
+        }
+        setSignaturePreviewState(false);
+      };
+
+      if (clearBtn) {
+        clearBtn.onclick = () => {
+          signaturePad.clear();
+          if (signatureError) {
+            signatureError.style.display = 'none';
+          }
+          setSignaturePreviewState(false);
+        };
+      }
+    }
+
+    function slugifyFilePart(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '')
+        .slice(0, 50);
+    }
+
+    function buildProposalPdfFilename() {
+      const data = getProposalDataFromUrl() || {};
+      const company = slugifyFilePart(data.company);
+      const title = slugifyFilePart(data.title);
+      const suffix = [company, title].filter(Boolean).join('-');
+      return suffix ? `proposta-dna-${suffix}.pdf` : 'proposta-dna-studio.pdf';
+    }
+
+    function setSignaturePreviewState(visible) {
+      const signaturePadContainer = document.querySelector('.signature-pad-container');
+      const signatureActions = document.querySelector('.signature-actions');
+      const printSignatureBox = document.getElementById('printSignatureBox');
+      const printSignatureImg = document.getElementById('printSignatureImg');
+
+      if (!signaturePadContainer || !signatureActions || !printSignatureBox) return;
+
+      if (visible && signaturePad && !signaturePad.isEmpty()) {
+        if (printSignatureImg) {
+          printSignatureImg.src = signaturePad.toDataURL('image/png');
+        }
+        signaturePadContainer.style.display = 'none';
+        signatureActions.style.display = 'none';
+        printSignatureBox.style.display = 'flex';
+        return;
+      }
+
+      signaturePadContainer.style.display = '';
+      signatureActions.style.display = 'flex';
+      printSignatureBox.style.display = 'none';
+    }
+
+    async function exportProposalPdf({ requireSignature = false, persistSignaturePreview = false } = {}) {
+      if (isGeneratingPdf) {
+        return false;
+      }
+
+      const proposalView = document.getElementById('proposalView');
+      const proposalPages = document.getElementById('proposalPages');
+      if (!proposalView || !proposalPages) {
+        return false;
+      }
+
+      if (requireSignature && (!signaturePad || signaturePad.isEmpty())) {
+        document.getElementById('signatureError').style.display = 'inline-block';
+        document.getElementById('signatureSection').scrollIntoView({ behavior: 'smooth' });
+        return false;
+      }
+
+      const hasSignature = Boolean(signaturePad && !signaturePad.isEmpty());
+      setSignaturePreviewState(hasSignature);
+
+      isGeneratingPdf = true;
+      document.body.classList.add('pdf-exporting');
+
+      try {
+        if (document.fonts?.ready) {
+          await document.fonts.ready;
+        }
+
+        if (window.html2pdf) {
+          await window.html2pdf()
+            .set({
+              margin: 0,
+              filename: buildProposalPdfFilename(),
+              image: { type: 'jpeg', quality: 0.98 },
+              html2canvas: {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: '#ffffff',
+                scrollX: 0,
+                scrollY: 0,
+                windowWidth: proposalPages.scrollWidth
+              },
+              jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak: { mode: ['css', 'legacy'] }
+            })
+            .from(proposalPages)
+            .save();
+        } else {
+          window.print();
+        }
+
+        return true;
+      } catch (err) {
+        console.error('Falha ao gerar PDF', err);
+        return false;
+      } finally {
+        document.body.classList.remove('pdf-exporting');
+        isGeneratingPdf = false;
+
+        if (persistSignaturePreview && hasSignature) {
+          setSignaturePreviewState(true);
+        } else {
+          setSignaturePreviewState(false);
+        }
+      }
+    }
+
+    async function downloadProposalPdf() {
+      await exportProposalPdf();
+    }
+
+    async function handleAcceptAndPDF(event) {
+      event.preventDefault();
+
+      const acceptBtn = document.getElementById('acceptBtn');
+      const acceptBtnText = document.getElementById('acceptBtnText');
+      const acceptBtnIcon = document.getElementById('acceptBtnIcon');
+
+      if (!acceptBtn || acceptBtn.classList.contains('disabled')) {
+        return;
+      }
+
+      if (!signaturePad || signaturePad.isEmpty()) {
+        document.getElementById('signatureError').style.display = 'inline-block';
+        document.getElementById('signatureSection').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+
+      document.getElementById('signatureError').style.display = 'none';
+      acceptBtnText.textContent = 'Preparando PDF...';
+      if (acceptBtnIcon) {
+        acceptBtnIcon.style.display = 'none';
+      }
+      acceptBtn.style.pointerEvents = 'none';
+
+      const success = await exportProposalPdf({
+        requireSignature: true,
+        persistSignaturePreview: true
+      });
+
+      if (!success) {
+        acceptBtnText.innerHTML = 'Aceitar Proposta &amp; Iniciar Projeto';
+        if (acceptBtnIcon) {
+          acceptBtnIcon.style.display = 'inline-block';
+        }
+        acceptBtn.style.pointerEvents = '';
+        return;
+      }
+
+      acceptBtnText.textContent = 'Avançar para o WhatsApp';
+      if (acceptBtnIcon) {
+        acceptBtnIcon.style.display = 'inline-block';
+      }
+
+      if (window.currentWhatsappUrl) {
+        acceptBtn.href = window.currentWhatsappUrl;
+        acceptBtn.target = '_blank';
+        acceptBtn.removeEventListener('click', handleAcceptAndPDF);
+      }
+
+      acceptBtn.style.pointerEvents = '';
+    }
+  </script>
+</body>
+</html>

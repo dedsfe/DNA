@@ -1,0 +1,420 @@
+  <script>
+    // Decodificação Base64 com suporte UTF-8 total
+    function b64_to_utf8(str) {
+      try {
+        return decodeURIComponent(escape(atob(str)));
+      } catch (err) {
+        console.error("Falha ao decodificar Base64", err);
+        return null;
+      }
+    }
+
+    // Carregar dados da URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+
+      if (!dataParam) {
+        showErrorScreen();
+        return;
+      }
+
+      // Decodificar payload
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) {
+        showErrorScreen();
+        return;
+      }
+
+      try {
+        const proposal = JSON.parse(decodedJson);
+        renderProposal(proposal);
+      } catch (err) {
+        console.error("Falha ao parsear JSON", err);
+        showErrorScreen();
+      }
+    });
+
+    function showErrorScreen() {
+      document.getElementById('errorScreen').style.display = 'flex';
+    }
+
+    function renderProposal(data) {
+      // Popular Metadados da Proposta
+      document.getElementById('propTitle').textContent = data.title || 'Proposta Comercial';
+      document.getElementById('clientCompany').textContent = data.company || 'Empresa Cliente';
+      document.getElementById('clientContact').textContent = `Aos cuidados de: ${data.contact || ''}`;
+      
+      // Assinatura Print
+      document.getElementById('sigClientCompany').textContent = data.company || 'Empresa Cliente';
+
+      // Popular Cards Métricas
+      document.getElementById('metricDeadline').textContent = data.deadline || 'A definir';
+      document.getElementById('metricValidity').textContent = data.validity || 'A definir';
+
+      // Popular Apresentação (Apenas se preenchido)
+      const introSection = document.getElementById('introSection');
+      if (data.intro && data.intro.trim() !== '') {
+        document.getElementById('propIntro').textContent = data.intro;
+        introSection.style.display = 'block';
+      } else {
+        introSection.style.display = 'none';
+      }
+
+      // Popular Objetivos (Apenas se preenchido)
+      const objectivesSection = document.getElementById('objectivesSection');
+      const objectivesContainer = document.getElementById('objectivesContainer');
+      objectivesContainer.innerHTML = '';
+      if (data.objectives && data.objectives.trim() !== '') {
+        const objLines = data.objectives.split('\n').filter(line => line.trim() !== '');
+        if (objLines.length > 0) {
+          objLines.forEach((line, idx) => {
+            const cardHtml = `
+              <div class="objective-card">
+                <div class="objective-num-wrapper">
+                  <span class="objective-num">${idx + 1}</span>
+                </div>
+                <span class="objective-content">${line.trim()}</span>
+              </div>
+            `;
+            objectivesContainer.insertAdjacentHTML('beforeend', cardHtml);
+          });
+          objectivesSection.style.display = 'block';
+        } else {
+          objectivesSection.style.display = 'none';
+        }
+      } else {
+        objectivesSection.style.display = 'none';
+      }
+
+      // Popular Condições de Pagamento Detalhadas
+      const paymentContainer = document.getElementById('financialConditions');
+      const paymentLines = data.payment ? data.payment.split('\n').filter(line => line.trim() !== '') : [];
+      
+      if (paymentLines.length > 0) {
+        let paymentHtml = `<ul class="payment-conditions-list">`;
+        paymentLines.forEach(line => {
+          paymentHtml += `
+            <li>
+              <span class="payment-bullet"></span>
+              <span class="payment-item-text">${line.trim()}</span>
+            </li>
+          `;
+        });
+        paymentHtml += `</ul>`;
+        paymentContainer.innerHTML = paymentHtml;
+      } else {
+        paymentContainer.innerHTML = `<p class="payment-text">${data.payment || ''}</p>`;
+      }
+
+      // Popular Lista de Escopos
+      const container = document.getElementById('scopeContainer');
+      container.innerHTML = ''; // Limpar default
+
+      if (data.items && Array.isArray(data.items)) {
+        data.items.forEach((item, index) => {
+          const itemNum = String(index + 1).padStart(2, '0');
+          const priceBadge = item.price ? `<span class="scope-price-badge">${item.price}</span>` : '';
+          
+          // Split features by newline
+          const descLines = item.desc ? item.desc.split('\n').filter(line => line.trim() !== '') : [];
+          let descHtml = '';
+          
+          if (descLines.length > 0) {
+            descHtml = `<ul class="scope-features-list">`;
+            descLines.forEach(line => {
+              descHtml += `
+                <li>
+                  <svg class="feature-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span class="feature-text">${line.trim()}</span>
+                </li>
+              `;
+            });
+            descHtml += `</ul>`;
+          } else {
+            descHtml = `<p class="scope-description">${item.desc}</p>`;
+          }
+          
+          const itemHtml = `
+            <div class="scope-card" id="scopeCard_${index}">
+              <div class="scope-header">
+                <div class="scope-select-wrap">
+                  <label class="premium-checkbox-container">
+                    <input type="checkbox" checked onchange="toggleScopeItem(${index})" data-price="${item.price}" class="scope-checkbox">
+                    <span class="premium-checkbox-checkmark"></span>
+                  </label>
+                  <div class="scope-number-title">
+                    <span class="scope-num">SERVIÇO // ${itemNum}</span>
+                    <h3 class="scope-title">${item.title}</h3>
+                  </div>
+                </div>
+                ${priceBadge}
+              </div>
+              <div class="scope-body">
+                ${descHtml}
+              </div>
+            </div>
+          `;
+          container.insertAdjacentHTML('beforeend', itemHtml);
+        });
+      }
+
+      // Realizar o primeiro cálculo de investimento com base nas seleções iniciais
+      calculateScopeTotals();
+
+      // Exibir página da Proposta
+      document.getElementById('proposalView').style.display = 'block';
+    }
+
+    // --- FUNÇÕES DE CÁLCULO E INTERATIVIDADE (ITERAÇÃO 3) ---
+
+    function toggleScopeItem(index) {
+      const card = document.getElementById(`scopeCard_${index}`);
+      if (!card) return;
+      
+      const cb = card.querySelector('.scope-checkbox');
+      if (cb) {
+        if (cb.checked) {
+          card.classList.remove('is-deselected');
+        } else {
+          card.classList.add('is-deselected');
+        }
+      }
+      
+      calculateScopeTotals();
+    }
+
+    function parsePriceString(priceStr) {
+      if (!priceStr) return 0;
+      let cleaned = priceStr.toLowerCase().replace(/\s/g, '');
+      if (!/\d/.test(cleaned)) {
+        return 0;
+      }
+      cleaned = cleaned.replace(/r\$/g, '');
+      
+      const matches = cleaned.match(/[0-9.,]+/);
+      if (!matches) return 0;
+      
+      let numStr = matches[0];
+      const hasComma = numStr.includes(',');
+      const hasDot = numStr.includes('.');
+      
+      if (hasComma && hasDot) {
+        numStr = numStr.replace(/\./g, '').replace(/,/g, '.');
+      } else if (hasComma) {
+        numStr = numStr.replace(/,/g, '.');
+      } else if (hasDot) {
+        const parts = numStr.split('.');
+        const lastPart = parts[parts.length - 1];
+        if (lastPart.length === 3 && parts.length === 2) {
+          numStr = numStr.replace(/\./g, '');
+        }
+      }
+      
+      const parsed = parseFloat(numStr);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    function isMonthlyPrice(priceStr) {
+      if (!priceStr) return false;
+      const lower = priceStr.toLowerCase();
+      return lower.includes('mês') || lower.includes('mensal') || lower.includes('/m') || lower.includes('recorrente');
+    }
+
+    function calculateScopeTotals() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      let oneOffTotal = 0;
+      let monthlyTotal = 0;
+      
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const priceStr = cb.getAttribute('data-price');
+          const value = parsePriceString(priceStr);
+          if (isMonthlyPrice(priceStr)) {
+            monthlyTotal += value;
+          } else {
+            oneOffTotal += value;
+          }
+        }
+      });
+      
+      const formatCurrency = (val) => {
+        return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
+      };
+      
+      const totalBlock = document.getElementById('financialTotal');
+      const headerTotalBlock = document.getElementById('metricTotal');
+      
+      let totalHtml = '';
+      let simpleText = '';
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (oneOffTotal === 0 && monthlyTotal === 0) {
+        totalHtml = `R$ 0,00 <span>*</span>`;
+        simpleText = `Nenhum serviço selecionado`;
+        if (acceptBtn) {
+          acceptBtn.classList.add('disabled');
+        }
+      } else {
+        if (acceptBtn) {
+          acceptBtn.classList.remove('disabled');
+        }
+        if (oneOffTotal > 0 && monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span> + ${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)} + ${formatCurrency(monthlyTotal)}/mês`;
+        } else if (oneOffTotal > 0) {
+          totalHtml = `${formatCurrency(oneOffTotal)} <span>(Único)</span>`;
+          simpleText = `${formatCurrency(oneOffTotal)}`;
+        } else if (monthlyTotal > 0) {
+          totalHtml = `${formatCurrency(monthlyTotal)}<span>/mês</span>`;
+          simpleText = `${formatCurrency(monthlyTotal)}/mês`;
+        }
+        
+        updateWhatsAppCTADynamic(oneOffTotal, monthlyTotal);
+      }
+      
+      if (totalBlock) totalBlock.innerHTML = totalHtml;
+      if (headerTotalBlock) headerTotalBlock.textContent = simpleText;
+    }
+
+    function updateWhatsAppCTAWithFallback(rawTotal) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      const message = `Olá! Acabei de visualizar a proposta comercial da DNA Studio para o projeto da ${companyName} e gostaria de dar o aceite oficial para darmos início!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
+    }
+
+    function updateWhatsAppCTADynamic(oneOff, monthly) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const dataParam = urlParams.get('d');
+      const decodedJson = b64_to_utf8(dataParam);
+      if (!decodedJson) return;
+      const data = JSON.parse(decodedJson);
+
+      const whatsappNumber = data.whatsapp || '5513991863669';
+      const companyName = data.company || '';
+      
+      const checkedCards = [];
+      const checkboxes = document.querySelectorAll('.scope-checkbox');
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const card = cb.closest('.scope-card');
+          const title = card.querySelector('.scope-title').textContent;
+          checkedCards.push(title);
+        }
+      });
+      
+      const servicesList = checkedCards.map(s => `• ${s}`).join('\n');
+      
+      let priceText = '';
+      if (oneOff > 0 && monthly > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único) + R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      } else if (oneOff > 0) {
+        priceText = `R$ ${oneOff.toLocaleString('pt-BR')} (Único)`;
+      } else if (monthly > 0) {
+        priceText = `R$ ${monthly.toLocaleString('pt-BR')}/mês`;
+      }
+      
+      const message = `Olá! Acabei de aprovar a proposta da DNA Studio para o projeto da ${companyName}!\n\n*Escopo Selecionado:*\n${servicesList}\n\n*Investimento:* ${priceText}\n\nGostaria de dar o aceite oficial e prosseguir!`;
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        window.currentWhatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+      }
+    }
+
+    let signaturePad;
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      const canvas = document.getElementById('signaturePad');
+      if (canvas && window.SignaturePad) {
+        function resizeCanvas() {
+          const ratio = Math.max(window.devicePixelRatio || 1, 1);
+          canvas.width = canvas.offsetWidth * ratio;
+          canvas.height = canvas.offsetHeight * ratio;
+          canvas.getContext("2d").scale(ratio, ratio);
+          if (signaturePad) {
+            signaturePad.clear();
+          }
+        }
+        window.addEventListener("resize", resizeCanvas);
+        resizeCanvas();
+
+        signaturePad = new SignaturePad(canvas, {
+          penColor: "rgb(0, 0, 0)",
+          backgroundColor: "rgb(255, 255, 255)"
+        });
+        
+        document.getElementById('clearSignatureBtn').addEventListener('click', () => {
+          signaturePad.clear();
+          document.getElementById('signatureError').style.display = 'none';
+        });
+      }
+      
+      const acceptBtn = document.getElementById('acceptBtn');
+      if (acceptBtn) {
+        acceptBtn.addEventListener('click', handleAcceptAndPDF);
+      }
+    });
+
+    async function handleAcceptAndPDF(e) {
+      e.preventDefault();
+      
+      if (document.getElementById('acceptBtn').classList.contains('disabled')) return;
+      
+      if (signaturePad && signaturePad.isEmpty()) {
+        document.getElementById('signatureError').style.display = 'inline-block';
+        document.getElementById('signatureSection').scrollIntoView({ behavior: 'smooth' });
+        return;
+      }
+      
+      document.getElementById('signatureError').style.display = 'none';
+      
+      if (signaturePad) {
+        const dataUrl = signaturePad.toDataURL();
+        document.getElementById('printSignatureImg').src = dataUrl;
+        document.getElementById('signaturePad').parentElement.style.display = 'none';
+        document.getElementById('clearSignatureBtn').style.display = 'none';
+        document.getElementById('printSignatureBox').style.display = 'block';
+      }
+      
+      document.getElementById('acceptBtnText').innerHTML = 'Preparando Documento...';
+      if(document.getElementById('acceptBtnIcon')) document.getElementById('acceptBtnIcon').style.display = 'none';
+      
+      setTimeout(() => {
+        window.print();
+        
+        document.getElementById('acceptBtnText').innerHTML = 'Avançar para o WhatsApp';
+        if(document.getElementById('acceptBtnIcon')) {
+          document.getElementById('acceptBtnIcon').style.display = 'inline-block';
+        }
+        
+        const acceptBtn = document.getElementById('acceptBtn');
+        if (acceptBtn && window.currentWhatsappUrl) {
+          acceptBtn.href = window.currentWhatsappUrl;
+          acceptBtn.target = '_blank';
+          acceptBtn.removeEventListener('click', handleAcceptAndPDF);
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>
