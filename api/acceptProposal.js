@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { company, contact, whatsapp, selectedServices } = req.body;
+    const { company, contact, whatsapp, selectedServices, financials } = req.body;
 
     const supabaseUrl = process.env.VITE_SUPABASE_URL;
     const supabaseKey = process.env.VITE_SUPABASE_KEY;
@@ -27,6 +27,21 @@ export default async function handler(req, res) {
     // --- 1. Encontrar ou Criar Cliente ---
     const companyName = (company || "Empresa Desconhecida").trim();
     let clientId = null;
+
+    // Processar campos financeiros
+    let dueDay = 5;
+    if (financials && financials.due_date) {
+       // extrair o dia da data (ex: '2026-05-25' -> 25)
+       const parts = financials.due_date.split('-');
+       if (parts.length === 3) dueDay = parseInt(parts[2], 10);
+    }
+    const financialFields = financials ? {
+      setup_fee: financials.setup_fee || 0,
+      mrr: financials.mrr || 0,
+      late_fee_percentage: financials.late_fee_percentage || 2,
+      late_fee_interest_per_month: financials.late_fee_interest_per_month || 1,
+      due_day: dueDay
+    } : {};
 
     // A) Buscar todos os clientes para fazer um match inteligente (agência tem poucos clientes, é performático)
     const searchRes = await fetch(`${supabaseUrl}/rest/v1/clients?select=id,name`, {
@@ -55,7 +70,7 @@ export default async function handler(req, res) {
     }
 
     if (clientId) {
-      // B) Atualizar o cliente existente para 'active'
+      // B) Atualizar o cliente existente para 'active' e setar financeiro
       await fetch(`${supabaseUrl}/rest/v1/clients?id=eq.${clientId}`, {
         method: 'PATCH',
         headers: {
@@ -63,7 +78,7 @@ export default async function handler(req, res) {
           'Authorization': `Bearer ${supabaseKey}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ status: 'active', contact_phone: whatsapp || undefined })
+        body: JSON.stringify({ status: 'active', contact_phone: whatsapp || undefined, ...financialFields })
       });
     } else {
       // C) Criar um novo cliente se não existir
@@ -71,7 +86,8 @@ export default async function handler(req, res) {
         name: companyName,
         status: "active",
         contact_phone: whatsapp || "",
-        since: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+        since: new Date().toISOString().split('T')[0], // YYYY-MM-DD
+        ...financialFields
       };
 
       const createRes = await fetch(`${supabaseUrl}/rest/v1/clients`, {

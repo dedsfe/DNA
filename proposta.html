@@ -1767,6 +1767,9 @@
         }
       });
       
+      window.currentOneOffTotal = oneOffTotal;
+      window.currentMonthlyTotal = monthlyTotal;
+      
       const formatCurrency = (val) => {
         return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
       };
@@ -1989,7 +1992,14 @@
             company: data.company,
             contact: data.contact,
             whatsapp: data.whatsapp,
-            selectedServices: checkedCards
+            selectedServices: checkedCards,
+            financials: {
+              setup_fee: window.currentOneOffTotal || 0,
+              mrr: window.currentMonthlyTotal || 0,
+              late_fee_percentage: parseFloat(data.lateFee) || 2.0,
+              late_fee_interest_per_month: parseFloat(data.lateInterest) || 1.0,
+              due_date: data.paymentDueDate || ''
+            }
           };
 
           // Chamada assíncrona para não travar a UI de gerar o PDF
