@@ -25,11 +25,11 @@ export default async function handler(req, res) {
     }
 
     // --- 1. Encontrar ou Criar Cliente ---
-    const companyName = company || "Empresa Desconhecida";
+    const companyName = (company || "Empresa Desconhecida").trim();
     let clientId = null;
 
-    // A) Buscar cliente existente pelo nome (case-insensitive)
-    const searchRes = await fetch(`${supabaseUrl}/rest/v1/clients?name=ilike.${encodeURIComponent(companyName)}&select=id`, {
+    // A) Buscar todos os clientes para fazer um match inteligente (agência tem poucos clientes, é performático)
+    const searchRes = await fetch(`${supabaseUrl}/rest/v1/clients?select=id,name`, {
       method: 'GET',
       headers: {
         'apikey': supabaseKey,
@@ -38,9 +38,19 @@ export default async function handler(req, res) {
     });
 
     if (searchRes.ok) {
-      const existingClients = await searchRes.json();
-      if (existingClients.length > 0) {
-        clientId = existingClients[0].id;
+      const allClients = await searchRes.json();
+      const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const normalizedNew = normalize(companyName);
+      
+      // Tenta achar um cliente onde o nome existente contenha o novo, ou o novo contenha o existente
+      // Ex: "Decorali Planejados" contém "Decorali"
+      const match = allClients.find(c => {
+        const normExisting = normalize(c.name);
+        return normExisting.includes(normalizedNew) || normalizedNew.includes(normExisting);
+      });
+
+      if (match) {
+        clientId = match.id;
       }
     }
 
