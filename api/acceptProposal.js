@@ -24,32 +24,65 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Server Configuration Error" });
     }
 
-    // --- 1. Criar Cliente ---
-    const clientPayload = {
-      name: company || "Empresa Desconhecida",
-      status: "active",
-      contact_phone: whatsapp || "",
-      since: new Date().toISOString().split('T')[0] // YYYY-MM-DD
-    };
+    // --- 1. Encontrar ou Criar Cliente ---
+    const companyName = company || "Empresa Desconhecida";
+    let clientId = null;
 
-    const clientRes = await fetch(`${supabaseUrl}/rest/v1/clients`, {
-      method: 'POST',
+    // A) Buscar cliente existente pelo nome (case-insensitive)
+    const searchRes = await fetch(`${supabaseUrl}/rest/v1/clients?name=ilike.${encodeURIComponent(companyName)}&select=id`, {
+      method: 'GET',
       headers: {
         'apikey': supabaseKey,
-        'Authorization': `Bearer ${supabaseKey}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation'
-      },
-      body: JSON.stringify(clientPayload)
+        'Authorization': `Bearer ${supabaseKey}`
+      }
     });
 
-    if (!clientRes.ok) {
-      const err = await clientRes.text();
-      throw new Error(`Failed to create client: ${err}`);
+    if (searchRes.ok) {
+      const existingClients = await searchRes.json();
+      if (existingClients.length > 0) {
+        clientId = existingClients[0].id;
+      }
     }
 
-    const clientData = await clientRes.json();
-    const clientId = clientData[0].id;
+    if (clientId) {
+      // B) Atualizar o cliente existente para 'active'
+      await fetch(`${supabaseUrl}/rest/v1/clients?id=eq.${clientId}`, {
+        method: 'PATCH',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status: 'active', contact_phone: whatsapp || undefined })
+      });
+    } else {
+      // C) Criar um novo cliente se não existir
+      const clientPayload = {
+        name: companyName,
+        status: "active",
+        contact_phone: whatsapp || "",
+        since: new Date().toISOString().split('T')[0] // YYYY-MM-DD
+      };
+
+      const createRes = await fetch(`${supabaseUrl}/rest/v1/clients`, {
+        method: 'POST',
+        headers: {
+          'apikey': supabaseKey,
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(clientPayload)
+      });
+
+      if (!createRes.ok) {
+        const err = await createRes.text();
+        throw new Error(`Failed to create client: ${err}`);
+      }
+
+      const clientData = await createRes.json();
+      clientId = clientData[0].id;
+    }
 
     // --- 2. Criar Tarefas de Onboarding Padrão ---
     const defaultTasks = [
