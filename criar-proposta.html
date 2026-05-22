@@ -945,22 +945,12 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
           <h2 class="panel-title"><span>04.</span> Prazos e Condições Comerciais</h2>
           <div class="form-grid">
             <div class="form-group">
-              <label for="deadlinePreset">Template de Prazo</label>
-              <select id="deadlinePreset" onchange="applyPreset('projectDeadline', DEADLINE_PRESETS, this.value)">
-                <option value="">-- Escolher Template --</option>
-                <option value="rapido">15 dias úteis</option>
-                <option value="padrao">30 dias úteis</option>
-                <option value="longo">45 dias úteis</option>
-                <option value="sob_medida">Sob Medida / A definir no cronograma</option>
-              </select>
-            </div>
-            <div class="form-group">
               <label for="projectDeadline">Prazo de Entrega</label>
-              <input type="text" id="projectDeadline" placeholder="Ex: 30 dias úteis" required>
+              <input type="date" id="projectDeadline" required>
             </div>
             <div class="form-group">
               <label for="proposalValidity">Validade da Proposta</label>
-              <input type="text" id="proposalValidity" placeholder="Ex: 7 dias corridos" required>
+              <input type="date" id="proposalValidity" required>
             </div>
             <div class="form-group">
               <label for="whatsappContact">WhatsApp do Contato DNA</label>
@@ -997,7 +987,7 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
             </div>
             <div class="form-group">
               <label for="paymentDueDate">Data de Pagamento</label>
-              <input type="text" id="paymentDueDate" placeholder="Ex: Todo dia 10 de cada mês" required>
+              <input type="date" id="paymentDueDate" required>
             </div>
             <div class="form-group">
               <label for="dnaSignerMode">Assinatura da DNA Digital Space</label>
@@ -1007,9 +997,13 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
                 <option value="custom">Personalizado</option>
               </select>
             </div>
-            <div class="form-group full-width">
-              <label for="lateFeeNotice">Aviso de Multa por Atraso <span class="field-hint">(Pode ser percentual ou valor fixo)</span></label>
-              <textarea id="lateFeeNotice" style="min-height: 100px;" placeholder="Ex: Em caso de pagamento após a data acordada, incidirá multa de 2% sobre o valor do contrato, além de juros de 1% ao mês." required></textarea>
+            <div class="form-group">
+              <label for="lateFeePercent">Multa Fixa por Atraso (%)</label>
+              <input type="number" id="lateFeePercent" value="2" min="0" step="0.1" required>
+            </div>
+            <div class="form-group">
+              <label for="lateInterestPercent">Juros por Atraso (% ao mês)</label>
+              <input type="number" id="lateInterestPercent" value="1" min="0" step="0.1" required>
             </div>
             <div class="form-group full-width">
               <label for="dnaSignerNames">Nome(s) do(s) representante(s) da DNA <span class="field-hint">(Um por linha)</span></label>
@@ -1114,12 +1108,7 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
       marketing: "Estruturar e fortalecer a presença da marca nas redes sociais\nOrganizar identidade visual, feed, bio e destaques\nPlanejar conteúdos com foco estratégico e conversão\nAmpliar posicionamento da marca com campanhas e novas redes\nAdaptar a execução conforme a necessidade e o nível de personalização"
     };
 
-    const DEADLINE_PRESETS = {
-      rapido: "15 dias úteis",
-      padrao: "30 dias úteis",
-      longo: "45 dias úteis",
-      sob_medida: "A definir no cronograma"
-    };
+
 
     window.addEventListener('DOMContentLoaded', () => {
       const isAuth = sessionStorage.getItem(STORAGE_KEY) === "true" || localStorage.getItem(STORAGE_KEY) === "true";
@@ -1129,8 +1118,7 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
 
       // Pre-fill standard payment conditions based on common PDF patterns
       document.getElementById('paymentConditions').value = PAYMENT_PRESETS.site_parcelado;
-      document.getElementById('paymentDueDate').value = 'Data definida entre as partes';
-      document.getElementById('lateFeeNotice').value = 'Em caso de pagamento após a data acordada, incidirá multa conforme definido nesta proposta, podendo ser aplicada em valor fixo ou percentual sobre o contrato.';
+      document.getElementById('paymentDueDate').value = '';
 
       // Adiciona o primeiro item de escopo por padrão com preenchimento sugestivo
       const sitePreset = SERVICE_PRESETS.site_essencial;
@@ -1284,15 +1272,25 @@ Facilitar a escolha entre opções essenciais, completas e personalizadas</texta
       const title = document.getElementById('projectTitle').value.trim();
       const intro = document.getElementById('proposalIntro').value.trim();
       const objectives = document.getElementById('proposalObjectives').value.trim();
-      const deadline = document.getElementById('projectDeadline').value.trim();
-      const validity = document.getElementById('proposalValidity').value.trim();
+      const formatDt = (d) => {
+        if (!d) return 'A definir';
+        const parts = d.split('-');
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        return d;
+      };
+
+      const deadline = formatDt(document.getElementById('projectDeadline').value);
+      const validity = formatDt(document.getElementById('proposalValidity').value);
       const totalNum = document.getElementById('projectTotalNum').value.trim();
       const totalRecurrence = document.getElementById('projectTotalRecurrence').value;
       const total = totalNum + (totalRecurrence ? (totalRecurrence.startsWith('/') ? totalRecurrence : " " + totalRecurrence) : "");
       const whatsapp = document.getElementById('whatsappContact').value.trim();
       const payment = document.getElementById('paymentConditions').value.trim();
-      const paymentDueDate = document.getElementById('paymentDueDate').value.trim();
-      const lateFeeNotice = document.getElementById('lateFeeNotice').value.trim();
+      const paymentDueDate = formatDt(document.getElementById('paymentDueDate').value);
+      
+      const lateFee = document.getElementById('lateFeePercent').value;
+      const lateInterest = document.getElementById('lateInterestPercent').value;
+      const lateFeeNotice = `Em caso de atraso no pagamento, incidirá multa de ${lateFee}% sobre o valor em aberto, acrescida de juros moratórios de ${lateInterest}% ao mês.`;
       const dnaSignerMode = document.getElementById('dnaSignerMode').value;
       const dnaSignerNames = document.getElementById('dnaSignerNames').value.trim();
 
