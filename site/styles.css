@@ -1,0 +1,676 @@
+/* ============================================
+   DNA DIGITAL — base
+   ============================================ */
+:root{
+  --ink:#050505;
+  --paper:#ffffff;
+  --accent:#FF4D47;
+  --muted:#6B6B6B;
+  --cta:#FF0000;
+  --cta-lit:#FF4726;
+
+  /* pill do hero */
+  --pill-border:#3C3F44;
+  --pill-border-lit:#5A6165;
+  --pill-text:#ADB1B8;
+  --pill-text-lit:#EDEEF0;
+  --pill-cta:#1B1B1F;
+  --sweep:linear-gradient(to right, transparent, #fff 42%, #fff 58%, transparent);
+  --sweep-size:62% 100%;      /* largura da faixa de luz */
+  --sweep-dur:5s;
+
+  /* geometria da ilha */
+  --bar-h:23px;             /* faixa preta de cima */
+  --notch-h:34px;           /* altura da gota fechada */
+  --cap-w:90px;             /* largura de cada curva lateral */
+  --island-closed:228px;    /* largura da gota fechada */
+  --island-open:520px;      /* recalculada por JS conforme o conteúdo */
+  --panel-h:34px;           /* altura da gota aberta (só muda no mobile) */
+
+  /* spring — mesma curva do editucation: pico 1.092 em .32s */
+  --spring:cubic-bezier(.22,1,.36,1);
+  --spring-dur:.55s;
+  --lag:.09s;                 /* hesitação antes de a ilha sair do lugar */
+  --soft:cubic-bezier(.22,1,.36,1);
+  --expo:cubic-bezier(.16,1,.3,1);   /* entra rápido e assenta devagar */
+
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter",system-ui,sans-serif;
+  --font-serif:"Instrument Serif",Georgia,serif;
+}
+
+/* spring de verdade (Chrome 113+/Safari 17.2+); cai pro cubic-bezier acima se não houver suporte */
+@supports (transition-timing-function:linear(0,1)){
+  :root{
+    --spring:linear(0, 0.0352, 0.1247, 0.2469, 0.3844, 0.5235, 0.6546, 0.7711,
+      0.8696, 0.9485, 1.0083, 1.0503, 1.077, 1.0909, 1.0948, 1.0912, 1.0826,
+      1.0709, 1.0579, 1.0447, 1.0323, 1.0213, 1.0121, 1.0046, 0.999, 0.9951,
+      0.9926, 0.9914, 0.991, 0.9914, 0.9922, 0.9933, 0.9946, 0.9958, 0.997,
+      0.998, 0.9989, 0.9996, 1.0001, 1.0005, 1.0007, 1.0008, 1.0009, 1.0008,
+      1.0007, 1.0006, 1.0005, 1.0004, 1);
+    --spring-dur:1.5s;
+  }
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================
+   NAVBAR — dynamic island
+   ============================================ */
+.island{
+  position:fixed;
+  top:0; left:0; right:0;
+  height:calc(var(--bar-h) + var(--notch-h));
+  z-index:100;
+  color:var(--ink);              /* alimenta o fill dos SVGs */
+}
+
+/* ---- camada da forma ---- */
+.island__base{
+  position:absolute; inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  z-index:1;
+  pointer-events:none;
+}
+
+.island__top{
+  flex:0 0 auto;
+  width:100%;
+  height:var(--bar-h);
+  background:var(--ink);
+}
+
+.island__notch{
+  flex:0 0 auto;               /* senão o base (57px) esmaga o painel aberto */
+  display:flex;
+  align-items:flex-start;
+  width:var(--island-closed);
+  height:var(--panel-h);
+  transition:
+    width  var(--spring-dur) var(--spring),
+    height var(--spring-dur) var(--spring);
+}
+
+.island__cap{
+  flex:0 0 var(--cap-w);
+  height:var(--notch-h);                    /* as curvas nunca esticam */
+  box-shadow:0 -2px 0 0 var(--ink);         /* tapa a costura com a barra */
+}
+.island__cap svg{display:block; width:100%; height:100%}
+
+.island__mid{
+  flex:1 1 auto;
+  align-self:stretch;
+  background:var(--ink);
+  box-shadow:-2px 0 0 0 var(--ink), 2px 0 0 0 var(--ink), 0 -2px 0 0 var(--ink);
+  border-radius:0 0 var(--panel-r,0) var(--panel-r,0);
+}
+
+/* ---- camada do conteúdo ---- */
+.island__content{
+  position:relative;
+  z-index:2;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+
+.island__link{
+  position:relative;
+  height:100%;
+  display:flex;
+  align-items:center;
+  padding:0 28px;
+  text-decoration:none;
+  pointer-events:none;           /* só clicável com a ilha aberta */
+}
+
+/* o span fica no fluxo (define a largura do link) e anima
+   só com transform, que não afeta o layout */
+.island__link span{
+  white-space:nowrap;
+  font-size:14px;
+  font-weight:400;
+  letter-spacing:-.01em;
+  color:#fff;
+  opacity:0;
+  filter:blur(4px);
+  transform:translateY(-30px) scale(1.1);
+  transition:
+    opacity .55s var(--soft),
+    filter  .55s var(--soft),
+    transform var(--spring-dur) var(--spring);
+}
+
+/* ---- logo / botão ---- */
+.island__logo{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  height:100%;
+  padding:0 22px;
+  border:0;
+  background:none;
+  font:inherit;
+  color:#fff;
+  cursor:default;
+}
+
+.island__logo-mark{
+  font-size:15px;
+  font-weight:600;
+  letter-spacing:.14em;
+  /* alinhado com o centro da gota, não da barra */
+  transform:translateY(calc(var(--bar-h) / 2));
+}
+
+.island__chev{
+  display:none;                  /* só no mobile */
+  width:10px; height:6px;
+  transform:translateY(calc(var(--bar-h) / 2));
+  transition:transform var(--spring-dur) var(--spring);
+}
+
+/* ============================================
+   ABERTO — desktop (hover)
+   ============================================ */
+@media (hover:hover){
+  .island:hover  .island__notch,
+  .island:focus-within .island__notch{
+    width:var(--island-open);
+    transition-delay:var(--lag);      /* custa a sair do lugar */
+  }
+
+  .island:hover  .island__link,
+  .island:focus-within .island__link{ pointer-events:auto; }
+
+  .island:hover  .island__link span,
+  .island:focus-within .island__link span{
+    opacity:.8;
+    filter:blur(0);
+    transform:translateY(calc(var(--bar-h) / 2)) scale(1);
+  }
+
+  .island .island__link:hover span,
+  .island .island__link:focus-visible span{ opacity:1; }
+}
+
+/* escalona a entrada dos links (de fora pra dentro) */
+.island__link:nth-child(1) span,
+.island__link:nth-child(5) span{transition-delay:calc(var(--lag) + .04s)}
+.island__link:nth-child(2) span,
+.island__link:nth-child(4) span{transition-delay:calc(var(--lag) + .10s)}
+
+/* ============================================
+   MOBILE — a gota vira painel e abre no toque
+   ============================================ */
+@media (max-width:768px){
+  :root{ --cap-w:46px; --island-closed:190px; }
+
+  .island__logo{ cursor:pointer; padding:0 18px; }
+  .island__chev{ display:block; }
+
+  /* conteúdo empilhado: logo em cima, links embaixo */
+  .island__content{
+    flex-direction:column;
+    align-items:center;
+    height:auto;
+    gap:0;
+  }
+
+  .island__logo{
+    order:-1;
+    height:calc(var(--bar-h) + var(--notch-h));
+    flex:0 0 auto;
+  }
+
+  .island__link{
+    height:0;                    /* fechado: o link não ocupa altura */
+    padding:0;
+    overflow:hidden;
+    justify-content:center;
+    pointer-events:none;
+    transition:height var(--spring-dur) var(--spring);
+  }
+
+  .island__link span{
+    font-size:16px;
+    transform:translateY(-14px) scale(1.06);
+    transition-delay:0s !important;
+  }
+
+  /* --- aberto --- */
+  .island.is-open{ --panel-h:calc(var(--notch-h) + 212px); --panel-r:26px; }
+
+  /* a largura é do PAINEL + as duas curvas, senão o corpo
+     desce estreito e a silhueta vira um "T" */
+  .island.is-open .island__notch{
+    width:calc(min(264px, 100vw - 120px) + 2 * var(--cap-w));
+  }
+
+  .island.is-open .island__link{
+    height:50px;
+    pointer-events:auto;
+  }
+
+  .island.is-open .island__link span{
+    opacity:.85;
+    filter:blur(0);
+    transform:translateY(0) scale(1);
+  }
+
+  .island.is-open .island__chev{
+    transform:translateY(calc(var(--bar-h) / 2)) rotate(180deg);
+  }
+
+  .island.is-open .island__link:nth-child(1) span{transition-delay:.04s !important}
+  .island.is-open .island__link:nth-child(2) span{transition-delay:.08s !important}
+  .island.is-open .island__link:nth-child(4) span{transition-delay:.12s !important}
+  .island.is-open .island__link:nth-child(5) span{transition-delay:.16s !important}
+}
+
+/* ============================================
+   HERO
+   ============================================ */
+.hero{
+  min-height:100vh;
+  background:var(--paper);
+  padding:150px 40px 0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+/* ---- pill ----
+   .pill        = a borda (1px de bg aparecendo em volta)
+   .pill__shine = brilho que corre pela borda
+   .pill__inner = o miolo preto por cima                     */
+.pill{
+  position:relative;
+  display:inline-flex;
+  padding:1px;                       /* a espessura da borda */
+  border-radius:999px;
+  background:var(--pill-border);
+  text-decoration:none;
+  overflow:hidden;
+  box-shadow:
+    0 .706592px .706592px -.625px  rgba(0,0,0,.18),
+    0 1.80656px 1.80656px -1.25px  rgba(0,0,0,.18),
+    0 3.62176px 3.62176px -1.875px rgba(0,0,0,.17),
+    0 6.8656px  6.8656px  -2.5px   rgba(0,0,0,.16),
+    0 13.6468px 13.6468px -3.125px rgba(0,0,0,.13),
+    0 30px      30px      -3.75px  rgba(0,0,0,.06);
+}
+
+.pill__shine{
+  position:absolute; inset:0;
+  border-radius:inherit;
+  background:var(--pill-border-lit);
+  -webkit-mask:var(--sweep) no-repeat;
+          mask:var(--sweep) no-repeat;
+  -webkit-mask-size:var(--sweep-size);
+          mask-size:var(--sweep-size);
+  animation:sweep var(--sweep-dur) ease-in-out infinite;
+}
+
+.pill__inner{
+  position:relative;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:6px 6px 6px 20px;
+  border-radius:inherit;
+  background:#000;
+}
+
+/* ---- texto com brilho passando ----
+   3 camadas: base cinza + halo borrado + nítida,
+   as duas de cima recortadas pela mesma máscara em movimento */
+.pill__msg{
+  position:relative;
+  font-size:14px;
+  line-height:1.7;
+  color:var(--pill-text);
+  white-space:nowrap;
+}
+
+.pill__msg::before,
+.pill__msg::after{
+  content:attr(data-text);
+  position:absolute;
+  left:0; top:0;
+  color:var(--pill-text-lit);
+  white-space:nowrap;
+  -webkit-mask:var(--sweep) no-repeat;
+          mask:var(--sweep) no-repeat;
+  -webkit-mask-size:var(--sweep-size);
+          mask-size:var(--sweep-size);
+  animation:sweep var(--sweep-dur) ease-in-out infinite;
+}
+
+.pill__msg::before{filter:blur(4px)}   /* o halo */
+.pill__msg::after {filter:none}        /* a luz nítida por cima */
+
+/* -120% deixa a faixa fora do texto à esquerda,
+   220% fora à direita — ela cruza o texto no meio do caminho */
+@keyframes sweep{
+  0%  {-webkit-mask-position:-120% 0; mask-position:-120% 0}
+  100%{-webkit-mask-position:220% 0;  mask-position:220% 0}
+}
+
+.pill__cta{
+  display:flex;
+  align-items:center;
+  padding:6px 16px;
+  border-radius:999px;
+  background:var(--pill-cta);
+  color:var(--pill-text-lit);
+  font-size:14px;
+  font-weight:500;
+  white-space:nowrap;
+}
+
+/* ---- headline + sub ---- */
+.hero__title{
+  max-width:800px;
+  margin:24px 0 0;
+  font-size:clamp(34px, 6.4vw, 60px);
+  font-weight:400;
+  line-height:1;
+  letter-spacing:-.03em;
+  text-align:center;
+  color:var(--ink);
+}
+
+.hero__title em{
+  font-family:var(--font-serif);
+  font-style:italic;
+  font-weight:400;
+  color:var(--accent);
+  letter-spacing:-.01em;
+}
+
+.hero__sub{
+  max-width:380px;
+  margin:16px 0 0;
+  font-size:17px;
+  font-weight:500;
+  line-height:1.2;
+  text-align:center;
+  color:var(--muted);
+}
+
+/* ---- CTA vermelho ----
+   o texto rola pra cima no hover: duas cópias trocam de lugar,
+   a que sai ganha blur (motion blur) e a que entra fica nítida */
+.cta{
+  display:inline-flex;
+  align-items:center;
+  margin-top:28px;
+  padding:12px 20px;
+  border-radius:36px;
+  background:var(--cta);
+  color:#FEFEFE;
+  font-size:17px;
+  font-weight:500;
+  line-height:1.2;
+  text-decoration:none;
+  transition:background .35s var(--soft), filter .2s var(--soft);
+  box-shadow:
+    inset 0 0 20px 1.64px rgba(255,255,255,.4),
+    0 .839802px .503881px -.3125px rgba(250,95,180,.13),
+    0 1.99048px  1.19429px -.625px  rgba(250,95,180,.13),
+    0 3.63084px  2.1785px  -.9375px rgba(250,95,180,.13),
+    0 6.03627px  3.62176px -1.25px  rgba(250,95,180,.13),
+    0 9.74808px  5.84885px -1.5625px rgba(250,95,180,.13),
+    0 15.9566px  9.57398px -1.875px rgba(250,95,180,.13),
+    0 27.4762px 16.4857px  -2.1875px rgba(250,95,180,.13),
+    0 50px      30px       -2.5px   rgba(250,95,180,.13);
+}
+
+/* sem overflow:hidden — o corte deixava uma linha reta visível
+   dentro do botão. as cópias fora de posição somem por opacidade */
+.cta__roll{
+  position:relative;
+  display:block;
+  height:1.2em;
+}
+
+.cta__t{
+  display:block;
+  white-space:nowrap;
+  transition:
+    transform .5s var(--soft),
+    filter    .5s var(--soft),
+    opacity   .5s var(--soft);
+}
+
+.cta__t:last-child{
+  position:absolute;
+  top:100%; left:0;
+  filter:blur(5px);
+  opacity:0;
+}
+
+.cta:hover{background:var(--cta-lit)}
+.cta:hover .cta__t{transform:translateY(-100%)}
+.cta:hover .cta__t:first-child{filter:blur(5px); opacity:0}
+.cta:hover .cta__t:last-child {filter:blur(0);   opacity:1}
+
+.cta:active{filter:brightness(.92)}
+
+/* ---- showreel ----
+   totalmente inerte: sem controles, sem menu de contexto,
+   sem hover, sem clique — pointer-events:none resolve tudo de uma vez */
+.showreel{
+  width:100%;
+  max-width:1120px;
+  margin:56px auto 0;
+  aspect-ratio:1120 / 649;
+  border-radius:32px;
+  overflow:hidden;
+  background:#1C1C1C;
+  pointer-events:none;
+  user-select:none;
+  box-shadow:
+    0 .839802px  2.18349px rgba(0,0,0,.01),
+    0 1.99048px  5.17525px rgba(0,0,0,.015),
+    0 3.63084px  9.44019px rgba(0,0,0,.02),
+    0 6.03627px 15.6943px  rgba(0,0,0,.025),
+    0 9.74808px 25.3449px  rgba(0,0,0,.03),
+    0 15.9566px 41.4872px  rgba(0,0,0,.035),
+    0 27.4762px 71.4381px  rgba(0,0,0,.045),
+    0 50px     130px       rgba(0,0,0,.06);
+}
+
+.showreel__video{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  pointer-events:none;
+}
+
+/* esconde os controles nativos mesmo se o browser insistir */
+.showreel__video::-webkit-media-controls,
+.showreel__video::-webkit-media-controls-enclosure,
+.showreel__video::-webkit-media-controls-panel,
+.showreel__video::-webkit-media-controls-start-playback-button{
+  display:none !important;
+  -webkit-appearance:none;
+}
+
+/* ---- reveal: palavra a palavra ----
+   valores medidos no original: blur 10px, y+10px, 50ms entre palavras */
+.w{
+  display:inline-block;
+  opacity:0;
+  filter:blur(10px);
+  transform:translateY(10px);
+}
+
+[data-split].is-in .w{
+  animation:wordIn 1.2s var(--expo) both;
+  animation-delay:calc(var(--i) * 50ms);
+}
+
+@keyframes wordIn{
+  to{opacity:1; filter:blur(0); transform:none}
+}
+
+[data-reveal]{
+  opacity:0;
+  filter:blur(8px);
+  transform:translateY(10px);
+}
+
+[data-reveal].is-in{
+  animation:wordIn 1.1s var(--expo) both;
+  animation-delay:var(--delay, .25s);
+}
+
+@media (max-width:768px){
+  .hero{padding-top:120px}
+  .hero__title{margin-top:20px}
+  .hero__sub{font-size:15px; max-width:320px}
+  .cta{font-size:16px; margin-top:24px}
+  .showreel{margin-top:40px; border-radius:20px}
+  .pill__inner{padding-left:16px}
+  .pill__msg{font-size:13px}
+  .pill__cta{font-size:13px; padding:6px 14px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ============================================
+   OUTCOME — reels
+   ============================================ */
+.outcome{
+  padding:120px 40px;
+  background:var(--paper);
+}
+
+.reels{
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  flex-wrap:wrap;
+}
+
+/* card 238x430 no original — mesma proporção, um pouco maior */
+.reel{
+  position:relative;
+  width:280px;
+  aspect-ratio:238 / 430;
+  border-radius:32px;
+  overflow:hidden;
+  background:#1C1C1C;
+  pointer-events:none;
+  user-select:none;
+  box-shadow:
+    0 .839802px  2.18349px rgba(0,0,0,.01),
+    0 1.99048px  5.17525px rgba(0,0,0,.015),
+    0 3.63084px  9.44019px rgba(0,0,0,.02),
+    0 6.03627px 15.6943px  rgba(0,0,0,.025),
+    0 9.74808px 25.3449px  rgba(0,0,0,.03),
+    0 15.9566px 41.4872px  rgba(0,0,0,.04),
+    0 27.4762px 71.4381px  rgba(0,0,0,.05),
+    0 50px     130px       rgba(0,0,0,.07);
+}
+
+.reel__video{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  pointer-events:none;
+}
+
+.reel__video::-webkit-media-controls,
+.reel__video::-webkit-media-controls-enclosure,
+.reel__video::-webkit-media-controls-panel,
+.reel__video::-webkit-media-controls-start-playback-button{
+  display:none !important;
+  -webkit-appearance:none;
+}
+
+/* escurece o rodapé pro nome sempre ficar legível */
+.reel__fade{
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:28%;
+  background:linear-gradient(rgba(0,0,0,0) 0%, rgba(0,0,0,.45) 100%);
+}
+
+.reel__profile{
+  position:absolute;
+  left:24px; bottom:24px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.reel__avatar{
+  width:32px; height:32px;
+  border-radius:16px;
+  object-fit:cover;
+  background:#fff;
+  box-shadow:
+    0 .839802px  .503881px -.3125px  rgba(0,0,0,.13),
+    0 1.99048px  1.19429px -.625px   rgba(0,0,0,.13),
+    0 3.63084px  2.1785px  -.9375px  rgba(0,0,0,.13),
+    0 6.03627px  3.62176px -1.25px   rgba(0,0,0,.13),
+    0 9.74808px  5.84885px -1.5625px rgba(0,0,0,.13),
+    0 15.9566px  9.57398px -1.875px  rgba(0,0,0,.13),
+    0 27.4762px 16.4857px  -2.1875px rgba(0,0,0,.13),
+    0 50px      30px       -2.5px    rgba(0,0,0,.13);
+}
+
+.reel__name{
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:-.01em;
+  color:#F5F5F5;
+  white-space:nowrap;
+}
+
+.reel__tick{
+  width:17px; height:17px;
+  flex:0 0 auto;
+  margin-left:-4px;
+}
+.reel__tick-badge{fill:#3897F0}
+.reel__tick-check{fill:#fff}
+
+@media (max-width:768px){
+  .outcome{padding:72px 24px}
+  .reels{gap:16px}
+  .reel{width:calc(50% - 8px); max-width:280px; border-radius:22px}
+  /* o card fica estreito: o nome encolhe com reticências
+     em vez de vazar por cima da borda */
+  .reel__profile{left:12px; right:12px; bottom:12px; gap:7px}
+  .reel__avatar{width:24px; height:24px; border-radius:12px}
+  .reel__name{
+    font-size:12px;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .reel__tick{width:13px; height:13px; margin-left:-2px}
+}

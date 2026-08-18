@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DNA Digital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ===== NAVBAR / DYNAMIC ISLAND ===== -->
+  <nav class="island" id="island" aria-label="Navegação principal">
+
+    <!-- camada 1: a forma preta (barra + gota) -->
+    <div class="island__base" aria-hidden="true">
+      <div class="island__top"></div>
+      <div class="island__notch" id="notch">
+        <div class="island__cap island__cap--left">
+          <svg viewBox="0 0 90 34" preserveAspectRatio="none">
+            <path d="M 0 0 C 47.6 0 38.3 34 90 34 L 90 0 Z" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="island__mid"></div>
+        <div class="island__cap island__cap--right">
+          <svg viewBox="0 0 90 34" preserveAspectRatio="none">
+            <path d="M 90 0 C 42.4 0 51.7 34 0 34 L 0 0 Z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- camada 2: conteúdo -->
+    <div class="island__content" id="islandContent">
+      <a class="island__link" href="#servicos"><span>Serviços</span></a>
+      <a class="island__link" href="#portfolio"><span>Portfólio</span></a>
+
+      <button class="island__logo" id="islandToggle" type="button"
+              aria-expanded="false" aria-controls="islandContent" aria-label="Abrir menu">
+        <span class="island__logo-mark">DNA</span>
+        <svg class="island__chev" viewBox="0 0 10 6" aria-hidden="true">
+          <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <a class="island__link" href="#processo"><span>Processo</span></a>
+      <a class="island__link" href="#contato"><span>Contato</span></a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero" id="topo">
+
+    <a class="pill" href="#contato">
+      <span class="pill__shine" aria-hidden="true"></span>
+      <span class="pill__inner">
+        <span class="pill__msg" data-text="Para escritórios de advocacia">Para escritórios de advocacia</span>
+        <span class="pill__cta">Falar</span>
+      </span>
+    </a>
+
+    <h1 class="hero__title" data-split>
+      A presença digital que separa o escritório <em>lembrado do esquecido</em>
+    </h1>
+
+    <p class="hero__sub" data-reveal>
+      Sites, sistemas sob medida e captação de eventos para escritórios
+      de advocacia que levam a própria imagem a sério.
+    </p>
+
+    <a class="cta" href="#contato" data-reveal style="--delay:.45s">
+      <span class="cta__roll">
+        <span class="cta__t">Ver o que a gente faz</span>
+        <span class="cta__t" aria-hidden="true">Ver o que a gente faz</span>
+      </span>
+    </a>
+
+    <div class="showreel" data-reveal style="--delay:.6s">
+      <video class="showreel__video"
+             src="assets/hero.mp4"
+             autoplay muted loop playsinline
+             preload="metadata"
+             disablepictureinpicture
+             tabindex="-1"
+             aria-hidden="true"></video>
+    </div>
+
+  </header>
+
+
+  <!-- ===== OUTCOME ===== -->
+  <section class="outcome" id="portfolio">
+    <div class="reels">
+      <article class="reel" data-reveal style="--delay:0s">
+        <video class="reel__video" src="assets/reel-1.mp4" autoplay muted loop playsinline
+               preload="metadata" disablepictureinpicture tabindex="-1" aria-hidden="true"></video>
+        <div class="reel__fade"></div>
+        <div class="reel__profile">
+          <img class="reel__avatar" src="assets/avatar.png" alt="">
+          <span class="reel__name">Mendes & Rocha</span>
+          <svg class="reel__tick" viewBox="0 0 24 24" aria-label="Verificado" role="img">
+            <path class="reel__tick-badge" d="M12 0C12.87 0 13.6 2.02 14.6 2.29C15.6 2.56 17.25 1.17 18 1.61C18.75 2.04 18.37 4.16 19.11 4.89C19.84 5.63 21.96 5.25 22.39 6C22.83 6.75 21.44 8.4 21.71 9.4C21.98 10.4 24 11.13 24 12C24 12.87 21.98 13.6 21.71 14.6C21.44 15.6 22.83 17.25 22.39 18C21.96 18.75 19.84 18.37 19.11 19.11C18.37 19.84 18.75 21.96 18 22.39C17.25 22.83 15.6 21.44 14.6 21.71C13.6 21.98 12.87 24 12 24C11.13 24 10.4 21.98 9.4 21.71C8.4 21.44 6.75 22.83 6 22.39C5.25 21.96 5.63 19.84 4.89 19.11C4.16 18.37 2.04 18.75 1.61 18C1.17 17.25 2.56 15.6 2.29 14.6C2.02 13.6 0 12.87 0 12C0 11.13 2.02 10.4 2.29 9.4C2.56 8.4 1.17 6.75 1.61 6C2.04 5.25 4.16 5.63 4.89 4.89C5.63 4.16 5.25 2.04 6 1.61C6.75 1.17 8.4 2.56 9.4 2.29C10.4 2.02 11.13 0 12 0Z"/>
+            <path class="reel__tick-check" d="M10.4 16.2 6.6 12.4l1.7-1.7 2.1 2.1 5.3-5.3 1.7 1.7z"/>
+          </svg>
+        </div>
+      </article>
+      <article class="reel" data-reveal style="--delay:.12s">
+        <video class="reel__video" src="assets/reel-2.mp4" autoplay muted loop playsinline
+               preload="metadata" disablepictureinpicture tabindex="-1" aria-hidden="true"></video>
+        <div class="reel__fade"></div>
+        <div class="reel__profile">
+          <img class="reel__avatar" src="assets/avatar.png" alt="">
+          <span class="reel__name">Alvarenga Advocacia</span>
+          <svg class="reel__tick" viewBox="0 0 24 24" aria-label="Verificado" role="img">
+            <path class="reel__tick-badge" d="M12 0C12.87 0 13.6 2.02 14.6 2.29C15.6 2.56 17.25 1.17 18 1.61C18.75 2.04 18.37 4.16 19.11 4.89C19.84 5.63 21.96 5.25 22.39 6C22.83 6.75 21.44 8.4 21.71 9.4C21.98 10.4 24 11.13 24 12C24 12.87 21.98 13.6 21.71 14.6C21.44 15.6 22.83 17.25 22.39 18C21.96 18.75 19.84 18.37 19.11 19.11C18.37 19.84 18.75 21.96 18 22.39C17.25 22.83 15.6 21.44 14.6 21.71C13.6 21.98 12.87 24 12 24C11.13 24 10.4 21.98 9.4 21.71C8.4 21.44 6.75 22.83 6 22.39C5.25 21.96 5.63 19.84 4.89 19.11C4.16 18.37 2.04 18.75 1.61 18C1.17 17.25 2.56 15.6 2.29 14.6C2.02 13.6 0 12.87 0 12C0 11.13 2.02 10.4 2.29 9.4C2.56 8.4 1.17 6.75 1.61 6C2.04 5.25 4.16 5.63 4.89 4.89C5.63 4.16 5.25 2.04 6 1.61C6.75 1.17 8.4 2.56 9.4 2.29C10.4 2.02 11.13 0 12 0Z"/>
+            <path class="reel__tick-check" d="M10.4 16.2 6.6 12.4l1.7-1.7 2.1 2.1 5.3-5.3 1.7 1.7z"/>
+          </svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+<script src="script.js"></script>
+</body>
+</html>
