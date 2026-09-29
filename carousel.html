@@ -196,6 +196,8 @@
   <footer>© 2026 The Carousel Maker</footer>
 
   <script>
+    const SUPABASE_URL = 'https://uknarvajkgekyhoqxzpk.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_5amaJ6_llf54m_giw1I89Q_UZorvpyS';
     const form = document.getElementById('beta');
     const status = document.getElementById('status');
     form.addEventListener('submit', async (event) => {
@@ -210,12 +212,24 @@
       button.disabled = true;
       button.textContent = 'Enviando…';
       try {
-        const response = await fetch('/api/betaSignup', {
+        if (data.website) throw new Error(); // honeypot: bots fill the hidden field
+        // Insert-only table: the publishable key can add rows but never read them (RLS).
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/carousel_beta_signups`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          headers: {
+            apikey: SUPABASE_KEY,
+            'Content-Type': 'application/json',
+            Prefer: 'return=minimal'
+          },
+          body: JSON.stringify({
+            email: data.email.trim().toLowerCase(),
+            handle: (data.handle || '').trim().replace(/^@+/, '') || null,
+            weekly_volume: data.volume || null,
+            source: 'site'
+          })
         });
-        if (!response.ok) throw new Error();
+        // 409 means this e-mail is already on the list, which is fine for the visitor.
+        if (!response.ok && response.status !== 409) throw new Error();
         form.reset();
         status.className = 'status ok';
         status.textContent = 'Pronto, você está na lista. Vamos te chamar por e-mail.';
