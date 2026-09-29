@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Carousel Maker · Beta para Mac</title>
+  <meta name="description" content="Crie carrosséis em lote com IA, direto do seu Mac. Entre na lista do beta.">
+  <meta property="og:title" content="The Carousel Maker · Beta para Mac">
+  <meta property="og:description" content="Suas fotos, suas referências, dezenas de carrosséis prontos. Entre na lista do beta.">
+  <meta property="og:image" content="/assets/carousel/app-canvas.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='7' width='18' height='20' rx='5' fill='%23f2a54a'/><rect x='11' y='4' width='18' height='20' rx='5' fill='%23111'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0b09;
+      --ink: #f6f1ea;
+      --muted: rgba(246, 241, 234, 0.62);
+      --line: rgba(246, 241, 234, 0.12);
+      --glass: rgba(255, 255, 255, 0.06);
+      --warm: #f2a54a;
+      --radius: 22px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    .glow {
+      position: fixed; inset: -20% -10% auto; height: 80vh; pointer-events: none; z-index: 0;
+      background: radial-gradient(60% 60% at 70% 20%, rgba(242, 165, 74, 0.22), transparent 70%),
+                  radial-gradient(40% 50% at 15% 10%, rgba(255, 214, 160, 0.10), transparent 70%);
+      filter: blur(20px);
+    }
+    .wrap { position: relative; z-index: 1; width: min(1120px, 100% - 32px); margin: 0 auto; }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; }
+    .brand-mark { width: 26px; height: 26px; position: relative; }
+    .brand-mark span { position: absolute; width: 17px; height: 20px; border-radius: 5px; }
+    .brand-mark span:first-child { left: 0; bottom: 0; background: var(--warm); }
+    .brand-mark span:last-child { right: 0; top: 0; background: var(--ink); mix-blend-mode: difference; }
+    .pill {
+      font-size: 13px; font-weight: 500; color: var(--muted);
+      border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: var(--glass);
+      backdrop-filter: blur(12px);
+    }
+
+    header { text-align: center; padding: 72px 0 40px; }
+    h1 {
+      font-family: 'Instrument Serif', Georgia, serif; font-weight: 400;
+      font-size: clamp(44px, 7.4vw, 92px); line-height: 0.98; letter-spacing: -0.02em;
+    }
+    h1 em { color: var(--warm); }
+    .lead { max-width: 560px; margin: 22px auto 0; font-size: clamp(16px, 2vw, 19px); color: var(--muted); }
+
+    form {
+      margin: 36px auto 0; max-width: 560px; display: grid; gap: 10px;
+      grid-template-columns: 1fr 1fr; text-align: left;
+    }
+    .field { display: grid; gap: 6px; }
+    .field.full { grid-column: 1 / -1; }
+    label { font-size: 13px; font-weight: 500; color: var(--muted); padding-left: 4px; }
+    input, select {
+      width: 100%; height: 50px; padding: 0 16px; border-radius: 14px;
+      border: 1px solid var(--line); background: rgba(255, 255, 255, 0.05); color: var(--ink);
+      font: 500 16px Inter, sans-serif; outline: none; transition: border-color .2s, background .2s;
+      appearance: none;
+    }
+    select { background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 20px) 22px, calc(100% - 15px) 22px; background-size: 5px 5px; background-repeat: no-repeat; }
+    select option { color: #111; }
+    input::placeholder { color: rgba(246, 241, 234, 0.35); }
+    input:focus, select:focus { border-color: rgba(242, 165, 74, 0.7); background: rgba(255, 255, 255, 0.08); }
+    button {
+      grid-column: 1 / -1; height: 54px; border: 0; border-radius: 14px; cursor: pointer;
+      background: var(--ink); color: #111; font: 600 16px Inter, sans-serif; letter-spacing: -0.01em;
+      transition: transform .15s, opacity .2s;
+    }
+    button:hover { transform: translateY(-1px); }
+    button:disabled { opacity: 0.6; cursor: default; transform: none; }
+    .hp { position: absolute; left: -9999px; }
+    .status { grid-column: 1 / -1; min-height: 24px; text-align: center; font-size: 15px; font-weight: 500; }
+    .status.ok { color: #7ee2a0; }
+    .status.err { color: #ff9c8a; }
+
+    .shot { margin: 56px auto 0; position: relative; perspective: 1600px; }
+    .shot img {
+      display: block; width: 100%; height: auto; border-radius: 18px;
+      border: 1px solid var(--line);
+      box-shadow: 0 60px 120px -40px rgba(0, 0, 0, 0.8), 0 0 0 10px rgba(255, 255, 255, 0.03);
+      transform: rotateX(8deg) scale(0.96); transform-origin: top center;
+      transition: transform 1.2s cubic-bezier(.2, .7, .2, 1);
+    }
+    .shot.in img { transform: rotateX(0) scale(1); }
+
+    section.features { padding: 110px 0 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card {
+      padding: 26px; border-radius: var(--radius); border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
+    }
+    .card .n { font-family: 'Instrument Serif', serif; font-size: 40px; color: var(--warm); line-height: 1; }
+    .card h3 { margin-top: 18px; font-size: 19px; font-weight: 600; letter-spacing: -0.01em; }
+    .card p { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+    .closing { text-align: center; padding: 90px 0 110px; }
+    .closing h2 { font-family: 'Instrument Serif', serif; font-weight: 400; font-size: clamp(36px, 5vw, 60px); line-height: 1.05; }
+    .closing a.cta {
+      display: inline-block; margin-top: 28px; padding: 16px 26px; border-radius: 14px;
+      background: var(--ink); color: #111; text-decoration: none; font-weight: 600;
+    }
+    footer { border-top: 1px solid var(--line); padding: 28px 0 40px; color: var(--muted); font-size: 13px; text-align: center; }
+
+    @media (max-width: 760px) {
+      header { padding-top: 48px; }
+      form { grid-template-columns: 1fr; }
+      section.features { grid-template-columns: 1fr; padding-top: 72px; }
+      .shot img { border-radius: 12px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .shot img { transform: none; transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="wrap">
+    <nav>
+      <div class="brand"><div class="brand-mark"><span></span><span></span></div>The Carousel Maker</div>
+      <div class="pill">Beta fechado · macOS</div>
+    </nav>
+
+    <header>
+      <h1>Dezenas de carrosséis.<br><em>Um clique.</em></h1>
+      <p class="lead">Escolha suas fotos, mostre o resultado que você quer e deixe a IA montar o lote inteiro no seu Mac. Você só revisa e posta.</p>
+
+      <form id="beta" novalidate>
+        <div class="field full">
+          <label for="email">Seu melhor e-mail</label>
+          <input id="email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="voce@email.com" required>
+        </div>
+        <div class="field">
+          <label for="handle">@ do Instagram ou TikTok</label>
+          <input id="handle" name="handle" type="text" autocomplete="off" placeholder="@seuperfil">
+        </div>
+        <div class="field">
+          <label for="volume">Carrosséis por semana</label>
+          <select id="volume" name="volume">
+            <option value="">Escolha</option>
+            <option>1 a 3</option>
+            <option>4 a 10</option>
+            <option>11 a 30</option>
+            <option>Mais de 30</option>
+          </select>
+        </div>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit">Quero testar o beta</button>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="shot" id="shot">
+        <img src="/assets/carousel/app-canvas.jpg" width="1912" height="1432" alt="Tela do The Carousel Maker: fotos, referências e copy ligadas à IA, que gera o lote na pasta de saída">
+      </div>
+    </header>
+
+    <section class="features">
+      <div class="card">
+        <div class="n">01</div>
+        <h3>Suas fotos, em lote</h3>
+        <p>Arraste a pasta de fotos e a de referências. O app entende o estilo que você quer e aplica em todas.</p>
+      </div>
+      <div class="card">
+        <div class="n">02</div>
+        <h3>Veja como fica no feed</h3>
+        <p>Escolha fonte, cor, contorno e posição do texto vendo o slide dentro da tela do TikTok, antes de gerar.</p>
+      </div>
+      <div class="card">
+        <div class="n">03</div>
+        <h3>A IA trabalha, você revisa</h3>
+        <p>Claude ou Codex geram as variações direto na sua pasta. Nada sai do seu computador sem você ver.</p>
+      </div>
+    </section>
+
+    <section class="closing">
+      <h2>Quer ser um dos primeiros?</h2>
+      <a class="cta" href="#beta" onclick="document.getElementById('email').focus()">Entrar na lista do beta</a>
+    </section>
+  </div>
+  <footer>© 2026 The Carousel Maker</footer>
+
+  <script>
+    const form = document.getElementById('beta');
+    const status = document.getElementById('status');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email || '')) {
+        status.className = 'status err';
+        status.textContent = 'Confere o e-mail, parece que faltou alguma coisa.';
+        return;
+      }
+      const button = form.querySelector('button');
+      button.disabled = true;
+      button.textContent = 'Enviando…';
+      try {
+        const response = await fetch('/api/betaSignup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error();
+        form.reset();
+        status.className = 'status ok';
+        status.textContent = 'Pronto, você está na lista. Vamos te chamar por e-mail.';
+        button.textContent = 'Inscrito';
+      } catch {
+        status.className = 'status err';
+        status.textContent = 'Não deu pra enviar agora. Tenta de novo em um minuto.';
+        button.disabled = false;
+        button.textContent = 'Quero testar o beta';
+      }
+    });
+
+    const shot = document.getElementById('shot');
+    new IntersectionObserver(([entry], observer) => {
+      if (entry.isIntersecting) { shot.classList.add('in'); observer.disconnect(); }
+    }, { threshold: 0.25 }).observe(shot);
+  </script>
+</body>
+</html>
