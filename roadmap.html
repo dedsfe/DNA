@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DNA · Roadmap do novo site</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⬛</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --page-bg: #f5f5f7;
+        --ink-primary: #0a1628;
+        --ink-secondary: rgba(10, 22, 40, 0.55);
+        --ink-muted: rgba(10, 22, 40, 0.35);
+        --accent-blue: #245ba1;
+        --line: rgba(10, 22, 40, 0.1);
+        --card: #fff;
+        --done: #245ba1;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        background: var(--page-bg);
+        color: var(--ink-primary);
+        font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .serif { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; }
+
+      /* Hero com as nuvens do site */
+      .hero {
+        position: relative;
+        min-height: 72svh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: clamp(1rem, 4vw, 3rem);
+        margin: clamp(0.6rem, 1.5vw, 1rem);
+        border-radius: clamp(1.6rem, 2.4vw, 2.25rem);
+        overflow: hidden;
+        color: #fff;
+      }
+      .hero img {
+        position: absolute; inset: 0; width: 100%; height: 100%;
+        object-fit: cover; z-index: -1;
+      }
+      .hero::after {
+        content: ""; position: absolute; inset: 0; z-index: -1;
+        background: linear-gradient(180deg, rgba(34,84,158,0) 30%, rgba(34,84,158,0.55) 100%);
+      }
+      .hero__top {
+        position: absolute; top: clamp(1rem, 3vw, 2rem); left: clamp(1rem, 4vw, 3rem); right: clamp(1rem, 4vw, 3rem);
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase;
+      }
+      .hero__top a { color: #fff; text-decoration: none; font-weight: 700; letter-spacing: 0.15em; }
+      .hero h1 {
+        font-size: clamp(3rem, 11vw, 8.5rem);
+        line-height: 0.9;
+        letter-spacing: -0.02em;
+      }
+      .hero h1 em { font-style: italic; }
+      .hero p {
+        margin-top: 1.2rem; max-width: 34rem;
+        font-size: clamp(1rem, 1.6vw, 1.15rem); line-height: 1.5; opacity: 0.92;
+      }
+
+      /* Progresso */
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+      .progress {
+        display: flex; gap: 6px; margin: clamp(2.5rem, 6vw, 4.5rem) 0 0.8rem;
+      }
+      .progress span { flex: 1; height: 6px; border-radius: 99px; background: var(--line); }
+      .progress span.on { background: var(--accent-blue); }
+      .progress-label { font-size: 0.85rem; color: var(--ink-secondary); }
+
+      /* Antes → depois */
+      .shift {
+        display: grid; grid-template-columns: 1fr auto 1fr; gap: 1rem; align-items: center;
+        margin: clamp(2.5rem, 6vw, 4rem) 0;
+      }
+      .shift__col { padding: 1.4rem 0; border-top: 1px solid var(--line); }
+      .shift__col h3 { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-muted); margin-bottom: 0.8rem; font-weight: 600; }
+      .shift__col p { font-size: clamp(1.6rem, 3.4vw, 2.4rem); line-height: 1.1; }
+      .shift__col small { display: block; margin-top: 0.6rem; color: var(--ink-secondary); font-size: 0.9rem; line-height: 1.5; }
+      .shift__arrow { font-size: 2rem; color: var(--accent-blue); }
+
+      /* Timeline */
+      .section-title {
+        font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1; letter-spacing: -0.01em;
+        margin: clamp(3rem, 8vw, 6rem) 0 clamp(1.5rem, 4vw, 2.5rem);
+      }
+      .phase {
+        display: grid; grid-template-columns: 5.5rem 1fr; gap: clamp(1rem, 3vw, 2.5rem);
+        padding: clamp(1.6rem, 4vw, 2.6rem) 0;
+        border-top: 1px solid var(--line);
+        opacity: 0; transform: translateY(24px);
+        transition: opacity 0.7s cubic-bezier(.2,.8,.2,1), transform 0.7s cubic-bezier(.2,.8,.2,1);
+      }
+      .phase.in { opacity: 1; transform: none; }
+      .phase__num {
+        font-family: "Instrument Serif", Georgia, serif;
+        font-size: clamp(3rem, 7vw, 5rem); line-height: 0.8; color: var(--ink-muted);
+      }
+      .phase.now .phase__num { color: var(--accent-blue); }
+      .phase__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem 1rem; }
+      .phase__head h3 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: clamp(1.8rem, 3.6vw, 2.6rem); line-height: 1.05; }
+      .tag {
+        font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+        padding: 0.3rem 0.65rem; border-radius: 99px; border: 1px solid var(--line); color: var(--ink-secondary);
+      }
+      .phase.now .tag { background: var(--accent-blue); border-color: var(--accent-blue); color: #fff; }
+      .phase__goal { margin: 0.7rem 0 1.2rem; color: var(--ink-secondary); line-height: 1.55; max-width: 40rem; }
+      .tasks { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0.55rem 2rem; }
+      .tasks li { position: relative; padding-left: 1.4rem; font-size: 0.95rem; line-height: 1.45; }
+      .tasks li::before {
+        content: ""; position: absolute; left: 0; top: 0.42em;
+        width: 0.6rem; height: 0.6rem; border-radius: 3px; border: 1.5px solid var(--ink-muted);
+      }
+      .phase__out { margin-top: 1.2rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; }
+
+      /* Blog preview */
+      .clusters { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+      .cluster { background: var(--card); border-radius: 1.4rem; padding: 1.5rem; }
+      .cluster h4 { font-family: "Instrument Serif", Georgia, serif; font-weight: 400; font-size: 1.7rem; line-height: 1.05; margin-bottom: 0.9rem; }
+      .cluster ul { list-style: none; display: grid; gap: 0.5rem; }
+      .cluster li { font-size: 0.9rem; color: var(--ink-secondary); line-height: 1.4; }
+      .cluster li::before { content: "↳ "; color: var(--accent-blue); }
+
+      footer { margin: clamp(4rem, 10vw, 7rem) 0 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; font-size: 0.85rem; color: var(--ink-secondary); }
+
+      @media (max-width: 680px) {
+        .shift { grid-template-columns: 1fr; }
+        .shift__arrow { transform: rotate(90deg); justify-self: start; }
+        .phase { grid-template-columns: 1fr; gap: 0.6rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .phase { opacity: 1; transform: none; transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <picture>
+        <source media="(max-width: 768px)" srcset="./assets/hero-clouds-mobile.jpg">
+        <img src="./assets/hero-clouds.jpg" alt="" aria-hidden="true" />
+      </picture>
+      <div class="hero__top"><a href="/">DNA</a><span>Roadmap · Nov 2026</span></div>
+      <h1 class="serif">O novo<br><em>DNA</em></h1>
+      <p>Sair da Vercel, morar na Cloudflare e virar um site que o Google encontra sozinho: páginas de serviço, blog e conteúdo toda semana.</p>
+    </header>
+
+    <main class="wrap">
+      <div class="progress" aria-hidden="true">
+        <span class="on"></span><span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <p class="progress-label">Fase 0 de 5 · começando agora</p>
+
+      <section class="shift">
+        <div class="shift__col">
+          <h3>Hoje</h3>
+          <p class="serif">Uma vitrine bonita.</p>
+          <small>HTML estático na Vercel, 1 página principal, zero conteúdo pro Google indexar. Quem não conhece a DNA não acha a DNA.</small>
+        </div>
+        <div class="shift__arrow">→</div>
+        <div class="shift__col">
+          <h3>Depois</h3>
+          <p class="serif">Uma máquina de achar cliente.</p>
+          <small>Astro na Cloudflare Pages, páginas por serviço e cidade, blog com post toda semana e cada página medida no Search Console.</small>
+        </div>
+      </section>
+
+      <h2 class="section-title serif">As 6 fases</h2>
+
+      <article class="phase now">
+        <div class="phase__num">00</div>
+        <div>
+          <div class="phase__head"><h3>Fundação e inventário</h3><span class="tag">Agora · semana 1</span></div>
+          <p class="phase__goal">Antes de mexer, saber tudo que existe e quanto o site vale hoje no Google. Nada pode quebrar na mudança.</p>
+          <ul class="tasks">
+            <li>Listar todas as URLs vivas (home, portfólio, proposta, carrossel, reels, termos, privacidade)</li>
+            <li>Ligar Google Search Console e tirar o retrato de hoje</li>
+            <li>Mapear a função <code>api/acceptProposal</code> e o que ela usa</li>
+            <li>Limpar o repo (scripts .py soltos, prints, node_modules)</li>
+          </ul>
+          <p class="phase__out">Entrega: planilha de URLs + baseline de tráfego</p>
+        </div>
+      </article>
+
+      <article class="phase">
+        <div class="phase__num">01</div>
+        <div>
+          <div class="phase__head"><h3>Mudança pra Cloudflare</h3><span class="tag">Semana 1–2</span></div>
+          <p class="phase__goal">Mudar de casa sem mudar a cara. O site atual roda idêntico na Cloudflare antes do redesign começar.</p>
+          <ul class="tasks">
+            <li>Projeto no Cloudflare Pages ligado ao GitHub (dedsfe/DNA)</li>
+            <li>DNS do digitaldna.space apontando pra Cloudflare</li>
+            <li><code>api/</code> vira Pages Functions</li>
+            <li>URLs limpas via <code>_redirects</code>, igual ao cleanUrls de hoje</li>
+            <li>Desligar o projeto da Vercel só depois de 48 h estável</li>
+          </ul>
+          <p class="phase__out">Entrega: digitaldna.space servido pela Cloudflare</p>
+        </div>
+      </article>
+
+      <article class="phase">
+        <div class="phase__num">02</div>
+        <div>
+          <div class="phase__head"><h3>Arquitetura e design novo</h3><span class="tag">Semana 2–4</span></div>
+          <p class="phase__goal">Redesign completo em Astro: carrega rápido, HTML limpo pro Google e componentes reaproveitáveis.</p>
+          <ul class="tasks">
+            <li>Pesquisa de referência (Awwwards, Pinterest, estúdios) antes de desenhar</li>
+            <li>Home nova + páginas por serviço: Sites, Branding, Social Media, Eventos</li>
+            <li>Página por cidade (Praia Grande, Santos, Baixada)</li>
+            <li>Cases do portfólio como páginas próprias, cada uma indexável</li>
+            <li>Mobile primeiro: tudo acontece rolando</li>
+          </ul>
+          <p class="phase__out">Entrega: site novo em preview no *.pages.dev</p>
+        </div>
+      </article>
+
+      <article class="phase">
+        <div class="phase__num">03</div>
+        <div>
+          <div class="phase__head"><h3>Motor de SEO técnico</h3><span class="tag">Semana 4–5</span></div>
+          <p class="phase__goal">Tudo que o Google precisa pra entender e confiar no site, embutido no template.</p>
+          <ul class="tasks">
+            <li>Sitemap e robots automáticos</li>
+            <li>Schema: LocalBusiness, Service, Article, BreadcrumbList</li>
+            <li>Imagem OG gerada por página</li>
+            <li>Core Web Vitals no verde (nota 95+ no Lighthouse)</li>
+            <li>Redirects 301 de toda URL antiga</li>
+          </ul>
+          <p class="phase__out">Entrega: lançamento do site novo no domínio</p>
+        </div>
+      </article>
+
+      <article class="phase">
+        <div class="phase__num">04</div>
+        <div>
+          <div class="phase__head"><h3>Blog e conteúdo</h3><span class="tag">Semana 5 em diante</span></div>
+          <p class="phase__goal">O blog é o que traz gente nova. Posts em Markdown no repo, publicados com um push.</p>
+          <ul class="tasks">
+            <li>Blog com categorias, autor e tempo de leitura</li>
+            <li>Pesquisa de palavras-chave por cluster (abaixo)</li>
+            <li>Ritmo: 2 posts por semana</li>
+            <li>Cada post linka pra uma página de serviço</li>
+            <li>Google Business Profile da DNA ativo e com posts</li>
+          </ul>
+          <p class="phase__out">Entrega: 8 posts no ar no 1º mês</p>
+        </div>
+      </article>
+
+      <article class="phase">
+        <div class="phase__num">05</div>
+        <div>
+          <div class="phase__head"><h3>Medir e escalar</h3><span class="tag">Mês 2–3</span></div>
+          <p class="phase__goal">Olhar os números e dobrar o que funciona.</p>
+          <ul class="tasks">
+            <li>Relatório mensal: cliques, posições, leads no WhatsApp</li>
+            <li>Reescrever post que ficou entre a posição 8 e 20</li>
+            <li>Páginas programáticas: “site para [nicho] em [cidade]”</li>
+            <li>Otimizar pra ChatGPT e AI Overviews (GEO)</li>
+          </ul>
+          <p class="phase__out">Meta: primeiro cliente vindo do Google</p>
+        </div>
+      </article>
+
+      <h2 class="section-title serif">Ideias pro blog</h2>
+      <div class="clusters">
+        <div class="cluster">
+          <h4>Sites</h4>
+          <ul>
+            <li>Quanto custa um site profissional em 2026</li>
+            <li>Site ou Instagram: o que traz mais cliente</li>
+            <li>Landing page que converte: 7 erros comuns</li>
+          </ul>
+        </div>
+        <div class="cluster">
+          <h4>Branding</h4>
+          <ul>
+            <li>Logo x identidade visual: qual a diferença</li>
+            <li>Quando é hora de mudar a marca</li>
+            <li>Paleta de cores pra negócio local</li>
+          </ul>
+        </div>
+        <div class="cluster">
+          <h4>Social media</h4>
+          <ul>
+            <li>Carrossel que vende: estrutura que funciona</li>
+            <li>Reels pra negócio local sem aparecer</li>
+            <li>Quantas vezes postar por semana</li>
+          </ul>
+        </div>
+        <div class="cluster">
+          <h4>Local</h4>
+          <ul>
+            <li>Agência de marketing em Praia Grande: como escolher</li>
+            <li>Google Meu Negócio passo a passo</li>
+            <li>Cases de clientes da Baixada</li>
+          </ul>
+        </div>
+      </div>
+
+      <footer>
+        <span>DNA · Estúdio de Design &amp; Estratégia</span>
+        <span>Página interna, fora do Google</span>
+      </footer>
+    </main>
+
+    <script>
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+      }, { threshold: 0.15 });
+      document.querySelectorAll(".phase").forEach((el) => io.observe(el));
+    </script>
+  </body>
+</html>
