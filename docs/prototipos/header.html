@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DNA — protótipo do header</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --blue: #245ba1;
+    --ink: #0a1628;
+    --paper: #f7f8fa;
+    --pad: clamp(20px, 4vw, 48px);
+    --ease: cubic-bezier(.2, .8, .2, 1);
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { background: var(--blue); color: var(--paper); font-family: Inter, system-ui, sans-serif; }
+  a { color: inherit; text-decoration: none; }
+
+  .hero { position: relative; min-height: 100svh; overflow: hidden; display: flex; flex-direction: column; }
+  .hero__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+  .nav {
+    position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between;
+    padding: max(16px, env(safe-area-inset-top)) var(--pad) 16px;
+  }
+  .nav__logo { font: 700 22px/1 Inter, sans-serif; letter-spacing: -.04em; }
+  .nav__links { display: none; gap: 32px; font-size: 14px; font-weight: 500; }
+  .nav__links a { opacity: .8; transition: opacity .2s; }
+  .nav__links a:hover { opacity: 1; }
+  .nav__right { display: flex; align-items: center; gap: 8px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 22px; border-radius: 999px;
+    font-size: 15px; font-weight: 600; white-space: nowrap;
+    transition: transform .3s var(--ease);
+  }
+  .btn:active { transform: scale(.97); }
+  .btn--solid { background: var(--paper); color: var(--ink); box-shadow: 3px 3px 0 var(--ink); }
+  .btn--line { border: 1.5px solid rgba(247, 248, 250, .45); }
+  .nav .btn { min-height: 42px; padding: 0 16px; font-size: 14px; }
+
+  .menu {
+    width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%;
+    border: 1.5px solid rgba(247, 248, 250, .45); background: none; color: inherit; cursor: pointer;
+  }
+
+  .hero__content {
+    position: relative; z-index: 1; padding: clamp(10px, 3svh, 72px) var(--pad) 0;
+    max-width: 780px; pointer-events: none;
+  }
+  .hero__content a { pointer-events: auto; }
+
+  .status { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; margin-bottom: 18px; }
+  .status i { width: 8px; height: 8px; border-radius: 50%; background: #5dec9a; animation: pulse 2s infinite; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 5px rgba(93, 236, 154, .22); } }
+
+  h1 {
+    font: 400 clamp(56px, 16.5vw, 136px)/.92 "Instrument Serif", serif;
+    letter-spacing: -.02em;
+  }
+  h1 em { font-style: italic; }
+  .sub { margin-top: 16px; max-width: 34ch; font-size: 17px; line-height: 1.4; opacity: .88; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+
+  .proof { margin-top: 14px; font-size: 13px; font-weight: 500; opacity: .85; }
+  .bubble {
+    position: relative; width: fit-content; max-width: 300px; margin-top: 16px; padding: 12px 16px;
+    border-radius: 18px; background: var(--paper); color: var(--ink);
+    font-size: 15px; font-weight: 600; line-height: 1.3; box-shadow: 3px 3px 0 var(--ink);
+  }
+  .bubble::after {
+    content: ""; position: absolute; left: 42px; bottom: -9px; width: 18px; height: 18px;
+    background: var(--paper); transform: rotate(45deg); box-shadow: 3px 3px 0 var(--ink); z-index: -1;
+  }
+  @media (max-height: 699px) { .bubble { display: none; } }
+
+  .reveal { opacity: 0; transform: translateY(18px); animation: up .8s var(--ease) forwards; }
+  .reveal:nth-child(2) { animation-delay: .08s; }
+  .reveal:nth-child(3) { animation-delay: .16s; }
+  .reveal:nth-child(4) { animation-delay: .24s; }
+  .reveal:nth-child(5) { animation-delay: .32s; }
+  .reveal:nth-child(6) { animation-delay: .9s; }
+  @keyframes up { to { opacity: 1; transform: none; } }
+
+  .next { height: 60vh; background: var(--paper); color: var(--ink); padding: var(--pad); }
+
+  @media (min-width: 900px) {
+    .nav__links { display: flex; }
+    .menu { display: none; }
+    .hero__content { margin-block: auto; padding-top: 0; padding-bottom: 8svh; }
+    .sub { font-size: 20px; }
+    .bubble { position: absolute; display: block; top: -14svh; left: calc(100% + 56px); width: 300px; margin: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { animation: none; opacity: 1; transform: none; }
+    .status i { animation: none; }
+  }
+</style>
+</head>
+<body>
+<header class="hero">
+  <canvas class="hero__canvas" aria-hidden="true"></canvas>
+
+  <nav class="nav" aria-label="Navegação principal">
+    <a class="nav__logo" href="#">DNA</a>
+    <div class="nav__links">
+      <a href="#servicos">Serviços</a>
+      <a href="#trabalhos">Trabalhos</a>
+      <a href="#precos">Preços</a>
+      <a href="#sobre">Quem somos</a>
+    </div>
+    <div class="nav__right">
+      <a class="btn btn--solid" href="https://wa.me/5513991863669?text=Oi%2C%20vim%20pelo%20site%20e%20quero%20garantir%20minha%20vaga" target="_blank" rel="noopener">Falar agora</a>
+      <button class="menu" aria-label="Abrir menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <div class="hero__content">
+    <p class="status reveal"><i></i>Poucas vagas abertas</p>
+    <h1 class="reveal">A sua marca precisa de <em>DNA.</em></h1>
+    <p class="sub reveal">Design, estratégia e conteúdo que fazem seu telefone tocar.</p>
+    <div class="cta reveal">
+      <a class="btn btn--solid" href="https://wa.me/5513991863669?text=Oi%2C%20vim%20pelo%20site%20e%20quero%20garantir%20minha%20vaga" target="_blank" rel="noopener">Garantir minha vaga</a>
+      <a class="btn btn--line" href="#trabalhos">Ver trabalhos</a>
+    </div>
+    <p class="proof reveal">15 projetos entregues · 10 clientes atendidos</p>
+    <p class="bubble reveal" aria-live="polite">Oi! Somos o André e a Danyelle. Desce que a gente te mostra.</p>
+  </div>
+</header>
+<section class="next"><p>Próxima seção. A rolagem segue livre.</p></section>
+
+<script type="module">
+  import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js'
+
+  const canvas = document.querySelector('.hero__canvas')
+  const hero = document.querySelector('.hero')
+  const content = document.querySelector('.hero__content')
+  const bubble = document.querySelector('.bubble')
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'low-power' })
+  const scene = new THREE.Scene()
+  const camera = new THREE.PerspectiveCamera(35, 1, .1, 50)
+  camera.position.z = 12
+
+  // Os dois bonecos: a luz faz o volume, a retícula faz o estilo
+  const mat = (color, roughness = .5) => new THREE.MeshStandardMaterial({ color, roughness })
+  const SKIN = mat(0xffffff, .75)
+  const INK = mat(0x050505, .35)
+  const part = (geo, material, x = 0, y = 0, z = 0, sx = 1, sy = 1, sz = 1) => {
+    const mesh = new THREE.Mesh(geo, material)
+    mesh.position.set(x, y, z)
+    mesh.scale.set(sx, sy, sz)
+    return mesh
+  }
+  const ball = new THREE.SphereGeometry(1, 32, 24)
+
+  function buildPerson({ shirt, hair }) {
+    const root = new THREE.Group()
+    const head = new THREE.Group()
+    root.add(head)
+    root.add(part(new THREE.CylinderGeometry(.25, .3, .6, 20), SKIN, 0, -.72))
+    root.add(part(new THREE.CapsuleGeometry(.6, 4, 8, 24), mat(shirt), 0, -3.42, 0, 1.3, 1, .62))
+
+    head.add(part(ball, SKIN, 0, 0, 0, .62, .68, .6))
+    head.add(part(ball, SKIN, -.62, -.02, 0, .1, .14, .08), part(ball, SKIN, .62, -.02, 0, .1, .14, .08))
+    head.add(part(ball, SKIN, 0, -.08, .6, .085, .085, .085))
+    const eyes = [-1, 1].map(s => part(ball, INK, s * .23, .06, .53, .075, .115, .05))
+    head.add(...eyes)
+    head.add(...[-1, 1].map(s => {
+      const brow = part(new THREE.CapsuleGeometry(.03, .16, 4, 8), INK, s * .24, .25, .53)
+      brow.rotation.z = Math.PI / 2 - s * .12
+      return brow
+    }))
+    const mouth = part(new THREE.TorusGeometry(.2, .032, 8, 24, Math.PI), INK, 0, -.17, .535)
+    mouth.rotation.z = Math.PI
+    head.add(mouth)
+    hair(head)
+    return { root, head, eyes, side: 1, bounce: 0, wait: 2 + Math.random() * 3, blink: 0 }
+  }
+
+  const cap = (r, arc) => new THREE.SphereGeometry(r, 32, 16, 0, Math.PI * 2, 0, Math.PI * arc)
+
+  const andre = buildPerson({
+    shirt: 0x262626,
+    hair(head) {
+      const m = mat(0x0a0a0a, .6)
+      const top = part(cap(.66, .5), m, 0, .06, -.03, 1, 1.04, 1)
+      top.rotation.x = -.62
+      head.add(top)
+    },
+  })
+  const danyelle = buildPerson({
+    shirt: 0xb4b4b4,
+    hair(head) {
+      const m = mat(0xa8a8a8, .55)
+      head.add(part(ball, m, 0, -.42, -.2, .8, 1.16, .5))
+      const top = part(cap(.66, .44), m, 0, .08, -.02, 1, 1.02, 1)
+      top.rotation.set(-.56, 0, -.26)
+      head.add(top)
+    },
+  })
+  andre.root.position.x = -.8
+  andre.root.rotation.y = .16
+  andre.side = 1
+  danyelle.root.position.x = .8
+  danyelle.root.rotation.y = -.16
+  danyelle.side = -1
+  const people = [andre, danyelle]
+  const duo = new THREE.Group()
+  duo.add(andre.root, danyelle.root)
+  scene.add(duo)
+
+  const key = new THREE.DirectionalLight(0xffffff, 2.4)
+  key.position.set(-4, 6, 7)
+  const rim = new THREE.DirectionalLight(0xffffff, 1.3)
+  rim.position.set(6, -3, -4)
+  const fill = new THREE.DirectionalLight(0xffffff, 1.5)
+  fill.position.set(1, 0, 10)
+  scene.add(key, rim, fill, new THREE.AmbientLight(0xffffff, .2))
+
+  // Passo de retícula em cima da cena renderizada
+  const target = new THREE.WebGLRenderTarget(1, 1, { samples: 2 })
+  const post = new THREE.ShaderMaterial({
+    uniforms: {
+      tScene: { value: target.texture },
+      uSize: { value: new THREE.Vector2(1, 1) },
+      uCell: { value: 5 },
+      uBlue: { value: new THREE.Color(0x245ba1).convertLinearToSRGB() },
+      uPaper: { value: new THREE.Color(0xf7f8fa).convertLinearToSRGB() },
+      uInk: { value: new THREE.Color(0x0a1628).convertLinearToSRGB() },
+    },
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+    fragmentShader: `
+      varying vec2 vUv;
+      uniform sampler2D tScene;
+      uniform vec2 uSize;
+      uniform float uCell;
+      uniform vec3 uBlue, uPaper, uInk;
+      void main() {
+        vec2 px = vUv * uSize;
+        float s = .7071;
+        mat2 rot = mat2(s, -s, s, s);
+        vec2 g = rot * px / uCell;
+        vec2 cell = floor(g) + .5;
+        vec2 center = (transpose(rot) * (cell * uCell)) / uSize;
+        vec4 c = texture2D(tScene, center);
+        vec4 exact = texture2D(tScene, vUv);
+        float lum = dot(c.rgb, vec3(.299, .587, .114));
+        float r = sqrt(clamp(1. - lum * 1.15, 0., 1.)) * .74;
+        float d = length(g - cell);
+        float dot_ = 1. - smoothstep(r - .14, r + .14, d);
+        vec3 shaded = mix(uPaper, uInk, dot_);
+        gl_FragColor = vec4(mix(uBlue, shaded, smoothstep(.2, .8, exact.a)), 1.);
+      }`,
+  })
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post)
+  const postScene = new THREE.Scene()
+  postScene.add(quad)
+  const postCam = new THREE.Camera()
+  scene.background = null
+  renderer.setClearColor(0x000000, 0)
+
+  let wide = false
+  function resize() {
+    const w = hero.clientWidth
+    const h = hero.clientHeight
+    const dpr = Math.min(devicePixelRatio, 1.75)
+    renderer.setPixelRatio(dpr)
+    renderer.setSize(w, h, false)
+    target.setSize(w * dpr, h * dpr)
+    post.uniforms.uSize.value.set(w * dpr, h * dpr)
+    post.uniforms.uCell.value = (w >= 900 ? 4.5 : 3.5) * dpr
+    camera.aspect = w / h
+    camera.updateProjectionMatrix()
+    wide = w >= 900
+    const view = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    const unit = h / view
+    if (wide) {
+      duo.scale.setScalar(1.75)
+      duo.position.set(camera.aspect * view * .25, .55, 0)
+    } else {
+      const free = (h - content.getBoundingClientRect().bottom - scrollY - 10) / unit
+      const s = Math.min(.9 * camera.aspect * view / 3, free / 1.5)
+      duo.scale.setScalar(s)
+      duo.position.set(0, -view / 2 + free - .76 * s, 0)
+    }
+  }
+  addEventListener('resize', resize)
+  resize()
+  document.fonts.ready.then(resize)
+
+  // Cursor e inclinação do celular só viram as cabeças: a rolagem nunca é presa
+  const aim = { x: 0, y: 0 }
+  const now = { x: 0, y: 0 }
+  addEventListener('pointermove', e => {
+    aim.x = e.clientX / innerWidth * 2 - 1
+    aim.y = e.clientY / innerHeight * 2 - 1
+  }, { passive: true })
+  addEventListener('deviceorientation', e => {
+    if (e.gamma == null) return
+    aim.x = Math.max(-1, Math.min(1, e.gamma / 30))
+    aim.y = Math.max(-1, Math.min(1, (e.beta - 45) / 30))
+  }, { passive: true })
+
+  // Toque em quem quiser: a pessoa pula e o balão responde
+  const lines = {
+    andre: ['Eu sou o André. Faço o site.', 'Ei, aqui é o dev. Tá tudo responsivo.'],
+    danyelle: ['Eu sou a Danyelle. Faço sua marca aparecer.', 'Bora parar de ser ignorado?'],
+  }
+  const said = { andre: 0, danyelle: 0 }
+  hero.addEventListener('click', e => {
+    if (e.target.closest('a, button')) return
+    const name = e.clientX < innerWidth * (wide ? .75 : .5) ? 'andre' : 'danyelle'
+    const who = name === 'andre' ? andre : danyelle
+    who.bounce = 1
+    bubble.textContent = lines[name][said[name]++ % lines[name].length]
+  })
+
+  let visible = true
+  new IntersectionObserver(([e]) => { visible = e.isIntersecting }).observe(hero)
+
+  const clock = new THREE.Clock()
+  let chat = 0
+  function frame() {
+    const dt = Math.min(clock.getDelta(), .05)
+    if (visible || still) {
+      now.x += (aim.x - now.x) * .08
+      now.y += (aim.y - now.y) * .08
+      chat -= dt
+      if (chat < -9) chat = 2.2
+      for (const p of people) {
+        // De vez em quando um olha pro outro
+        const x = chat > 0 ? p.side * .75 : now.x
+        p.head.rotation.y += (x * .6 - p.head.rotation.y) * .1
+        p.head.rotation.x += ((chat > 0 ? 0 : now.y * .28) - p.head.rotation.x) * .1
+        p.wait -= dt
+        if (p.wait < 0) { p.wait = 2.5 + Math.random() * 4; p.blink = .14 }
+        p.blink = Math.max(0, p.blink - dt)
+        for (const eye of p.eyes) eye.scale.y = p.blink > 0 ? .012 : .115
+        p.bounce = Math.max(0, p.bounce - dt * 1.9)
+        p.root.position.y = Math.sin(p.bounce * Math.PI) * .22
+      }
+      renderer.setRenderTarget(target)
+      renderer.render(scene, camera)
+      renderer.setRenderTarget(null)
+      renderer.render(postScene, postCam)
+    }
+    if (!still) requestAnimationFrame(frame)
+  }
+  frame()
+</script>
+</body>
+</html>

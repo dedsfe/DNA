@@ -6,3 +6,5 @@ node_modules/
 .wrangler/
 dist/
 StackVault/
+.vercel
+.env*.local

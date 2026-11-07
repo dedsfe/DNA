@@ -120,6 +120,13 @@
         width: 0.6rem; height: 0.6rem; border-radius: 3px; border: 1.5px solid var(--ink-muted);
       }
       .phase__out { margin-top: 1.2rem; font-size: 0.85rem; color: var(--accent-blue); font-weight: 600; }
+      .tasks li.done { color: var(--ink-secondary); }
+      .tasks li.done::before { background: var(--done); border-color: var(--done); }
+      .tasks li.done::after {
+        content: ""; position: absolute; left: 0.2rem; top: 0.52em;
+        width: 0.2rem; height: 0.32rem; border: solid #fff; border-width: 0 1.5px 1.5px 0; transform: rotate(45deg);
+      }
+      .phase.done .tag { border-color: var(--done); color: var(--done); }
 
       /* Blog preview */
       .clusters { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
@@ -174,41 +181,41 @@
 
       <h2 class="section-title serif">As 6 fases</h2>
 
-      <article class="phase now">
+      <article class="phase done">
         <div class="phase__num">00</div>
         <div>
-          <div class="phase__head"><h3>Fundação e inventário</h3><span class="tag">Agora · semana 1</span></div>
+          <div class="phase__head"><h3>Fundação e inventário</h3><span class="tag">Feito</span></div>
           <p class="phase__goal">Antes de mexer, saber tudo que existe e quanto o site vale hoje no Google. Nada pode quebrar na mudança.</p>
           <ul class="tasks">
-            <li>Listar todas as URLs vivas (home, portfólio, proposta, carrossel, reels, termos, privacidade)</li>
+            <li class="done">Listar todas as URLs vivas (home, portfólio, proposta, carrossel, reels, termos, privacidade)</li>
             <li>Ligar Google Search Console e tirar o retrato de hoje</li>
-            <li>Mapear a função <code>api/acceptProposal</code> e o que ela usa</li>
-            <li>Limpar o repo (scripts .py soltos, prints, node_modules)</li>
+            <li class="done">Mapear a função <code>api/acceptProposal</code> e o que ela usa</li>
+            <li class="done">Limpar o repo (scripts .py soltos, prints, node_modules)</li>
           </ul>
           <p class="phase__out">Entrega: planilha de URLs + baseline de tráfego</p>
         </div>
       </article>
 
-      <article class="phase">
+      <article class="phase done">
         <div class="phase__num">01</div>
         <div>
-          <div class="phase__head"><h3>Mudança pra Cloudflare</h3><span class="tag">Semana 1–2</span></div>
+          <div class="phase__head"><h3>Mudança pra Cloudflare</h3><span class="tag">Feito</span></div>
           <p class="phase__goal">Mudar de casa sem mudar a cara. O site atual roda idêntico na Cloudflare antes do redesign começar.</p>
           <ul class="tasks">
-            <li>Projeto no Cloudflare Pages ligado ao GitHub (dedsfe/DNA)</li>
-            <li>DNS do digitaldna.space apontando pra Cloudflare</li>
-            <li><code>api/</code> vira Pages Functions</li>
-            <li>URLs limpas via <code>_redirects</code>, igual ao cleanUrls de hoje</li>
+            <li class="done">Projeto no Cloudflare Pages (deploy pelo <code>./deploy.sh</code>)</li>
+            <li class="done">DNS do digitaldna.space apontando pra Cloudflare, com o e-mail junto</li>
+            <li class="done"><code>api/</code> vira Pages Functions</li>
+            <li class="done">URLs limpas via <code>_redirects</code>, igual ao cleanUrls de hoje</li>
             <li>Desligar o projeto da Vercel só depois de 48 h estável</li>
           </ul>
           <p class="phase__out">Entrega: digitaldna.space servido pela Cloudflare</p>
         </div>
       </article>
 
-      <article class="phase">
+      <article class="phase now">
         <div class="phase__num">02</div>
         <div>
-          <div class="phase__head"><h3>Arquitetura e design novo</h3><span class="tag">Semana 2–4</span></div>
+          <div class="phase__head"><h3>Arquitetura e design novo</h3><span class="tag">Agora</span></div>
           <p class="phase__goal">Redesign completo em Astro: carrega rápido, HTML limpo pro Google e componentes reaproveitáveis.</p>
           <ul class="tasks">
             <li>Pesquisa de referência (Awwwards, Pinterest, estúdios) antes de desenhar</li>
