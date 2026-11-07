@@ -245,6 +245,20 @@
     50% { transform: translate(-61px, -13px); } 67% { transform: translate(18px, 63px); } 83% { transform: translate(-29px, -58px); } 100% { transform: translate(44px, 31px); }
   }
 
+  /* marca no canto de cima, espelhando a topbar */
+  .brand {
+    position: fixed; top: 18px; left: 18px; z-index: 60; display: flex; align-items: center; gap: 9px;
+    height: 46px; padding: 0 18px 0 14px; border-radius: 99px; text-decoration: none;
+    background: var(--glass); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: inset 0 0 0 1px var(--line), 0 6px 18px -10px rgba(0, 0, 0, .3);
+    color: var(--ink); font: 800 17px/1 Archivo, sans-serif; letter-spacing: -.02em;
+    opacity: 0; filter: blur(10px); animation: blurin .9s cubic-bezier(.2, .8, .2, 1) .2s forwards;
+    transition: scale .4s var(--spring), box-shadow .3s;
+  }
+  .brand:hover { scale: 1.04; box-shadow: inset 0 0 0 1px var(--line-2), 0 10px 22px -10px rgba(0, 0, 0, .35); }
+  .brand__mark { width: 21px; height: 22px; background: currentColor; -webkit-mask: url(assets/dna-mark.png) center / contain no-repeat; mask: url(assets/dna-mark.png) center / contain no-repeat; }
+  .brand small { font: 600 11px/1 Inter, sans-serif; letter-spacing: .18em; color: var(--logo); margin-left: 1px; }
+
   /* ===== SOM: liga/desliga no canto ===== */
   .topbar {
     position: fixed; top: 18px; right: 18px; z-index: 60; display: flex; align-items: center; gap: 8px;
@@ -408,6 +422,8 @@
     .trust__set { gap: 36px; padding-right: 36px; }
     .logo { scale: .82; }
     .topbar { top: 12px; right: 12px; gap: 6px; }
+    .brand { top: 12px; left: 12px; height: 42px; padding: 0 14px 0 12px; }
+    .brand small { display: none; }
     .tb { height: 42px; }
     .snd, .theme { width: 42px; }
     .lang button, .lang::before { width: 36px; height: 34px; }
@@ -631,6 +647,7 @@
 
 <div class="bg" aria-hidden="true"><canvas id="dots"></canvas></div>
 <div class="grain" aria-hidden="true"></div>
+<a class="brand" href="#" aria-label="DNA Digital, voltar ao topo"><span class="brand__mark" aria-hidden="true"></span>DNA<small>DIGITAL</small></a>
 <div class="topbar">
   <div class="tb lang" id="lang" data-on="pt" role="group" aria-label="Idioma"><button type="button" data-l="pt" aria-pressed="true">PT</button><button type="button" data-l="en" aria-pressed="false">EN</button></div>
   <button class="tb theme" id="theme" type="button" aria-label="Modo escuro"><svg viewBox="0 0 24 24" aria-hidden="true">
@@ -658,19 +675,17 @@
   <div class="stage">
     <h1 class="title" id="title" aria-label="Criamos sites que vendem."></h1>
   <div class="stickers" id="stickers" aria-hidden="true">
-      <div class="stk stk--tag" style="--x:3%;--y:-9%;--r:-9deg;--mx:28%;--my:-4%"><span class="stk__tilt"><span class="stk__face"><span data-i="s1">Vagas limitadas</span><span class="stk__sheen"><i></i></span></span></span></div>
       <div class="stk seal" style="--x:99%;--y:-12%;--r:10deg;--mx:90%;--my:-8%"><span class="stk__tilt"><span class="stk__face">
         <svg class="seal__ring" viewBox="0 0 100 100"><defs><path id="sealp" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs><text><textPath href="#sealp" textLength="232" lengthAdjust="spacing" data-i="seal">SATISFAÇÃO GARANTIDA •</textPath></text></svg>
         <svg class="seal__check" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.2 4.2L19 7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span class="stk__sheen"><i></i></span></span></span></div>
-      <div class="stk star" style="--x:-3%;--y:84%;--r:-10deg;--mx:9%;--my:84%"><span class="stk__tilt">
+      <div class="stk star" style="--x:-3%;--y:84%;--r:-10deg;--mx:6%;--my:-6%"><span class="stk__tilt">
         <svg viewBox="0 0 120 120"><defs><linearGradient id="lime" x1="0" y1=".3" x2="1" y2=".7"><stop offset="0" stop-color="#fde047"/><stop offset=".3" stop-color="#bef264"/><stop offset=".62" stop-color="#4ade80"/><stop offset=".82" stop-color="#22c55e"/><stop offset="1" stop-color="#a7f3d0"/></linearGradient></defs>
           <polygon points="60.0,4.0 68.2,13.7 79.2,7.4 83.5,19.3 96.0,17.1 96.0,29.8 108.5,32.0 104.2,43.9 115.1,50.3 107.0,60.0 115.1,69.7 104.2,76.1 108.5,88.0 96.0,90.2 96.0,102.9 83.5,100.7 79.2,112.6 68.2,106.3 60.0,116.0 51.8,106.3 40.8,112.6 36.5,100.7 24.0,102.9 24.0,90.2 11.5,88.0 15.8,76.1 4.9,69.7 13.0,60.0 4.9,50.3 15.8,43.9 11.5,32.0 24.0,29.8 24.0,17.1 36.5,19.3 40.8,7.4 51.8,13.7" fill="url(#lime)" stroke="#fff" stroke-width="9.7" stroke-linejoin="round" paint-order="stroke"/></svg>
-        <span class="stk__face"><b>4,9</b><small>★★★★★</small><span class="stk__sheen"><i></i></span></span></span></div>
-      <div class="stk stk--tag" style="--x:101%;--y:108%;--r:7deg;--mx:76%;--my:93%"><span class="stk__tilt"><span class="stk__face"><span data-i="s4">Feito no Brasil</span><span class="stk__sheen"><i></i></span></span></span></div>
+        <span class="stk__face"><b>5,0</b><small>★★★★★</small><span class="stk__sheen"><i></i></span></span></span></div>
     </div>
   </div>
-  <p class="sub t-sub" id="sub">Estúdio independente que cria sites rápidos e que convertem, pra empresas, criadores e marcas.</p>
+  <p class="sub t-sub" id="sub">Seu site pronto em 10 dias, feito pra transformar visita em cliente chamando no WhatsApp.</p>
   <div class="ctas">
     <a class="btn btn--main" href="#contato" data-n="0">
       <span class="btn__icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -822,10 +837,10 @@
   const title = document.getElementById('title');
   const COPY = {
     pt: { wide: ['Criamos sites', 'que vendem.'], narrow: ['Criamos', 'sites que', 'vendem.'],
-      sub: 'Estúdio independente que cria sites rápidos e que convertem, pra empresas, criadores e marcas.',
+      sub: 'Seu site pronto em 10 dias, feito pra transformar visita em cliente chamando no WhatsApp.',
       btns: ['Começar meu projeto', 'Ver trabalhos'] },
     en: { wide: ['We build sites', 'that sell.'], narrow: ['We build', 'sites that', 'sell.'],
-      sub: 'Independent studio designing and building fast, high-converting websites for businesses, creators and brands.',
+      sub: 'Your website live in 10 days, built to turn visitors into clients messaging you on WhatsApp.',
       btns: ['Start my project', 'See our work'] },
   };
   let lang = document.documentElement.lang === 'en' ? 'en' : 'pt';
@@ -1215,7 +1230,7 @@
 (() => {
   const root = document.documentElement;
   const T = {
-    pt: { pill: 'Agenda aberta pra novembro', call: 'Chamar agora', wa: 'No WhatsApp', s1: 'Vagas limitadas', s4: 'Feito no Brasil',
+    pt: { pill: 'Agenda aberta pra novembro', call: 'Chamar agora', wa: 'No WhatsApp',
       seal: 'SATISFAÇÃO GARANTIDA •', trust: 'Quem já vende com a gente', work: 'Trabalhos', live: 'Ver site no ar', credit: 'Modelos 3D', pk: 'Planos e investimento', pt: 'Escolha o seu e <em>comece a vender</em>', ps: 'Preço fechado, prazo no contrato e você acompanha tudo pelo WhatsApp. Sem mensalidade escondida.',
       from: 'a partir de', terms: 'ou 12x no cartão', hot: 'Mais escolhido', p3n: 'Loja ou web app',
       p1for: 'Pra lançar um produto ou captar clientes', p2for: 'Pra empresa que quer ser encontrada e vender', p3for: 'Pra vender online ou rodar um produto',
@@ -1228,7 +1243,7 @@
       w2t: 'Assessoria premium', w2d: 'Landing elegante com pacotes animados, galeria e agendamento direto pelo site.',
       w3t: 'E-commerce', w3d: 'Loja de alta perfumaria árabe, minimalista e imersiva, feita pra vender perfume caro.',
       w4t: 'Web app', w4d: 'Cinco jogos de festa num app só, que roda direto no navegador do celular.', dark: 'Modo escuro', light: 'Modo claro', langLabel: 'Idioma' },
-    en: { pill: 'Booking for November', call: 'Book a call', wa: 'On WhatsApp', s1: 'Limited spots', s4: 'Made in Brazil',
+    en: { pill: 'Booking for November', call: 'Book a call', wa: 'On WhatsApp',
       seal: 'SATISFACTION GUARANTEED •', trust: 'Brands selling with us', work: 'Work', live: 'See it live', credit: '3D models', pk: 'Plans & pricing', pt: 'Pick yours and <em>start selling</em>', ps: 'Fixed price, deadline in the contract and you follow everything on WhatsApp. No hidden monthly fees.',
       from: 'starting at', terms: 'or 12 installments', hot: 'Most popular', p3n: 'Store or web app',
       p1for: 'To launch a product or capture leads', p2for: 'For businesses that want to be found and sell', p3for: 'To sell online or run a product',
